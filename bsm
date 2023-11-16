@@ -24,6 +24,9 @@ Options:
     -r | --remove
 	Remove script(s) from personal scripts (DOES NOT TOUCH SYSTEM EXECUTABLES)
 
+    -a | --add
+    Add an external script directly to bsm
+
     -v | --version
         Show version
 
