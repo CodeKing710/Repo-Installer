@@ -46,10 +46,10 @@ if [[ ! -d /scripts ]]; then
 
     #Make folders
     sudo mkdir /scripts
-    sudo mkdir /scripts/node
-    sudo mkdir /scripts/python
-    sudo mkdir /scripts/ruby
-    sudo mkdir /scripts/lisp
+    # sudo mkdir /scripts/node
+    # sudo mkdir /scripts/python
+    # sudo mkdir /scripts/ruby
+    # sudo mkdir /scripts/lisp
     #Allow rwx permissions to scripts
     sudo chmod 777 -R /scripts
     #Also update PATH for first-time use
@@ -69,7 +69,7 @@ while [[ "$1" =~ ^- && ! "$1" == "--" ]]; do
                     #Make python folder and executable (Install python if not installed)
                     if [[ ! -d "/scripts/python" ]]; then
                         echo "Installing Python and setting up dependencies..."
-                        # mkdir /scripts/python 2>/dev/null
+                        mkdir /scripts/python 2>/dev/null
                         sudo apt-get install -y python3-pip 2>/dev/null
                     fi
                     touch "/scripts/python/${name%.py}" && chmod 757 "/scripts/python/${name%.py}"
@@ -79,16 +79,19 @@ while [[ "$1" =~ ^- && ! "$1" == "--" ]]; do
                     fi
                 elif [[ "$name" =~ ".js" ]]; then
                     #Make Nodejs folder, exe, installation
-                    if [[ ! -d "/scripts/node" ]]; then
+                    if [[ -d -e "/scripts/node" ]]; then
                         echo "Installing Node.js and dependencies..."
-                        # mkdir /scripts/node 2>/dev/null
+                        mkdir /scripts/node 2>/dev/null
                         sudo snap install --edge node --classic 2>/dev/null
                     fi
                     touch "/scripts/node/${name%.js}" && chmod 757 "/scripts/node/${name%.js}"
                     rintf "#!/bin/env node\n\n//Write script code" > "/scripts/node/${name%.js}"
                     if [[ -e "/scripts/node/${name%.js}" ]]; then
                         echo "Script Created!"
-                    fi
+                elif [[ "$name" =~ ".rb" ]]; then
+                    #Ruby
+                elif [[ "$name" =~ ".cl" ]]; then
+                    #LISP
                 else #Deal with Bash
                     touch "/scripts/$name" && chmod 757 "/scripts/$name"
                     printf "#!/bin/bash\n\n#Write script code" > "/scripts/$name"
