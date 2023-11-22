@@ -40,24 +40,8 @@ version="1.1.0";
 
 #INIT
 if [[ ! -d /scripts ]]; then
-    echo "FIRST TIME SETUP! Installing Dependencies..."
-    #Allow use of /var/log to programs
-    sudo mkdir /var/log/bsm;
-    touch /var/log/bsm/err.log 2>/dev/null;
-    sudo chmod 766 /var/log/bsm/err.log;
-
-    #Make folders
-    sudo mkdir /scripts;
-    # sudo mkdir /scripts/node
-    # sudo mkdir /scripts/python
-    # sudo mkdir /scripts/ruby
-    # sudo mkdir /scripts/lisp
-    #Allow rwx permissions to scripts
-    sudo chmod 777 -R /scripts;
-    #Also update PATH for first-time use
-    PATH="$PATH:/scripts:/scripts/node:/scripts/python:/scripts/ruby:/scripts/lisp"
-    
-    echo "Installed!"
+    echo "FIRST TIME SETUP!"
+    source "$(find -name "bsm-install")"
 fi
 
 #Go thru args
