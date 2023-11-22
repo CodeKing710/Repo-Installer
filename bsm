@@ -45,6 +45,10 @@ if [[ ! -d /scripts ]]; then
 fi
 
 #Go thru args
+if [[ "$1" == "" ]]; then
+    echo "$help"
+    exit
+fi
 while [[ "$1" =~ ^- && ! "$1" == "--" ]]; do
     case "$1" in
         -c | --create )

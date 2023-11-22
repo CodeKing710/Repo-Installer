@@ -2,6 +2,8 @@
 
 #This script runs the general install for BSM
 echo "Installing..."
+sudo cp "$(find -name "bsm")" /usr/local/bin/bsm
+sudo chmod 755 /usr/local/bin/bsm
 echo "Updating PATH..."
 if [[ "$(cat ~/.bashrc | tail -n 1)" == "fi" ]]; then
   echo "export PATH=\"$PATH:/scripts:/scripts/node:/scripts/python:/scripts/ruby:/scripts/lisp\"" >> ~/.bashrc
@@ -15,8 +17,8 @@ sudo chmod 766 /var/log/bsm_err_log.log
 sudo chmod 766 /var/log/bsm_log.log
 
 #This should setup BSM, logging is sent to stdout to check for any errors
-if [[ -d "/scripts" && "$(echo $PATH | grep \b/scripts\b)" != "" ]]; then
-  printf "BSM has been successfully installed! Run\n\nsource ~/.bashrc\n\nfor the changes to take effect!"
-else
-  echo "BSM-Install has run into an error. Check screen for details!"
-fi
+echo "BSM has been successfully installed! Run"
+echo ""
+echo "\`source ~/.bashrc\`"
+echo ""
+echo "for the changes to take effect!"
