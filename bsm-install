@@ -2,7 +2,7 @@
 
 #This script runs the general install for BSM
 echo "Installing..."
-sudo cp "$(find -name "bsm")" /usr/local/bin/bsm
+sudo cp "$(find -name "bsm")" /usr/local/bin/bsm && echo "Copy of BSM added to program registry!"
 sudo chmod 755 /usr/local/bin/bsm
 echo "Updating PATH..."
 if [[ "$(cat ~/.bashrc | tail -n 1)" == "fi" ]]; then
