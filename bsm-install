@@ -1,24 +1,46 @@
 #!/bin/bash
 
-#This script runs the general install for BSM
-echo "Installing..."
-sudo cp "$(find -name "bsm")" /usr/local/bin/bsm && echo "Copy of BSM added to program registry!"
-sudo chmod 755 /usr/local/bin/bsm
-echo "Updating PATH..."
-if [[ "$(cat ~/.bashrc | tail -n 1)" == "fi" ]]; then
-  echo "export PATH=\"$PATH:/scripts:/scripts/node:/scripts/python:/scripts/ruby:/scripts/lisp\"" >> ~/.bashrc
-fi
-echo "Setting up logging and scripts folders..."
-sudo mkdir /scripts
-sudo chmod 777 /scripts
-sudo touch /var/log/bsm_err_log.log
-sudo touch /var/log/bsm_log.log
-sudo chmod 766 /var/log/bsm_err_log.log
-sudo chmod 766 /var/log/bsm_log.log
+if [[ "$1" == "-u" ]]; then
+  sudo rm -r /scripts
+  sudo rm /var/log/bsm_log.log
+  sudo rm /var/log/bsm_err_log.log
+  sudo rm /usr/local/bin/bsm
+  sudo rm /usr/local/sbin/bsm-install
+  echo "$(head -n -1 ~/.bashrc)" > ~/.bashrc #Reset bashrc
+  export PATH="$(echo "$PATH" | tr -s ':' '\n' | grep -v "/scripts" | tr -s '\n' ':' | sed 's/.$//')" #Reset PATH
+elif [[ "$1" == "-c" ]]; then
+  #Clear log files
+  echo "" > /var/log/bsm_err_log.log
+  echo "" > /var/log/bsm_log.log
+else
+  #general install for BSM
+  echo "Installing..."
+  sudo cp "$(find -name "Bash-Script-Manager/bsm")" /usr/local/bin/bsm && echo "Copy of BSM added to program registry!"
+  sudo cp "$(find -name "Bash-Script-Manager/bsm-install")" /usr/local/sbin/bsm-install && echo "Installer copied to system registry!"
+  sudo chmod 755 /usr/local/bin/bsm
+  echo "Updating PATH..."
+  #This assumes you haven't modified the original bashrc file with your own things that don't end in 'fi'
+  if [[ "$(cat ~/.bashrc | tail 1)" =~ "fi" ]]; then
+    export PATH="$PATH:/scripts:/scripts/node:/scripts/python:/scripts/ruby:/scripts/lisp"
+  fi
+  echo "Setting up logging and scripts folders..."
+  if [ ! -d "/scripts" ]; then
+    sudo mkdir /scripts
+    sudo chmod 777 /scripts
+  fi
+  if [ ! -e "/var/log/bsm_err_log.log" ]; then
+    sudo touch /var/log/bsm_err_log.log
+    sudo chmod 766 /var/log/bsm_err_log.log
+  fi
+  if [ ! -e "/var/log/bsm_log.log" ]; then
+    sudo touch /var/log/bsm_log.log
+    sudo chmod 766 /var/log/bsm_log.log
+  fi
 
-#This should setup BSM, logging is sent to stdout to check for any errors
-echo "BSM has been successfully installed! Run"
-echo ""
-echo "\`source ~/.bashrc\`"
-echo ""
-echo "for the changes to take effect!"
+  #This should setup BSM, logging is sent to stdout to check for any errors
+  echo "BSM has been successfully installed! Run"
+  echo ""
+  echo "\`source ~/.bashrc\`"
+  echo ""
+  echo "for the changes to take effect!"
+fi
