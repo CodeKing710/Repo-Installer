@@ -229,7 +229,12 @@ while [[ "$1" =~ ^- && ! "$1" == "--" ]]; do
             bsm-install -u
             exit;;
         -R | --reinstall-deps )
-            bsm-install -rd
+            shift
+            if [[ "$1" != "" ]]; then
+                bsm-install -rd "$1"
+            else
+                bsm-install -rd
+            fi
             exit;;
         -v | --version )
             echo "$version"

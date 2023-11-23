@@ -27,7 +27,7 @@ elif [[ "$1" == "-c" ]]; then
   echo "Clearing logs..."
   echo "" > /var/log/bsm_err_log.log
   echo "" > /var/log/bsm_log.log
-  if [ "${2,,}" == "node" ]; then
+  if [ "${2,,}" =~ "node" ]; then
     echo "This will clear all Node.js scripts, are you sure you want to delete these scripts? [Y/n] "
     read yn
     if [ "${yn,,}" == 'y' ]; then
@@ -41,21 +41,21 @@ elif [[ "$1" == "-c" ]]; then
       echo "Removing Python scripts..."
       sudo rm /scripts/python/*
     fi
-  elif [ "${2,,}" == "ruby" ]; then
+  elif [ "${2,,}" =~ "ruby" ]; then
     echo "This will clear all Ruby scripts, are you sure you want to delete these scripts? [Y/n] "
     read yn
     if [ "${yn,,}" == 'y' ]; then
       echo "Removing Ruby scripts..."
       sudo rm /scripts/ruby/*
     fi
-  elif [ "${2,,}" == "lisp" ]; then
+  elif [ "${2,,}" =~ "l" ]; then
     echo "This will clear all LISP scripts, are you sure you want to delete these scripts? [Y/n] "
     read yn
     if [ "${yn,,}" == 'y' ]; then
       echo "Removing LISP scripts..."
       sudo rm /scripts/lisp/*
     fi
-  elif [ "${2,,}" == "bash" ]; then
+  elif [ "${2,,}" =~ "sh" ]; then
     echo "This will clear all Bash scripts, are you sure you want to delete these scripts? [Y/n] "
     read yn
     if [ "${yn,,}" == 'y' ]; then
@@ -64,7 +64,7 @@ elif [[ "$1" == "-c" ]]; then
     fi
   fi
 elif [[ "$1" == "-rd" ]]; then
-  if [[ "${2,,}" == "node" ]]; then
+  if [[ "${2,,}" =~ "node" ]]; then
   echo "Installing and setting up Node..."
     sudo mkdir /scripts/node
     $node
@@ -72,11 +72,11 @@ elif [[ "$1" == "-rd" ]]; then
   echo "Installing and setting up Python..."
     sudo mkdir /scripts/python
     $python
-  elif [[ "${2,,}" == "ruby" ]]; then
+  elif [[ "${2,,}" =~ "ruby" ]]; then
   echo "Installing and setting up Ruby..."
     sudo mkdir /scripts/ruby
     $ruby
-  elif [[ "${2,,}" == "lisp" ]]; then
+  elif [[ "${2,,}" =~ "l" ]]; then
   echo "Installing and setting up LISP..."
     sudo mkdir /scripts/lisp
     $lisp
@@ -95,12 +95,12 @@ elif [[ "$1" == "-rd" ]]; then
 else
   #general install for BSM
   echo "Installing..."
-  sudo cp "$(find "*/Bash-Script-Manager/" -name "bsm")" /usr/local/bin/bsm && echo "Copy of BSM added to program registry!"
-  sudo cp "$(find "*/Bash-Script-Manager/" -name "bsm-install")" /usr/local/sbin/bsm-install && echo "Installer copied to system registry!"
-  sudo chmod 755 /usr/local/bin/bsm 2> /dev/null
+  sudo cp "$(find ~/Bash-Script-Manager -name "bsm")" /usr/local/bin/bsm && echo "Copy of BSM added to program registry!"
+  sudo cp "$(find ~/Bash-Script-Manager -name "bsm-install")" /usr/local/sbin/bsm-install && echo "Installer copied to system registry!"
+  sudo chmod 755 /usr/local/bin/bsm
   echo "Updating PATH..."
   #This assumes you haven't modified the original bashrc file with your own things that don't end in 'fi'
-  if [[ "$(cat ~/.bashrc | tail 1)" =~ "fi" ]]; then
+  if [[ "$(echo "$PATH" | grep /scripts)" == "" ]]; then
     export PATH="$PATH:/scripts:/scripts/node:/scripts/python:/scripts/ruby:/scripts/lisp"
   fi
   echo "Setting up logging and scripts folders..."

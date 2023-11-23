@@ -2,19 +2,18 @@
 
 This is a local script manager that allows you to add custom scripts to your system without affecting the baseline OS scripts.
 
-__NOTE: THIS SCRIPT IS INTENDED FOR USE ON DEBIAN BASED LINUX DISTRIBUTIONS!__
+__NOTE: THIS SCRIPT IS INTENDED FOR USE ON DEBIAN/UBUNTU BASED DISTRIBUTIONS!__
+__FUNCTIONS WITH WINDOWS SUBSYSTEM FOR LINUX!__
 
 Support for Bash, Node, Python, Ruby, and LISP scripts.
 
 ### Installation
 
-To install, run the install script once repo is cloned.
+To install, run the install script once repo is cloned. The repo should be cloned to your home directory, or `~`.
 
 If the install script won't execute, run the following:
 
-`. $GITREPOPATH/install`
-
-_GITREPOPATH_ is the path to the cloned repo.
+`. ~/Bash-Script-Manager/bsm-install`
 
 ### Usage
 
@@ -45,3 +44,30 @@ To see every available script that has been added to your custom scripts, you ca
 `bsm -l`
 
 For any help in case you forget how to use the command, you can use `bsm -h` o `bsm --help`. Versioning info can be found with `bsm -v`.
+
+
+### Extra Goodies
+
+##### Fixing BSM
+
+BSM offers a few more options, but they pertain only to the instance itself. BSM is designed to be preconfigured in such a way that you, the user, don't have to worry about where the file goes or whether it will execute or not. BSM handles all this. Sometimes though, BSM may bug out due to how the file was edited or if the file was modded by a different program other than a text editor. One way to fix this is to run `bsm -I` or `bsm --install`. Assuming normal installation from `bsm-install` went well, this command should setup BSMs configuration files again, allowing you to once again access your files.
+
+**Notice** the capitalization of the argument. The capitalization in this case signifies that it modifies BSM directly.
+
+Another way to fix it is to just plain uninstall it and go through installation the normal way again. This can be done via `bsm -U` or `bsm --uninstall`. This will completely remove BSM from your system, including PATH links and any leftover scripts and config files.
+
+But let's say that your BSM install works just fine, but the underlying dependencies that run specific types of scripts are broken. Using `bsm -R` or `bsm --reinstall-deps` will reinstall a specific dependency or all of them based on whether you pass the option or not. Naming is not case sensitive and some allow for the nickname to be passed instead. Available deps include:
+
+- Node
+- Python
+- Ruby
+- LiSP
+
+**NOTE**
+All install related commands can also be passed to `bsm-install`, via `bsm-install`, `bsm-install -u`, and `bsm-install -rd [...]` respectively. `bsm-install` also has a special function that allows you to clear any or all script directories and keep the config structure intact. By using `bsm-install -c [...]`, you can specify a name or none to remove any or all scripts. Available script directories include:
+
+- node
+- python
+- ruby
+- lisp
+- bash
