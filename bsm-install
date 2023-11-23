@@ -1,6 +1,13 @@
 #!/bin/bash
 
 version="1.2.1"
+log="/var/log/bsm_log.log"
+errlog="/var/log/bsm_err_log.log"
+node="sudo snap install --edge node --classic >> $log 2>> $errlog"
+python="sudo apt install python3-pip >> $log 2>> $errlog"
+ruby="sudo apt install ruby-full >> $log 2>> $errlog"
+lisp="sudo apt install sbcl >> $log 2>> $errlog"
+
 if [[ "$1" == "-v" ]]; then
   echo "$version"
 elif [[ "$1" == "-u" ]]; then
@@ -56,11 +63,40 @@ elif [[ "$1" == "-c" ]]; then
       sudo rm /scripts/* 2> /dev/null
     fi
   fi
+elif [[ "$1" == "-rd" ]]; then
+  if [[ "${2,,}" == "node"]]; then
+  echo "Installing and setting up Node..."
+    sudo mkdir /scripts/node
+    $node
+  elif [[ "${2,,}" =~ "py"]]; then
+  echo "Installing and setting up Python..."
+    sudo mkdir /scripts/python
+    $python
+  elif [[ "${2,,}" == "ruby"]]; then
+  echo "Installing and setting up Ruby..."
+    sudo mkdir /scripts/ruby
+    $ruby
+  elif [[ "${2,,}" == "lisp"]]; then
+  echo "Installing and setting up LISP..."
+    sudo mkdir /scripts/lisp
+    $lisp
+  else
+    echo "Setting up BSM Folders..."
+    sudo mkdir /scripts/node
+    sudo mkdir /scripts/python
+    sudo mkdir /scripts/ruby
+    sudo mkdir /scripts/lisp
+    echo "Installing BSM Dependencies..."
+    $node
+    $python
+    $ruby
+    $lisp
+  fi
 else
   #general install for BSM
   echo "Installing..."
-  sudo cp "$(find -name "*/Bash-Script-Manager/bsm")" /usr/local/bin/bsm && echo "Copy of BSM added to program registry!"
-  sudo cp "$(find -name "*/Bash-Script-Manager/bsm-install")" /usr/local/sbin/bsm-install && echo "Installer copied to system registry!"
+  sudo cp "$(find "*/Bash-Script-Manager/" -name "bsm")" /usr/local/bin/bsm && echo "Copy of BSM added to program registry!"
+  sudo cp "$(find "*/Bash-Script-Manager/" -name "bsm-install")" /usr/local/sbin/bsm-install && echo "Installer copied to system registry!"
   sudo chmod 755 /usr/local/bin/bsm 2> /dev/null
   echo "Updating PATH..."
   #This assumes you haven't modified the original bashrc file with your own things that don't end in 'fi'

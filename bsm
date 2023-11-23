@@ -52,7 +52,7 @@ errlog="/var/log/bsm_err_log.log"
 #INIT
 if [[ ! -d /scripts ]]; then
     echo "FIRST TIME SETUP!"
-    source "$(find -name "*/Bash-Script-Manager/bsm-install")"
+    source "$(find "*/Bash-Script-Manager/" -name "bsm-install")"
 fi
 
 #Go thru args
@@ -223,12 +223,13 @@ while [[ "$1" =~ ^- && ! "$1" == "--" ]]; do
             ls -pR1 /scripts | grep -v / | tr -s '\n' ' ' | tr ' ' '\n' | xargs -i echo "- {}"
             exit;;
         -I | --install )
-            source "$(find -name "/usr/local/sbin/bsm-install")"
+            bsm-install
             exit;;
         -U | --uninstall )
-            source "$(find -name "/usr/local/sbin/bsm-install")" -u
+            bsm-install -u
             exit;;
         -R | --reinstall-deps )
+            bsm-install -rd
             exit;;
         -v | --version )
             echo "$version"
