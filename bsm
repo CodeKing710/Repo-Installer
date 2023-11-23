@@ -45,14 +45,14 @@ Options:
     
 HELP
 );
-version="1.2.0";
+version="1.2.1";
 log="/var/log/bsm_log.log"
 errlog="/var/log/bsm_err_log.log"
 
 #INIT
 if [[ ! -d /scripts ]]; then
     echo "FIRST TIME SETUP!"
-    source "$(find -name "/usr/local/sbin/bsm-install")"
+    source "$(find -name "*/Bash-Script-Manager/bsm-install")"
 fi
 
 #Go thru args
@@ -226,7 +226,7 @@ while [[ "$1" =~ ^- && ! "$1" == "--" ]]; do
             source "$(find -name "/usr/local/sbin/bsm-install")"
             exit;;
         -U | --uninstall )
-            source "$(find -name "bsm-install")" -u
+            source "$(find -name "/usr/local/sbin/bsm-install")" -u
             exit;;
         -R | --reinstall-deps )
             exit;;

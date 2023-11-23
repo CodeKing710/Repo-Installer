@@ -1,6 +1,6 @@
 #!/bin/bash
 
-version="1.2.0"
+version="1.2.1"
 if [[ "$1" == "-v" ]]; then
   echo "$version"
 elif [[ "$1" == "-u" ]]; then
@@ -59,8 +59,8 @@ elif [[ "$1" == "-c" ]]; then
 else
   #general install for BSM
   echo "Installing..."
-  sudo cp "$(find -name "Bash-Script-Manager/bsm")" /usr/local/bin/bsm && echo "Copy of BSM added to program registry!"
-  sudo cp "$(find -name "Bash-Script-Manager/bsm-install")" /usr/local/sbin/bsm-install && echo "Installer copied to system registry!"
+  sudo cp "$(find -name "*/Bash-Script-Manager/bsm")" /usr/local/bin/bsm && echo "Copy of BSM added to program registry!"
+  sudo cp "$(find -name "*/Bash-Script-Manager/bsm-install")" /usr/local/sbin/bsm-install && echo "Installer copied to system registry!"
   sudo chmod 755 /usr/local/bin/bsm 2> /dev/null
   echo "Updating PATH..."
   #This assumes you haven't modified the original bashrc file with your own things that don't end in 'fi'
