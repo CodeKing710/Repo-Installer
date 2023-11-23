@@ -37,6 +37,8 @@ Options:
 HELP
 );
 version="1.1.0";
+log="/var/log/bsm_log.log"
+errlog="/var/log/bsm_err_log.log"
 
 #INIT
 if [[ ! -d /scripts ]]; then
@@ -61,8 +63,8 @@ while [[ "$1" =~ ^- && ! "$1" == "--" ]]; do
                     #Make python folder and executable (Install python if not installed)
                     if [[ ! -d "/scripts/python" ]]; then
                         echo "Installing Python and setting up dependencies..."
-                        mkdir /scripts/python 2>/dev/null
-                        sudo apt-get install -y python3-pip 2>/dev/null
+                        mkdir /scripts/python >> $log 2> $errlog
+                        sudo apt-get install -y python3-pip >> $log 2> $errlog || echo "Ran into issue installing, check /var/log/bsm_err_log.log"
                     fi
                     touch "/scripts/python/${name%.py}" && chmod 757 "/scripts/python/${name%.py}"
                     printf "#!/bin/env python3\n\n#Write script code" > "/scripts/python/${name%.py}"
@@ -73,8 +75,8 @@ while [[ "$1" =~ ^- && ! "$1" == "--" ]]; do
                     #Make Nodejs folder, exe, installation
                     if [[ ! -d "/scripts/node" ]]; then
                         echo "Installing Node.js and dependencies..."
-                        mkdir /scripts/node 2>/dev/null
-                        sudo snap install --edge node --classic 2>/dev/null
+                        mkdir /scripts/node >> $log 2> $errlog
+                        sudo snap install --edge node --classic >> $log 2> $errlog || echo "Ran into issue installing, check /var/log/bsm_err_log.log"
                     fi
                     touch "/scripts/node/${name%.js}" && chmod 757 "/scripts/node/${name%.js}"
                     printf "#!/bin/env node\n\n//Write script code" > "/scripts/node/${name%.js}"
@@ -85,11 +87,11 @@ while [[ "$1" =~ ^- && ! "$1" == "--" ]]; do
                     #Ruby folder, exe, install
                     if [[ ! -d "/scripts/ruby" ]]; then
                         echo "Installing Ruby and dependencies..."
-                        mkdir /scripts/ruby 2>/dev/null
-                        sudo apt install ruby-full 2>/dev/null
+                        mkdir /scripts/ruby >> $log 2> $errlog
+                        sudo apt install ruby-full -y >> $log 2> $errlog || echo "Ran into issue installing, check /var/log/bsm_err_log.log"
                     fi
                     touch "/scripts/ruby/${name%.rb}" && chmod 757 "/scripts/ruby/${name%.rb}"
-                    printf "#!/bin/env ruby\n\n//Write script code" > "/scripts/ruby/${name%.rb}"
+                    printf "#!/bin/env ruby\n\n#Write script code" > "/scripts/ruby/${name%.rb}"
                     if [[ -e "/scripts/ruby/${name%.rb}" ]]; then
                         echo "Script Created!"
                     fi
@@ -97,18 +99,19 @@ while [[ "$1" =~ ^- && ! "$1" == "--" ]]; do
                     #LISP folder, exe, install
                     if [[ ! -d "/scripts/lisp" ]]; then
                         echo "Installing CommonLISP and dependencies..."
-                        mkdir /scripts/node 2>/dev/null
-                        sudo apt install sbcl 2>/dev/null
+                        echo "View log file for details"
+                        mkdir /scripts/lisp >> $log 2> $errlog
+                        sudo apt install sbcl -y >> $log 2> $errlog || echo "Ran into issue installing, check /var/log/bsm_err_log.log"
                     fi
                     touch "/scripts/lisp/${name%.cl}" && chmod 757 "/scripts/lisp/${name%.cl}"
-                    printf "#!/bin/env sbcl\n\n//Write script code" > "/scripts/node/${name%.cl}"
+                    printf "#!/bin/env sbcl\n\n;; Write script code" > "/scripts/lisp/${name%.cl}"
                     if [[ -e "/scripts/lisp/${name%.cl}" ]]; then
                         echo "Script Created!"
                     fi
                 else #Deal with Bash
-                    touch "/scripts/$name" && chmod 757 "/scripts/$name"
-                    printf "#!/bin/bash\n\n#Write script code" > "/scripts/$name"
-                    if [[ -e "/scripts/$name" ]]; then
+                    touch "/scripts/${name%.**}" && chmod 757 "/scripts/${name%.**}"
+                    printf "#!/bin/bash\n\n#Write script code" > "/scripts/${name%.**}"
+                    if [[ -e "/scripts/${name%.**}" ]]; then
                         echo "Script Created!"
                     fi
                 fi
@@ -135,37 +138,37 @@ while [[ "$1" =~ ^- && ! "$1" == "--" ]]; do
             name=( "$@" )
             for n in $name; do
                 if [[ -e "/scripts/${n%.**}" ]]; then
-                    rm "/scripts/${n%.**}" 2> /var/log/bsm/err.log
+                    rm "/scripts/${n%.**}" >> $log 2> $errlog
                     if [[ ! -e "/scripts/${n%.**}" ]]; then
                         echo "Script Removed!"
                     else
-                        echo "Unable to remove script, refer to /var/log/bsm/err.log for details"
+                        echo "Unable to remove script, refer to /var/log/bsm_err_log.log for details"
                     fi
                 else
                     #Check for other executables
                     if [[ -e "/scripts/python/${n%.**}" ]]; then
-                        rm "/scripts/python/${n%.**}" 2> /var/log/bsm/err.log
+                        rm "/scripts/python/${n%.**}" >> $log 2> $errlog
                         if [[ ! -e "/scripts/python/${n%.**}" ]]; then
                             echo "Script(s) Removed!"
                         else
                             echo "Unable to remove script, refer to /var/log/bsm/err.log for details"
                         fi
                     elif [[ -e "/scripts/node/${n%.**}" ]]; then
-                        rm "/scripts/node/${n%.**}" 2> /var/log/bsm/err.log
+                        rm "/scripts/node/${n%.**}" >> $log 2> $errlog
                         if [[ ! -e "/scripts/node/${n%.**}" ]]; then
                             echo "Script(s) Removed!"
                         else
                             echo "Unable to remove script, refer to /var/log/bsm/err.log for details"
                         fi
                     elif [[ -e "/scripts/ruby/${n%.**}" ]]; then
-                        rm "/scripts/ruby/${n%.**}" 2> /var/log/bsm/err.log
+                        rm "/scripts/ruby/${n%.**}" >> $log 2> $errlog
                         if [[ ! -e "/scripts/ruby/${n%.**}" ]]; then
                             echo "Script(s) Removed!"
                         else
                             echo "Unable to remove script, refer to /var/log/bsm/err.log for details"
                         fi
                     elif [[ -e "/scripts/lisp/${n%.**}" ]]; then
-                        rm "/scripts/lisp/${n%.**}" 2> /var/log/bsm/err.log
+                        rm "/scripts/lisp/${n%.**}" >> $log 2> $errlog
                         if [[ ! -e "/scripts/lisp/${n%.**}" ]]; then
                             echo "Script(s) Removed!"
                         else
@@ -183,7 +186,7 @@ while [[ "$1" =~ ^- && ! "$1" == "--" ]]; do
             shift
             name=$1
             sudo chmod 757 "$file"
-            ln -s -t /scripts "$file" "$name" 2> /var/log/bsm/err.log
+            ln -s -t /scripts "$file" "$name" >> $log 2> $errlog
             if [[ -e "/scripts/$name" ]]; then
                 echo "Script Linked!"
             else
