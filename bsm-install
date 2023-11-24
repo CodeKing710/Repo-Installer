@@ -149,3 +149,6 @@ else
   #This should setup BSM, logging is sent to stdout to check for any errors
   echo "BSM has been successfully installed!"
 fi
+
+#General fallout
+exit
