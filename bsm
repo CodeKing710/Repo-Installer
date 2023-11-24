@@ -52,7 +52,7 @@ errlog="/var/log/bsm_err_log.log"
 #INIT
 if [[ ! -d /scripts ]]; then
     echo "FIRST TIME SETUP!"
-    source "$(find "~/Bash-Script-Manager" -name "bsm-install")"
+    source "$(find ~ -name "bsm-install")"
 fi
 
 #Go thru args

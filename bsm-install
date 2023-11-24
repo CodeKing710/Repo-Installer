@@ -95,8 +95,8 @@ elif [[ "$1" == "-rd" ]]; then
 else
   #general install for BSM
   echo "Installing..."
-  sudo cp "$(find ~/Bash-Script-Manager -name "bsm")" /usr/local/bin/bsm && echo "Copy of BSM added to program registry!"
-  sudo cp "$(find ~/Bash-Script-Manager -name "bsm-install")" /usr/local/sbin/bsm-install && echo "Installer copied to system registry!"
+  sudo cp "$(find ~ -name "bsm")" /usr/local/bin/bsm && echo "Copy of BSM added to program registry!"
+  sudo cp "$(find ~ -name "bsm-install")" /usr/local/sbin/bsm-install && echo "Installer copied to system registry!"
   sudo chmod 755 /usr/local/bin/bsm
   echo "Updating PATH..."
   #This assumes you haven't modified the original bashrc file with your own things that don't end in 'fi'
@@ -118,9 +118,5 @@ else
   fi
 
   #This should setup BSM, logging is sent to stdout to check for any errors
-  echo "BSM has been successfully installed! Run"
-  echo ""
-  echo "\`source ~/.bashrc\`"
-  echo ""
-  echo "for the changes to take effect!"
+  echo "BSM has been successfully installed!"
 fi
