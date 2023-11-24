@@ -3,12 +3,28 @@
 version="1.2.1"
 log="/var/log/bsm_log.log"
 errlog="/var/log/bsm_err_log.log"
-node="sudo snap install --edge node --classic >> $log 2>> $errlog"
-python="sudo apt install python3-pip >> $log 2>> $errlog"
-ruby="sudo apt install ruby-full >> $log 2>> $errlog"
-lisp="sudo apt install sbcl >> $log 2>> $errlog"
 
-if [[ "$1" == "-v" ]]; then
+if [[ "$1" == "-l" ]]; then
+  clear
+  while true; do
+    echo "Which log would you like to view?"
+    echo "[1] Output Log"
+    echo "[2] Error Log"
+    read opt
+    clear
+    if [[ "$opt" == "1" ]]; then
+      echo "Output Log:"
+      cat $log
+      exit
+    elif [[ "$opt" == "2" ]]; then
+      echo "Error Log:"
+      cat $errlog
+      exit
+    else
+      echo "Not an option"
+    fi
+  done
+elif [[ "$1" == "-v" ]]; then
   echo "$version"
 elif [[ "$1" == "-u" ]]; then
   echo "Uninstalling BSM..."
@@ -67,19 +83,19 @@ elif [[ "$1" == "-rd" ]]; then
   if [[ "${2,,}" =~ "node" ]]; then
   echo "Installing and setting up Node..."
     sudo mkdir /scripts/node
-    $node
+    sudo snap install --edge node --classic >> $log 2>> $errlog
   elif [[ "${2,,}" =~ "py" ]]; then
   echo "Installing and setting up Python..."
     sudo mkdir /scripts/python
-    $python
+    sudo apt install python3-pip >> $log 2>> $errlog
   elif [[ "${2,,}" =~ "ruby" ]]; then
   echo "Installing and setting up Ruby..."
     sudo mkdir /scripts/ruby
-    $ruby
+    sudo apt install ruby-full >> $log 2>> $errlog
   elif [[ "${2,,}" =~ "l" ]]; then
   echo "Installing and setting up LISP..."
     sudo mkdir /scripts/lisp
-    $lisp
+    sudo apt install sbcl >> $log 2>> $errlog
   else
     echo "Setting up BSM Folders..."
     sudo mkdir /scripts/node
@@ -87,10 +103,10 @@ elif [[ "$1" == "-rd" ]]; then
     sudo mkdir /scripts/ruby
     sudo mkdir /scripts/lisp
     echo "Installing BSM Dependencies..."
-    $node
-    $python
-    $ruby
-    $lisp
+    sudo snap install --edge node --classic >> $log 2>> $errlog
+    sudo apt install python3-pip >> $log 2>> $errlog
+    sudo apt install ruby-full >> $log 2>> $errlog
+    sudo apt install sbcl >> $log 2>> $errlog
   fi
 else
   #general install for BSM
