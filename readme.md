@@ -64,10 +64,12 @@ But let's say that your BSM install works just fine, but the underlying dependen
 - LiSP
 
 **NOTE**
-All install related commands can also be passed to `bsm-install`, via `bsm-install`, `bsm-install -u`, and `bsm-install -rd [...]` respectively. `bsm-install` also has a special function that allows you to clear any or all script directories and keep the config structure intact. By using `bsm-install -c [...]`, you can specify a name or none to remove any or all scripts. Available script directories include:
+All install related commands can also be passed to `bsm-install`, via `bsm-install &`, `bsm-install -u`, and `bsm-install -rd [...]` respectively. `bsm-install` also has a special function that allows you to clear any or all script directories and keep the config structure intact. By using `bsm-install -c [...]`, you can specify a name or none to remove any or all scripts. Available script directories include:
 
 - node
 - python
 - ruby
 - lisp
 - bash
+
+If you don't want to clear any scripts and want to just clear logs, use `bsm-install -c log`.
