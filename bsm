@@ -42,6 +42,9 @@ Options:
 
     -h | --help
         Show this screen
+
+For more information and available commands, visit https://github.com/SubLock69/Bash-Script-Manager#readme.
+Man page in progress
     
 HELP
 );
@@ -57,6 +60,8 @@ fi
 
 #Go thru args
 if [[ "$1" == "" ]]; then
+    #case won't grab this, make sure ahead of time
+    #reduces performance issues and terminates before reading any further
     echo "$help"
     exit
 fi
