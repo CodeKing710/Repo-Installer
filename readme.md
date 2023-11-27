@@ -9,11 +9,13 @@ Support for Bash, Node, Python, Ruby, and LISP scripts.
 
 ### Installation
 
-To install, run the install script once repo is cloned. The repo should be cloned to your home directory, or `~`.
+To install, run the install script once repo is cloned. If it won't open, run the following:
 
-If the install script won't execute, run the following:
+`sudo chmod +x "$(find ~ -name bsm-install)"`
 
-`. ~/Bash-Script-Manager/bsm-install`
+Then try running again or run the following:
+
+`. "$(find ~ -name bsm-install)"`
 
 ### Usage
 
