@@ -2,7 +2,7 @@
 
 This is a local script manager that allows you to add custom scripts to your system without affecting the baseline OS scripts.
 
-__NOTE: THIS SCRIPT IS INTENDED FOR USE ON DEBIAN/UBUNTU BASED DISTRIBUTIONS!__
+__NOTE: THIS SCRIPT IS INTENDED FOR USE ON DEBIAN/UBUNTU BASED DISTRIBUTIONS!__<br>
 __FUNCTIONS WITH WINDOWS SUBSYSTEM FOR LINUX!__
 
 Support for Bash, Node, Python, Ruby, and LISP scripts.
