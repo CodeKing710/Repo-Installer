@@ -48,7 +48,7 @@ Man page in progress
     
 HELP
 );
-version="1.3.0";
+version="1.3.1";
 log="/var/log/bsm_log.log"
 errlog="/var/log/bsm_err_log.log"
 
@@ -242,7 +242,7 @@ while [[ "$1" =~ ^- && ! "$1" == "--" ]]; do
                 newname=$1
             fi
             echo "Renaming..."
-            mv "$(find -L /scripts -type f -name "$oldname")" "$(find -L /scripts -type f -name "$oldname" | sed "s/$oldname/$newname/")"
+            mv "$(find -L /scripts -type f -name "$oldname")" "$(find -L /scripts -type f -name "$oldname" | sed "s/\/$oldname/\/$newname/")"
             echo "Script renamed!"
             ;;
         -l | --list )
