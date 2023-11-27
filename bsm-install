@@ -130,7 +130,7 @@ else
   echo "Updating PATH..."
   #This assumes you haven't modified the original bashrc file with your own things that don't end in 'fi'
   if [[ "$(echo "$PATH" | grep /scripts)" == "" ]]; then
-    export PATH="$PATH:/scripts:/scripts/node:/scripts/python:/scripts/ruby:/scripts/lisp"
+    export PATH="$PATH:/scripts:/scripts/_node:/scripts/_python:/scripts/_ruby:/scripts/_lisp"
   fi
   echo "Setting up logging and scripts folders..."
   if [ ! -d "/scripts" ]; then
