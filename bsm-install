@@ -1,6 +1,6 @@
 #!/bin/bash
 
-version="1.2.1"
+version="1.2.2"
 log="/var/log/bsm_log.log"
 errlog="/var/log/bsm_err_log.log"
 
@@ -135,14 +135,19 @@ else
   echo "Setting up logging and scripts folders..."
   if [ ! -d "/scripts" ]; then
     sudo mkdir /scripts
-    sudo chmod 777 /scripts
+    sudo chown baloo /scripts
+    sudo chgrp baloo /scripts
   fi
   if [ ! -e "/var/log/bsm_err_log.log" ]; then
     sudo touch /var/log/bsm_err_log.log
+    sudo chown baloo /var/log/bsm_err_log.log
+    sudo chgrp baloo /var/log/bsm_err_log.log
     sudo chmod 766 /var/log/bsm_err_log.log
   fi
   if [ ! -e "/var/log/bsm_log.log" ]; then
     sudo touch /var/log/bsm_log.log
+    sudo chown baloo /var/log/bsm_log.log
+    sudo chgrp baloo /var/log/bsm_log.log
     sudo chmod 766 /var/log/bsm_log.log
   fi
 

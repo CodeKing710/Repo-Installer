@@ -1,4 +1,4 @@
-# Bash Script Manager
+# Bash Script Manager (v1.3.0)
 
 This is a local script manager that allows you to add custom scripts to your system without affecting the baseline OS scripts.
 
@@ -59,6 +59,12 @@ To see every available script that has been added to your custom scripts, you ca
 
 ```
 bsm -l
+```
+
+If you named your script wrong, don't fret! You can use the `-n` flag to rename a script!
+
+```
+bsm -n [WRONG_SCRIPT] [NAME_YOU_WANT]
 ```
 
 For any help in case you forget how to use the command, you can use `bsm -h` or `bsm --help`. Versioning info can be found with `bsm -v`.

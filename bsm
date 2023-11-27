@@ -48,7 +48,7 @@ Man page in progress
     
 HELP
 );
-version="1.2.1";
+version="1.3.0";
 log="/var/log/bsm_log.log"
 errlog="/var/log/bsm_err_log.log"
 
@@ -70,56 +70,56 @@ while [[ "$1" =~ ^- && ! "$1" == "--" ]]; do
         -c | --create )
             shift
             name=$1
-            if [[ ! -e "/scripts/node/${name%.**}" && ! -e "/scripts/python/${name%.**}" && ! -e "/scripts/$name" ]]; then
+            if [[ ! -e "/scripts/_node/${name%.**}" && ! -e "/scripts/_python/${name%.**}" && ! -e "/scripts/$name" ]]; then
 
                 #Check for other types of executeable scripts
                 if [[ "$name" =~ ".py" ]]; then
                     #Make python folder and executable (Install python if not installed)
-                    if [[ ! -d "/scripts/python" ]]; then
+                    if [[ ! -d "/scripts/_python" ]]; then
                         echo "Installing Python and setting up dependencies..."
-                        mkdir /scripts/python >> $log 2>> $errlog
+                        mkdir /scripts/_python >> $log 2>> $errlog
                         sudo apt-get install -y python3-pip >> $log 2>> $errlog || echo "Ran into issue installing, check /var/log/bsm_err_log.log"
                     fi
-                    touch "/scripts/python/${name%.py}" && chmod 757 "/scripts/python/${name%.py}"
-                    printf "#!/bin/env python3\n\n#Write script code" > "/scripts/python/${name%.py}"
-                    if [[ -e "/scripts/python/${name%.py}" ]]; then
+                    touch "/scripts/_python/${name%.py}" && chmod 757 "/scripts/_python/${name%.py}"
+                    printf "#!/bin/env python3\n\n#Write script code" > "/scripts/_python/${name%.py}"
+                    if [[ -e "/scripts/_python/${name%.py}" ]]; then
                         echo "Script Created!"
                     fi
                 elif [[ "$name" =~ ".js" ]]; then
                     #Make Nodejs folder, exe, installation
-                    if [[ ! -d "/scripts/node" ]]; then
+                    if [[ ! -d "/scripts/_node" ]]; then
                         echo "Installing Node.js and dependencies..."
-                        mkdir /scripts/node >> $log 2>> $errlog
+                        mkdir /scripts/_node >> $log 2>> $errlog
                         sudo snap install --edge node --classic >> $log 2>> $errlog || echo "Ran into issue installing, check /var/log/bsm_err_log.log"
                     fi
-                    touch "/scripts/node/${name%.js}" && chmod 757 "/scripts/node/${name%.js}"
-                    printf "#!/bin/env node\n\n//Write script code" > "/scripts/node/${name%.js}"
-                    if [[ -e "/scripts/node/${name%.js}" ]]; then
+                    touch "/scripts/_node/${name%.js}" && chmod 757 "/scripts/_node/${name%.js}"
+                    printf "#!/bin/env node\n\n//Write script code" > "/scripts/_node/${name%.js}"
+                    if [[ -e "/scripts/_node/${name%.js}" ]]; then
                         echo "Script Created!"
                     fi
                 elif [[ "$name" =~ ".rb" ]]; then
                     #Ruby folder, exe, install
-                    if [[ ! -d "/scripts/ruby" ]]; then
+                    if [[ ! -d "/scripts/_ruby" ]]; then
                         echo "Installing Ruby and dependencies..."
-                        mkdir /scripts/ruby >> $log 2>> $errlog
+                        mkdir /scripts/_ruby >> $log 2>> $errlog
                         sudo apt install ruby-full -y >> $log 2>> $errlog || echo "Ran into issue installing, check /var/log/bsm_err_log.log"
                     fi
-                    touch "/scripts/ruby/${name%.rb}" && chmod 757 "/scripts/ruby/${name%.rb}"
-                    printf "#!/bin/env ruby\n\n#Write script code" > "/scripts/ruby/${name%.rb}"
-                    if [[ -e "/scripts/ruby/${name%.rb}" ]]; then
+                    touch "/scripts/_ruby/${name%.rb}" && chmod 757 "/scripts/_ruby/${name%.rb}"
+                    printf "#!/bin/env ruby\n\n#Write script code" > "/scripts/_ruby/${name%.rb}"
+                    if [[ -e "/scripts/_ruby/${name%.rb}" ]]; then
                         echo "Script Created!"
                     fi
                 elif [[ "$name" =~ ".cl" ]]; then
                     #LISP folder, exe, install
-                    if [[ ! -d "/scripts/lisp" ]]; then
+                    if [[ ! -d "/scripts/_lisp" ]]; then
                         echo "Installing CommonLISP and dependencies..."
                         echo "View log file for details"
-                        mkdir /scripts/lisp >> $log 2>> $errlog
+                        mkdir /scripts/_lisp >> $log 2>> $errlog
                         sudo apt install sbcl -y >> $log 2>> $errlog || echo "Ran into issue installing, check /var/log/bsm_err_log.log"
                     fi
-                    touch "/scripts/lisp/${name%.cl}" && chmod 757 "/scripts/lisp/${name%.cl}"
-                    printf "#!/bin/env sbcl\n\n;; Write script code" > "/scripts/lisp/${name%.cl}"
-                    if [[ -e "/scripts/lisp/${name%.cl}" ]]; then
+                    touch "/scripts/_lisp/${name%.cl}" && chmod 757 "/scripts/_lisp/${name%.cl}"
+                    printf "#!/bin/env -S sbcl --script\n\n;; Write script code" > "/scripts/_lisp/${name%.cl}"
+                    if [[ -e "/scripts/_lisp/${name%.cl}" ]]; then
                         echo "Script Created!"
                     fi
                 else #Deal with Bash
@@ -141,16 +141,18 @@ while [[ "$1" =~ ^- && ! "$1" == "--" ]]; do
         -o | --open )
             shift
             name=$1
-            if [[ -e "/scripts/lisp/${name%.**}" || -e "/scripts/ruby/${name%.**}" || -e "/scripts/python/${name%.**}" || -e "/scripts/node/${name%.**}" || -e "/scripts/${name%.**}" ]]; then
-                find -L /scripts -name "${name%.**}" -exec sudo nano {} \;
+            if [[ -e "/scripts/_lisp/${name%.**}" || -e "/scripts/_ruby/${name%.**}" || -e "/scripts/_python/${name%.**}" || -e "/scripts/_node/${name%.**}" || -e "/scripts/${name%.**}" ]]; then
+                echo "Script found, opening..."
+                find -L /scripts -type f -name "${name%.**}" -exec sudo nano {} \; 2>> $errlog
             else
+                echo "Script not found, creating..."
                 bsm -c "$name" -o "${name%.**}"
             fi
             exit;;
         -r | --remove )
             shift
-            name=( "$@" )
-            for n in $name; do
+            while [[ $1 != "" ]]; do
+                n=$1
                 if [[ -e "/scripts/${n%.**}" ]]; then
                     rm "/scripts/${n%.**}" >> $log 2>> $errlog
                     if [[ ! -e "/scripts/${n%.**}" ]]; then
@@ -160,30 +162,30 @@ while [[ "$1" =~ ^- && ! "$1" == "--" ]]; do
                     fi
                 else
                     #Check for other executables
-                    if [[ -e "/scripts/python/${n%.**}" ]]; then
-                        rm "/scripts/python/${n%.**}" >> $log 2>> $errlog
-                        if [[ ! -e "/scripts/python/${n%.**}" ]]; then
+                    if [[ -e "/scripts/_python/${n%.**}" ]]; then
+                        rm "/scripts/_python/${n%.**}" >> $log 2>> $errlog
+                        if [[ ! -e "/scripts/_python/${n%.**}" ]]; then
                             echo "Script(s) Removed!"
                         else
                             echo "Unable to remove script, refer to /var/log/bsm/err.log for details"
                         fi
-                    elif [[ -e "/scripts/node/${n%.**}" ]]; then
-                        rm "/scripts/node/${n%.**}" >> $log 2>> $errlog
-                        if [[ ! -e "/scripts/node/${n%.**}" ]]; then
+                    elif [[ -e "/scripts/_node/${n%.**}" ]]; then
+                        rm "/scripts/_node/${n%.**}" >> $log 2>> $errlog
+                        if [[ ! -e "/scripts/_node/${n%.**}" ]]; then
                             echo "Script(s) Removed!"
                         else
                             echo "Unable to remove script, refer to /var/log/bsm/err.log for details"
                         fi
-                    elif [[ -e "/scripts/ruby/${n%.**}" ]]; then
-                        rm "/scripts/ruby/${n%.**}" >> $log 2>> $errlog
-                        if [[ ! -e "/scripts/ruby/${n%.**}" ]]; then
+                    elif [[ -e "/scripts/_ruby/${n%.**}" ]]; then
+                        rm "/scripts/_ruby/${n%.**}" >> $log 2>> $errlog
+                        if [[ ! -e "/scripts/_ruby/${n%.**}" ]]; then
                             echo "Script(s) Removed!"
                         else
                             echo "Unable to remove script, refer to /var/log/bsm/err.log for details"
                         fi
-                    elif [[ -e "/scripts/lisp/${n%.**}" ]]; then
-                        rm "/scripts/lisp/${n%.**}" >> $log 2>> $errlog
-                        if [[ ! -e "/scripts/lisp/${n%.**}" ]]; then
+                    elif [[ -e "/scripts/_lisp/${n%.**}" ]]; then
+                        rm "/scripts/_lisp/${n%.**}" >> $log 2>> $errlog
+                        if [[ ! -e "/scripts/_lisp/${n%.**}" ]]; then
                             echo "Script(s) Removed!"
                         else
                             echo "Unable to remove script, refer to /var/log/bsm/err.log for details"
@@ -192,6 +194,7 @@ while [[ "$1" =~ ^- && ! "$1" == "--" ]]; do
                         echo "Script doesn't exist!"
                     fi
                 fi
+                shift
             done
             exit;;
         -L | --link )
@@ -213,15 +216,34 @@ while [[ "$1" =~ ^- && ! "$1" == "--" ]]; do
             bsm -c "$name"
             scriptpath="/scripts"
             if [[ "$name" =~ ".js" ]]; then
-                scriptpath="$scriptpath/node"
+                scriptpath="$scriptpath/_node"
             elif [[ "$name" =~ ".py" ]]; then
-                scriptpath="$scriptpath/python"
+                scriptpath="$scriptpath/_python"
             elif [[ "$name" =~ ".rb" ]]; then
-                scriptpath="$scriptpath/ruby"
+                scriptpath="$scriptpath/_ruby"
             elif [[ "$name" =~ ".cl" ]]; then
-                scriptpath="$scriptpath/lisp"
+                scriptpath="$scriptpath/_lisp"
             fi
-            cat < find -L -type f ~ -name "$name" >> "$scriptpath/${name%.**}"
+            cat < find -L ~ -type f -name "$name" >> "$scriptpath/${name%.**}"
+            ;;
+        -n | --rename )
+            shift
+            oldname=$1
+            if [[ "$(find -L /scripts -type f -name "$oldname")" == "" ]]; then
+                echo "Script to rename doesn't exist!"
+                exit
+            fi
+            shift
+            if [[ $1 == "" ]]; then
+                echo "You must supply a name to rename to!"
+                echo -n "Enter name: "
+                read newname
+            else
+                newname=$1
+            fi
+            echo "Renaming..."
+            mv "$(find -L /scripts -type f -name "$oldname")" "$(find -L /scripts -type f -name "$oldname" | sed "s/$oldname/$newname/")"
+            echo "Script renamed!"
             ;;
         -l | --list )
             echo "Available Scripts:"
