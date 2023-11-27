@@ -11,41 +11,57 @@ Support for Bash, Node, Python, Ruby, and LISP scripts.
 
 To install, run the install script once repo is cloned. If it won't open, run the following:
 
-`sudo chmod +x "$(find ~ -name bsm-install)"`
+```
+sudo chmod +x "$(find ~ -name bsm-install)"
+```
 
 Then try running again or run the following:
 
-`. "$(find ~ -name bsm-install)"`
+```
+. "$(find ~ -name bsm-install)"
+```
 
 ### Usage
 
 Making a script of any kind is very simple. You can do this one of two ways. You can either create the file and be done like so;
 
-`bsm -c "[SCRIPT]"`
+```
+bsm -c "[SCRIPT]"
+```
 
 Or you can have it open right away for editing.
 
-`bsm -o "[SCRIPT]"`
+```
+bsm -o "[SCRIPT]"
+```
 
 To remove a script is as simple as quoting the name of the script you want removed. Please note that to remove any script you just input the name, no file extensions necessary. If you do input a file extension the manager will still know where to look and remove the script. This argument is not chainable as it accepts any number of script names to mark for removal. (Example below)
 
-`bsm -r my-script.py #Removes python script`
-`bsm -r my-script #Does the same as the above`
-`bsm -r my-script my-2-script #Removes both scripts`
+```
+bsm -r my-script.py #Removes python script
+bsm -r my-script #Does the same as the above
+bsm -r my-script my-2-script #Removes both scripts
+```
 
 Another way you can add scripts to your system is through the linking of an existing script. This will ensure the script can be run directly from the terminal no matter where you are.
 
-`bsm -L "[PATH]" "[SCRIPTNAME]"`
+```
+bsm -L "[PATH]" "[SCRIPTNAME]"
+```
 
 If you want to add a pre-existing script and move it to the scripts folder to be opened directly by BSM, you can do that via the "-a" flag. It stands for "--add" to add an existing script directly to BSM
 
-`bsm -a "[PATH]"`
+```
+bsm -a "[PATH]"
+```
 
 To see every available script that has been added to your custom scripts, you can use the "-l" flag to list out all the scripts in a nice easy-to-read fashion.
 
-`bsm -l`
+```
+bsm -l
+```
 
-For any help in case you forget how to use the command, you can use `bsm -h` o `bsm --help`. Versioning info can be found with `bsm -v`.
+For any help in case you forget how to use the command, you can use `bsm -h` or `bsm --help`. Versioning info can be found with `bsm -v`.
 
 
 ### Extra Goodies
@@ -74,7 +90,10 @@ All install related commands can also be passed to `bsm-install`, via `bsm-insta
 - lisp
 - bash
 
-If you don't want to clear any scripts and want to just clear logs, use `bsm-install -c log`.
+If you don't want to clear any scripts and want to just clear logs, use 
+```
+bsm-install -c log
+```
 
 
 ### Features to come
