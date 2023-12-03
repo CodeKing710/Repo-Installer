@@ -1,6 +1,6 @@
 #!/bin/bash
 
-version="1.2.2"
+version="1.2.3"
 log="/var/log/bsm_log.log"
 errlog="/var/log/bsm_err_log.log"
 
@@ -50,28 +50,28 @@ elif [[ "$1" == "-c" ]]; then
     read yn
     if [[ "${yn,,}" == 'y' ]]; then
       echo "Removing Node.js scripts..."
-      sudo rm /scripts/node/*
+      sudo rm /scripts/_node/*
     fi
   elif [[ "${2,,}" =~ "py" ]]; then
     echo -n "This will clear all Python scripts, are you sure you want to delete these scripts? [Y/n] "
     read yn
     if [[ "${yn,,}" == 'y' ]]; then
       echo "Removing Python scripts..."
-      sudo rm /scripts/python/*
+      sudo rm /scripts/_python/*
     fi
   elif [[ "${2,,}" =~ "ruby" ]]; then
     echo -n "This will clear all Ruby scripts, are you sure you want to delete these scripts? [Y/n] "
     read yn
     if [[ "${yn,,}" == 'y' ]]; then
       echo "Removing Ruby scripts..."
-      sudo rm /scripts/ruby/*
+      sudo rm /scripts/_ruby/*
     fi
   elif [[ "${2,,}" =~ "l" ]]; then
     echo -n "This will clear all LISP scripts, are you sure you want to delete these scripts? [Y/n] "
     read yn
     if [[ "${yn,,}" == 'y' ]]; then
       echo "Removing LISP scripts..."
-      sudo rm /scripts/lisp/*
+      sudo rm /scripts/_lisp/*
     fi
   elif [[ "${2,,}" =~ "sh" ]]; then
     echo -n "This will clear all Bash scripts, are you sure you want to delete these scripts? [Y/n] "
@@ -85,36 +85,36 @@ elif [[ "$1" == "-c" ]]; then
     read yn
     if [[ "${yn,,}" == 'y' ]]; then
       echo "Removing all scripts..."
-      sudo rm /scripts/node/* 2> /dev/null
-      sudo rm /scripts/ruby/* 2> /dev/null
-      sudo rm /scripts/python/* 2> /dev/null
-      sudo rm /scripts/lisp/* 2> /dev/null
+      sudo rm /scripts/_node/* 2> /dev/null
+      sudo rm /scripts/_ruby/* 2> /dev/null
+      sudo rm /scripts/_python/* 2> /dev/null
+      sudo rm /scripts/_lisp/* 2> /dev/null
       sudo rm /scripts/* 2> /dev/null
     fi
   fi
 elif [[ "$1" == "-rd" ]]; then
   if [[ "${2,,}" =~ "node" ]]; then
   echo "Installing and setting up Node..."
-    sudo mkdir /scripts/node
+    sudo mkdir /scripts/_node
     sudo snap install --edge node --classic >> $log 2>> $errlog
   elif [[ "${2,,}" =~ "py" ]]; then
   echo "Installing and setting up Python..."
-    sudo mkdir /scripts/python
+    sudo mkdir /scripts/_python
     sudo apt install python3-pip >> $log 2>> $errlog
   elif [[ "${2,,}" =~ "ruby" ]]; then
   echo "Installing and setting up Ruby..."
-    sudo mkdir /scripts/ruby
+    sudo mkdir /scripts/_ruby
     sudo apt install ruby-full >> $log 2>> $errlog
   elif [[ "${2,,}" =~ "l" ]]; then
   echo "Installing and setting up LISP..."
-    sudo mkdir /scripts/lisp
+    sudo mkdir /scripts/_lisp
     sudo apt install sbcl >> $log 2>> $errlog
   else
     echo "Setting up BSM Folders..."
-    sudo mkdir /scripts/node
-    sudo mkdir /scripts/python
-    sudo mkdir /scripts/ruby
-    sudo mkdir /scripts/lisp
+    sudo mkdir /scripts/_node
+    sudo mkdir /scripts/_python
+    sudo mkdir /scripts/_ruby
+    sudo mkdir /scripts/_lisp
     echo "Installing BSM Dependencies..."
     sudo snap install --edge node --classic >> $log 2>> $errlog
     sudo apt install python3-pip >> $log 2>> $errlog
@@ -135,19 +135,19 @@ else
   echo "Setting up logging and scripts folders..."
   if [ ! -d "/scripts" ]; then
     sudo mkdir /scripts
-    sudo chown baloo /scripts
-    sudo chgrp baloo /scripts
+    sudo chown $USER /scripts
+    sudo chgrp $USER /scripts
   fi
   if [ ! -e "/var/log/bsm_err_log.log" ]; then
     sudo touch /var/log/bsm_err_log.log
-    sudo chown baloo /var/log/bsm_err_log.log
-    sudo chgrp baloo /var/log/bsm_err_log.log
+    sudo chown $USER /var/log/bsm_err_log.log
+    sudo chgrp $USER /var/log/bsm_err_log.log
     sudo chmod 766 /var/log/bsm_err_log.log
   fi
   if [ ! -e "/var/log/bsm_log.log" ]; then
     sudo touch /var/log/bsm_log.log
-    sudo chown baloo /var/log/bsm_log.log
-    sudo chgrp baloo /var/log/bsm_log.log
+    sudo chown $USER /var/log/bsm_log.log
+    sudo chgrp $USER /var/log/bsm_log.log
     sudo chmod 766 /var/log/bsm_log.log
   fi
 
