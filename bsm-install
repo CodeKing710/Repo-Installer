@@ -5,25 +5,36 @@ log="/var/log/bsm_log.log"
 errlog="/var/log/bsm_err_log.log"
 
 if [[ "$1" == "-l" ]]; then
-  clear
-  while true; do
-    echo "Which log would you like to view?"
-    echo "[1] Output Log"
-    echo "[2] Error Log"
-    read opt
+  shift
+  if [[ "$1" == "-o" ]]; then
+    echo "Output Log:"
+    cat $log
+    exit
+  elif [[ "$1" == "-e" ]]; then
+    echo "Error Log:"
+    cat $errlog
+    exit
+  else
     clear
-    if [[ "$opt" == "1" ]]; then
-      echo "Output Log:"
-      cat $log
-      exit
-    elif [[ "$opt" == "2" ]]; then
-      echo "Error Log:"
-      cat $errlog
-      exit
-    else
-      echo "Not an option"
-    fi
-  done
+    while true; do
+      echo "Which log would you like to view?"
+      echo "[1] Output Log"
+      echo "[2] Error Log"
+      read opt
+      clear
+      if [[ "$opt" == "1" ]]; then
+        echo "Output Log:"
+        cat $log
+        exit
+      elif [[ "$opt" == "2" ]]; then
+        echo "Error Log:"
+        cat $errlog
+        exit
+      else
+        echo "Not an option"
+      fi
+    done
+  fi
 elif [[ "$1" == "-v" ]]; then
   echo "$version"
 elif [[ "$1" == "-u" ]]; then
