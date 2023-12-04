@@ -177,7 +177,7 @@ clear_bsm() {
       sudo rm $scripts/_lisp/* 2> /dev/null
       sudo rm $scripts/* 2> /dev/null
     else
-      break
+      return
     fi
   fi
 }
