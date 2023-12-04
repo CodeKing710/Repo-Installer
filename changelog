@@ -15,6 +15,9 @@ __Version info, patch notes, and what's new will appear here__
 
 ### Version Info
 
+bsm: v1.3.2
+bsm-install: v1.2.4
+
 __Features__
 
 - Create Scripts for Python, Node, Ruby, and LISP
