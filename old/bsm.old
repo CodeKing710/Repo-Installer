@@ -48,14 +48,14 @@ Man page in progress
     
 HELP
 );
-version=$(cat $(find -type f -name ".version") | head -1);
+version=$(cat $(find -type f -name ".old.version") | head -1);
 log="/var/log/bsm_log.log"
 errlog="/var/log/bsm_err_log.log"
 
 #INIT
 if [[ ! -d /scripts ]]; then
     echo "FIRST TIME SETUP!"
-    source "$(find ~ -name "bsm-install")"
+    source "$(find ~ -name "bsm-install.old")"
 fi
 
 #Go thru args

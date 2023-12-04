@@ -1,3 +1,17 @@
 #!/bin/bash
 
 ### FUNCTION PACK FOR BSM CLI FUNCTIONALITY ###
+search_args() {
+  while [[ "$1" != "" ]]; do
+    case $1 in
+      -v | --version )
+        exit;;
+      -h | --help )
+        exit;;
+      * )
+        echo "Err: No argument found with '$1' in BSM"
+        exit;;
+    esac
+    shift
+  done
+}

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-version=$(cat $(find -type f -name ".version") | tail -1)
+version=$(cat $(find -type f -name ".old.version") | tail -1)
 log="/var/log/bsm_log.log"
 errlog="/var/log/bsm_err_log.log"
 
@@ -42,9 +42,9 @@ elif [[ "$1" == "-u" ]]; then
   sudo rm -r /scripts
   sudo rm /var/log/bsm_log.log
   sudo rm /var/log/bsm_err_log.log
-  sudo rm /usr/local/bin/bsm
+  sudo rm /usr/local/bin/bsm-old
   echo "Uninstalling BSM-install..."
-  sudo rm /usr/local/sbin/bsm-install
+  sudo rm /usr/local/sbin/bsm-install-old
   echo "Resetting PATH..."
   # echo "$(head -n -1 ~/.bashrc)" > ~/.bashrc #Reset bashrc
   export PATH="$(echo "$PATH" | tr -s ':' '\n' | grep -v "/scripts" | tr -s '\n' ':' | sed 's/.$//')" #Reset PATH
@@ -135,9 +135,9 @@ elif [[ "$1" == "-rd" ]]; then
 else
   #general install for BSM
   echo "Installing..."
-  sudo cp "$(find ~ -name "bsm")" /usr/local/bin/bsm && echo "Copy of BSM added to program registry!"
-  sudo cp "$(find ~ -name "bsm-install")" /usr/local/sbin/bsm-install && echo "Installer copied to system registry!"
-  sudo chmod 755 /usr/local/bin/bsm
+  sudo cp "$(find ~ -name "bsm.old")" /usr/local/bin/bsm-old && echo "Copy of BSM added to program registry!"
+  sudo cp "$(find ~ -name "bsm-install.old")" /usr/local/sbin/bsm-install-old && echo "Installer copied to system registry!"
+  sudo chmod 755 /usr/local/bin/bsm-old
   echo "Updating PATH..."
   #This assumes you haven't modified the original bashrc file with your own things that don't end in 'fi'
   if [[ "$(echo "$PATH" | grep /scripts)" == "" ]]; then
