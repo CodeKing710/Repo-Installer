@@ -258,7 +258,7 @@ if [[ "$1" == "" ]]; then
     echo "Welcome to the BSM Installer!"
     echo "What would you like to do today?"
     echo "1) Install    3) Repair     5) Clear"
-    echo "1) Uninstall  3) Logs       5) Exit"
+    echo "2) Uninstall  4) Logs       6) Exit"
   done
 else
   # Arguments passed, see what they are
