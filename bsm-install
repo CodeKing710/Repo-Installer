@@ -3,7 +3,7 @@
 ### BSM-INSTALL CLI ###
 
 # Vars
-version=$(cat /bsm/version | tail -1)
+version=$(cat /bsm/.version | tail -1)
 log="/bsm/logs/bsm.log"
 errlog="/bsm/logs/err.log"
 scripts="/bsm/scripts"
@@ -11,18 +11,6 @@ scripts="/bsm/scripts"
 # Functions
 install() {
   echo "Installing..."
-  sudo cp "$(find ~ -type f -name "bsm")" /usr/local/bin/bsm && echo "Copy of BSM added to program registry!"
-  sudo cp "$(find ~ -type f -name "bsm-install")" /usr/local/sbin/bsm-install && echo "Installer copied to system registry!"
-  sudo touch /bsm/version
-  sudo cp "$(find ~ -type f -name ".version")" /bsm/version
-  sudo chmod 755 /usr/local/bin/bsm
-  sudo chmod 755 /usr/local/sbin/bsm-install
-  echo "Updating PATH..."
-  #This assumes you haven't modified the original bashrc file with your own things that don't end in 'fi'
-  if [[ "$(echo "$PATH" | grep $scripts)" == "" ]]; then
-    echo "export PATH=\"$PATH:$scripts:$scripts/_node:$scripts/_python:$scripts/_ruby:$scripts/_lisp\"" >> /home/$USER/.bashrc
-    source ~/.bashrc #Attempt reload of PATH
-  fi
   echo "Setting up logging and scripts folders..."
   if [ ! -d "/bsm" ]; then
     sudo mkdir /bsm
@@ -42,6 +30,17 @@ install() {
     sudo chown $USER $log
     sudo chgrp $USER $log
     sudo chmod 766 $log
+  fi
+  sudo cp "$(find ~ -type f -name "bsm")" /usr/local/bin/bsm && echo "Copy of BSM added to program registry!"
+  sudo cp "$(find ~ -type f -name "bsm-install")" /usr/local/sbin/bsm-install && echo "Installer copied to system registry!"
+  sudo cp "$(find ~ -type f -name ".version")" /bsm/.version
+  sudo chmod 755 /usr/local/bin/bsm
+  sudo chmod 755 /usr/local/sbin/bsm-install
+  echo "Updating PATH..."
+  #This assumes you haven't modified the original bashrc file with your own things that don't end in 'fi'
+  if [[ "$(echo "$PATH" | grep $scripts)" == "" ]]; then
+    echo "export PATH=\"$PATH:$scripts:$scripts/_node:$scripts/_python:$scripts/_ruby:$scripts/_lisp\"" >> /home/$USER/.bashrc
+    source ~/.bashrc #Attempt reload of PATH
   fi
 
   #This should setup BSM, logging is sent to stdout to check for any errors
