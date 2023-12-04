@@ -221,7 +221,7 @@ if [[ "$1" == "" ]]; then
       Repair )
         repair;;
       Logs )
-        logs;;
+        view_logs;;
       Clear )
         clear;;
       Exit )
