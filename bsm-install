@@ -209,6 +209,7 @@ search_args() {
 # Main
 if [[ "$1" == "" ]]; then
   # No arguments passed, run walkthrough guide
+  clear
   echo "Welcome to the BSM Installer!"
   echo "What would you like to do today?"
   select opt in Install Uninstall Repair Logs Clear Exit; do
@@ -223,14 +224,24 @@ if [[ "$1" == "" ]]; then
       Logs )
         view_logs;;
       Clear )
-        clear;;
+        select sel in All Node Python Ruby LISP Logs; do
+          case $sel in
+            All )
+              clear
+              break;;
+          esac
+        done
+        ;;
       Exit )
         break;;
       * )
         echo "Not an option";;
     esac
+    clear
     echo "Welcome to the BSM Installer!"
     echo "What would you like to do today?"
+    echo "1) Install    3) Repair     5) Clear"
+    echo "1) Uninstall  3) Logs       5) Exit"
   done
 else
   # Arguments passed, see what they are
