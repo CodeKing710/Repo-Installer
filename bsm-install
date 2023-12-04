@@ -1,9 +1,231 @@
 #!/bin/bash
 
-### BSM-INSTALL CLI MAIN ###
+### BSM-INSTALL CLI ###
 
-#Vars
-version=$(cat /bsm/.version | head -n -2)
+# Vars
+version=$(cat /bsm/.version | tail -1)
 log="/etc/bsm/logs/bsm.log"
 errlog="/etc/bsm/logs/err.log"
 scripts="/bsm/scripts"
+
+# Functions
+install() {
+  echo "Installing..."
+  sudo cp "$(find ~ -name "bsm")" /usr/local/bin/bsm && echo "Copy of BSM added to program registry!"
+  sudo cp "$(find ~ -name "bsm-install")" /usr/local/sbin/bsm-install && echo "Installer copied to system registry!"
+  sudo chmod 755 /usr/local/bin/bsm
+  sudo chmod 755 /usr/local/sbin/bsm-install
+  echo "Updating PATH..."
+  #This assumes you haven't modified the original bashrc file with your own things that don't end in 'fi'
+  if [[ "$(echo "$PATH" | grep $scripts)" == "" ]]; then
+    echo 'export PATH="$PATH:$scripts:$scripts/_node:$scripts/_python:$scripts/_ruby:$scripts/_lisp"' >> /home/$USER/.bashrc
+  fi
+  echo "Setting up logging and scripts folders..."
+  if [ ! -d "$scripts" ]; then
+    sudo mkdir $scripts
+    sudo chown $USER $scripts
+    sudo chgrp $USER $scripts
+  fi
+  if [ ! -e $errlog ]; then
+    sudo touch $errlog
+    sudo chown $USER $errlog
+    sudo chgrp $USER $errlog
+    sudo chmod 766 $errlog
+  fi
+  if [ ! -e $log ]; then
+    sudo touch $log
+    sudo chown $USER $log
+    sudo chgrp $USER $log
+    sudo chmod 766 $log
+  fi
+
+  #This should setup BSM, logging is sent to stdout to check for any errors
+  echo "BSM has been successfully installed!"
+  echo "If you can't access BSM, try running \"source ~/.profile\""
+}
+
+uninstall() {
+  echo "Uninstalling BSM..."
+  sudo rm -r /bsm
+  sudo rm -r /etc/bsm
+  sudo rm /usr/local/bin/bsm
+  echo "Uninstalling BSM-install..."
+  sudo rm /usr/local/sbin/bsm-install
+  echo "Resetting PATH..."
+  echo "$(head -n -1 /home/$USER/.bashrc)" > /home/$USER/.bashrc #Reset bashrc
+  # export PATH="$(echo "$PATH" | tr -s ':' '\n' | grep -v "$scripts" | tr -s '\n' ':' | sed 's/.$//')" #Reset PATH
+  echo "Sucessfully uninstalled BSM!"
+}
+
+repair() {
+  if [[ "${2,,}" =~ "node" ]]; then
+  echo "Installing and setting up Node..."
+    sudo mkdir $scripts/_node
+    sudo snap install --edge node --classic >> $log 2>> $errlog
+  elif [[ "${2,,}" =~ "py" ]]; then
+  echo "Installing and setting up Python..."
+    sudo mkdir $scripts/_python
+    sudo apt-get install python3-pip >> $log 2>> $errlog
+  elif [[ "${2,,}" =~ "ruby" ]]; then
+  echo "Installing and setting up Ruby..."
+    sudo mkdir $scripts/_ruby
+    sudo apt-get install ruby-full >> $log 2>> $errlog
+  elif [[ "${2,,}" =~ "l" ]]; then
+  echo "Installing and setting up LISP..."
+    sudo mkdir $scripts/_lisp
+    sudo apt-get install sbcl >> $log 2>> $errlog
+  else
+    echo "Setting up BSM Folders..."
+    sudo mkdir $scripts/_node
+    sudo mkdir $scripts/_python
+    sudo mkdir $scripts/_ruby
+    sudo mkdir $scripts/_lisp
+    echo "Installing BSM Dependencies..."
+    sudo snap install --edge node --classic >> $log 2>> $errlog
+    sudo apt-get install python3-pip >> $log 2>> $errlog
+    sudo apt-get install ruby-full >> $log 2>> $errlog
+    sudo apt-get install sbcl >> $log 2>> $errlog
+  fi
+}
+
+view_logs() {
+  shift
+  if [[ "$1" == "-o" ]]; then
+    echo "Output Log:"
+    cat $log
+    exit
+  elif [[ "$1" == "-e" ]]; then
+    echo "Error Log:"
+    cat $errlog
+    exit
+  else
+    clear
+    while true; do
+      echo "Which log would you like to view?"
+      echo "[1] Output Log"
+      echo "[2] Error Log"
+      read opt
+      clear
+      if [[ "$opt" == "1" ]]; then
+        echo "Output Log:"
+        cat $log
+        exit
+      elif [[ "$opt" == "2" ]]; then
+        echo "Error Log:"
+        cat $errlog
+        exit
+      else
+        echo "Not an option"
+      fi
+    done
+  fi
+}
+
+clear() {
+  #Clear log files
+  echo "Clearing logs..."
+  echo "" > $errlog
+  echo "" > $log
+  if [[ "$2" == "log" ]]; then
+    exit
+  elif [[ "${2,,}" =~ "node" ]]; then
+    echo -n "This will clear all Node.js scripts, are you sure you want to delete these scripts? [Y/n] "
+    read yn
+    if [[ "${yn,,}" == 'y' ]]; then
+      echo "Removing Node.js scripts..."
+      sudo rm $scripts/_node/*
+    fi
+  elif [[ "${2,,}" =~ "py" ]]; then
+    echo -n "This will clear all Python scripts, are you sure you want to delete these scripts? [Y/n] "
+    read yn
+    if [[ "${yn,,}" == 'y' ]]; then
+      echo "Removing Python scripts..."
+      sudo rm $scripts/_python/*
+    fi
+  elif [[ "${2,,}" =~ "ruby" ]]; then
+    echo -n "This will clear all Ruby scripts, are you sure you want to delete these scripts? [Y/n] "
+    read yn
+    if [[ "${yn,,}" == 'y' ]]; then
+      echo "Removing Ruby scripts..."
+      sudo rm $scripts/_ruby/*
+    fi
+  elif [[ "${2,,}" =~ "l" ]]; then
+    echo -n "This will clear all LISP scripts, are you sure you want to delete these scripts? [Y/n] "
+    read yn
+    if [[ "${yn,,}" == 'y' ]]; then
+      echo "Removing LISP scripts..."
+      sudo rm $scripts/_lisp/*
+    fi
+  elif [[ "${2,,}" =~ "sh" ]]; then
+    echo -n "This will clear all Bash scripts, are you sure you want to delete these scripts? [Y/n] "
+    read yn
+    if [[ "${yn,,}" == 'y' ]]; then
+      echo "Removing Bash scripts..."
+      sudo rm $scripts/* 2> /dev/null
+    fi
+  else
+    echo -n "This will clear ALL SCRIPTS. Do you want to continue? [Y/n] "
+    read yn
+    if [[ "${yn,,}" == 'y' ]]; then
+      echo "Removing all scripts..."
+      sudo rm $scripts/_node/* 2> /dev/null
+      sudo rm $scripts/_ruby/* 2> /dev/null
+      sudo rm $scripts/_python/* 2> /dev/null
+      sudo rm $scripts/_lisp/* 2> /dev/null
+      sudo rm $scripts/* 2> /dev/null
+    else
+      exit
+    fi
+  fi
+}
+
+search_args(args) {
+  while [[ "$1" =~ ^- && ! "$1" == "--" ]]; do case $1 in
+    -i | --install )
+      install
+      break;;
+    -u | --uninstall )
+      uninstall
+      break;;
+    -r | --repair )
+      repair
+      break;;
+    -v | --version )
+      echo "$version"
+      exit;;
+    -l | --logs )
+      view_logs
+      break;;
+    -c | --clear )
+      clear
+      break;;
+  esac; shift; done;
+}
+
+# Main
+if [[ "$1" == "" ]]; then
+  # No arguments passed, run walkthrough guide
+  select opt in Install Uninstall Repair Logs Clear Exit; do
+    echo "Welcome to the BSM Installer!"
+    echo "What would you like to do today?"
+    case $opt in
+      Install )
+        install;;
+      Uninstall )
+        uninstall;;
+      Repair )
+        repair;;
+      Logs )
+        logs;;
+      Clear )
+        clear;;
+      Exit )
+        break;;
+      * )
+        echo "Not an option";;
+    esac
+  done
+else
+  # Arguments passed, see what they are
+  search_args($@)
+fi

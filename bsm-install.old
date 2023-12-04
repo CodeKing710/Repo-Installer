@@ -1,9 +1,8 @@
 #!/bin/bash
 
-version=$(cat $(find -type f -name ".version") | head -1)
+version=$(cat $(find -type f -name ".version") | tail -1)
 log="/var/log/bsm_log.log"
 errlog="/var/log/bsm_err_log.log"
-scripts="/bsm/scripts"
 
 if [[ "$1" == "-l" ]]; then
   shift
