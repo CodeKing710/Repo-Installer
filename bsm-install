@@ -3,7 +3,7 @@
 ### BSM-INSTALL CLI ###
 
 # Vars
-version=$(cat /bsm/.version | tail -1)
+version=$(cat /bsm/version | tail -1)
 log="/bsm/logs/bsm.log"
 errlog="/bsm/logs/err.log"
 scripts="/bsm/scripts"
@@ -11,15 +11,16 @@ scripts="/bsm/scripts"
 # Functions
 install() {
   echo "Installing..."
-  sudo cp "$(find ~ -name "bsm")" /usr/local/bin/bsm && echo "Copy of BSM added to program registry!"
-  sudo cp "$(find ~ -name "bsm-install")" /usr/local/sbin/bsm-install && echo "Installer copied to system registry!"
-  sudo cp "$(find ~ -name ".version")" /bsm/.version && echo "Installer copied to system registry!"
+  sudo cp "$(find ~ -type f -name "bsm")" /usr/local/bin/bsm && echo "Copy of BSM added to program registry!"
+  sudo cp "$(find ~ -type f -name "bsm-install")" /usr/local/sbin/bsm-install && echo "Installer copied to system registry!"
+  sudo cp "$(find ~ -type f -name ".version")" /bsm/version
   sudo chmod 755 /usr/local/bin/bsm
   sudo chmod 755 /usr/local/sbin/bsm-install
   echo "Updating PATH..."
   #This assumes you haven't modified the original bashrc file with your own things that don't end in 'fi'
   if [[ "$(echo "$PATH" | grep $scripts)" == "" ]]; then
-    echo 'export PATH="$PATH:$scripts:$scripts/_node:$scripts/_python:$scripts/_ruby:$scripts/_lisp"' >> /home/$USER/.bashrc
+    echo "export PATH=\"$PATH:$scripts:$scripts/_node:$scripts/_python:$scripts/_ruby:$scripts/_lisp\"" >> /home/$USER/.bashrc
+    source ~/.bashrc #Attempt reload of PATH
   fi
   echo "Setting up logging and scripts folders..."
   if [ ! -d "/bsm" ]; then
@@ -56,6 +57,7 @@ uninstall() {
   sudo rm /usr/local/sbin/bsm-install
   echo "Resetting PATH..."
   echo "$(head -n -1 /home/$USER/.bashrc)" > /home/$USER/.bashrc #Reset bashrc
+  source ~/.bashrc #Attempt reload of PATH
   # export PATH="$(echo "$PATH" | tr -s ':' '\n' | grep -v "$scripts" | tr -s '\n' ':' | sed 's/.$//')" #Reset PATH
   echo "Sucessfully uninstalled BSM!"
 }
