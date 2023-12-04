@@ -48,7 +48,7 @@ Man page in progress
     
 HELP
 );
-version="1.3.1";
+version="1.3.2";
 log="/var/log/bsm_log.log"
 errlog="/var/log/bsm_err_log.log"
 
@@ -79,6 +79,7 @@ while [[ "$1" =~ ^- && ! "$1" == "--" ]]; do
                         echo "Installing Python and setting up dependencies..."
                         mkdir /scripts/_python >> $log 2>> $errlog
                         sudo apt-get install -y python3-pip >> $log 2>> $errlog || echo "Ran into issue installing, check /var/log/bsm_err_log.log"
+                        echo "Finished installing Python! You may need to hit [Enter] to continue..."
                     fi
                     touch "/scripts/_python/${name%.py}" && chmod 757 "/scripts/_python/${name%.py}"
                     printf "#!/bin/env python3\n\n#Write script code" > "/scripts/_python/${name%.py}"
@@ -91,6 +92,7 @@ while [[ "$1" =~ ^- && ! "$1" == "--" ]]; do
                         echo "Installing Node.js and dependencies..."
                         mkdir /scripts/_node >> $log 2>> $errlog
                         sudo snap install --edge node --classic >> $log 2>> $errlog || echo "Ran into issue installing, check /var/log/bsm_err_log.log"
+                        echo "Finished installing Node! You may need to hit [Enter] to continue..."
                     fi
                     touch "/scripts/_node/${name%.js}" && chmod 757 "/scripts/_node/${name%.js}"
                     printf "#!/bin/env node\n\n//Write script code" > "/scripts/_node/${name%.js}"
@@ -102,7 +104,8 @@ while [[ "$1" =~ ^- && ! "$1" == "--" ]]; do
                     if [[ ! -d "/scripts/_ruby" ]]; then
                         echo "Installing Ruby and dependencies..."
                         mkdir /scripts/_ruby >> $log 2>> $errlog
-                        sudo apt install ruby-full -y >> $log 2>> $errlog || echo "Ran into issue installing, check /var/log/bsm_err_log.log"
+                        sudo apt-get install ruby-full -y >> $log 2>> $errlog || echo "Ran into issue installing, check /var/log/bsm_err_log.log"
+                        echo "Finished installing Ruby! You may need to hit [Enter] to continue..."
                     fi
                     touch "/scripts/_ruby/${name%.rb}" && chmod 757 "/scripts/_ruby/${name%.rb}"
                     printf "#!/bin/env ruby\n\n#Write script code" > "/scripts/_ruby/${name%.rb}"
@@ -115,7 +118,8 @@ while [[ "$1" =~ ^- && ! "$1" == "--" ]]; do
                         echo "Installing CommonLISP and dependencies..."
                         echo "View log file for details"
                         mkdir /scripts/_lisp >> $log 2>> $errlog
-                        sudo apt install sbcl -y >> $log 2>> $errlog || echo "Ran into issue installing, check /var/log/bsm_err_log.log"
+                        sudo apt-get install sbcl -y >> $log 2>> $errlog || echo "Ran into issue installing, check /var/log/bsm_err_log.log"
+                        echo "Finished installing LISP! You may need to hit [Enter] to continue..."
                     fi
                     touch "/scripts/_lisp/${name%.cl}" && chmod 757 "/scripts/_lisp/${name%.cl}"
                     printf "#!/bin/env -S sbcl --script\n\n;; Write script code" > "/scripts/_lisp/${name%.cl}"

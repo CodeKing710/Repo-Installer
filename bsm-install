@@ -1,6 +1,6 @@
 #!/bin/bash
 
-version="1.2.3"
+version="1.2.4"
 log="/var/log/bsm_log.log"
 errlog="/var/log/bsm_err_log.log"
 
@@ -111,15 +111,15 @@ elif [[ "$1" == "-rd" ]]; then
   elif [[ "${2,,}" =~ "py" ]]; then
   echo "Installing and setting up Python..."
     sudo mkdir /scripts/_python
-    sudo apt install python3-pip >> $log 2>> $errlog
+    sudo apt-get install python3-pip >> $log 2>> $errlog
   elif [[ "${2,,}" =~ "ruby" ]]; then
   echo "Installing and setting up Ruby..."
     sudo mkdir /scripts/_ruby
-    sudo apt install ruby-full >> $log 2>> $errlog
+    sudo apt-get install ruby-full >> $log 2>> $errlog
   elif [[ "${2,,}" =~ "l" ]]; then
   echo "Installing and setting up LISP..."
     sudo mkdir /scripts/_lisp
-    sudo apt install sbcl >> $log 2>> $errlog
+    sudo apt-get install sbcl >> $log 2>> $errlog
   else
     echo "Setting up BSM Folders..."
     sudo mkdir /scripts/_node
@@ -128,9 +128,9 @@ elif [[ "$1" == "-rd" ]]; then
     sudo mkdir /scripts/_lisp
     echo "Installing BSM Dependencies..."
     sudo snap install --edge node --classic >> $log 2>> $errlog
-    sudo apt install python3-pip >> $log 2>> $errlog
-    sudo apt install ruby-full >> $log 2>> $errlog
-    sudo apt install sbcl >> $log 2>> $errlog
+    sudo apt-get install python3-pip >> $log 2>> $errlog
+    sudo apt-get install ruby-full >> $log 2>> $errlog
+    sudo apt-get install sbcl >> $log 2>> $errlog
   fi
 else
   #general install for BSM
