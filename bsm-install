@@ -228,27 +228,27 @@ if [[ "$1" == "" ]]; then
           case $sel in
             All )
               clear_bsm
-              break 2;;
+              break;;
             Node )
               clear_bsm node
-              break 2;;
+              break;;
             Python )
               clear_bsm python
-              break 2;;
+              break;;
             Ruby )
               clear_bsm ruby
-              break 2;;
+              break;;
             LISP )
               clear_bsm lisp
-              break 2;;
+              break;;
             Bash )
               clear_bsm bash
-              break 2;;
+              break;;
             Logs )
               clear_bsm log
-              break 2;;
+              break;;
             Exit )
-              break 2;;
+              break;;
             * )
               echo "Not an option";;
           esac
