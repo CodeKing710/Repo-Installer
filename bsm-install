@@ -244,6 +244,9 @@ if [[ "$1" == "" ]]; then
             Bash )
               clear_bsm bash
               break 2;;
+            Logs )
+              clear_bsm log
+              break 2;;
             Exit )
               break 2;;
             * )
