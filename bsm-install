@@ -13,6 +13,7 @@ install() {
   echo "Installing..."
   sudo cp "$(find ~ -type f -name "bsm")" /usr/local/bin/bsm && echo "Copy of BSM added to program registry!"
   sudo cp "$(find ~ -type f -name "bsm-install")" /usr/local/sbin/bsm-install && echo "Installer copied to system registry!"
+  sudo touch /bsm/version
   sudo cp "$(find ~ -type f -name ".version")" /bsm/version
   sudo chmod 755 /usr/local/bin/bsm
   sudo chmod 755 /usr/local/sbin/bsm-install
