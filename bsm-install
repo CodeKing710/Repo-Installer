@@ -125,42 +125,42 @@ view_logs() {
   fi
 }
 
-clear() {
+clear(opt) {
   #Clear log files
   echo "Clearing logs..."
   echo "" > $errlog
   echo "" > $log
-  if [[ "$2" == "log" ]]; then
+  if [[ "$opt" == "log" ]]; then
     break
-  elif [[ "${2,,}" =~ "node" ]]; then
+  elif [[ "${opt,,}" =~ "node" ]]; then
     echo -n "This will clear all Node.js scripts, are you sure you want to delete these scripts? [Y/n] "
     read yn
     if [[ "${yn,,}" == 'y' ]]; then
       echo "Removing Node.js scripts..."
       sudo rm $scripts/_node/*
     fi
-  elif [[ "${2,,}" =~ "py" ]]; then
+  elif [[ "${opt,,}" =~ "py" ]]; then
     echo -n "This will clear all Python scripts, are you sure you want to delete these scripts? [Y/n] "
     read yn
     if [[ "${yn,,}" == 'y' ]]; then
       echo "Removing Python scripts..."
       sudo rm $scripts/_python/*
     fi
-  elif [[ "${2,,}" =~ "ruby" ]]; then
+  elif [[ "${opt,,}" =~ "ruby" ]]; then
     echo -n "This will clear all Ruby scripts, are you sure you want to delete these scripts? [Y/n] "
     read yn
     if [[ "${yn,,}" == 'y' ]]; then
       echo "Removing Ruby scripts..."
       sudo rm $scripts/_ruby/*
     fi
-  elif [[ "${2,,}" =~ "l" ]]; then
+  elif [[ "${opt,,}" =~ "l" ]]; then
     echo -n "This will clear all LISP scripts, are you sure you want to delete these scripts? [Y/n] "
     read yn
     if [[ "${yn,,}" == 'y' ]]; then
       echo "Removing LISP scripts..."
       sudo rm $scripts/_lisp/*
     fi
-  elif [[ "${2,,}" =~ "sh" ]]; then
+  elif [[ "${opt,,}" =~ "sh" ]]; then
     echo -n "This will clear all Bash scripts, are you sure you want to delete these scripts? [Y/n] "
     read yn
     if [[ "${yn,,}" == 'y' ]]; then
@@ -178,32 +178,32 @@ clear() {
       sudo rm $scripts/_lisp/* 2> /dev/null
       sudo rm $scripts/* 2> /dev/null
     else
-      exit
+      break
     fi
   fi
 }
 
 search_args() {
-  while [[ "$1" =~ ^- && ! "$1" == "--" ]]; do case $1 in
+  case $1 in
     -i | --install )
       install
-      break;;
+      exit;;
     -u | --uninstall )
       uninstall
-      break;;
+      exit;;
     -r | --repair )
       repair
-      break;;
+      exit;;
     -v | --version )
       echo "$version"
       exit;;
     -l | --logs )
-      view_logs
-      break;;
+      view_logs $2
+      exit;;
     -c | --clear )
-      clear
-      break;;
-  esac; shift; done;
+      clear $2
+      exit;;
+  esac
 }
 
 # Main
@@ -229,6 +229,8 @@ if [[ "$1" == "" ]]; then
             All )
               clear
               break;;
+            Node )
+              clear node
           esac
         done
         ;;
