@@ -131,7 +131,7 @@ clear_bsm() {
   echo "" > $errlog
   echo "" > $log
   if [[ "$1" == "log" ]]; then
-    # Do nothing
+    return
   elif [[ "${1,,}" =~ "node" ]]; then
     echo -n "This will clear all Node.js scripts, are you sure you want to delete these scripts? [Y/n] "
     read yn
