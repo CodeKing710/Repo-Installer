@@ -227,5 +227,5 @@ if [[ "$1" == "" ]]; then
   done
 else
   # Arguments passed, see what they are
-  search_args()
+  search_args
 fi
