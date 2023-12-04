@@ -125,7 +125,7 @@ view_logs() {
   fi
 }
 
-clear() {
+clear_bsm() {
   #Clear log files
   echo "Clearing logs..."
   echo "" > $errlog
@@ -201,7 +201,7 @@ search_args() {
       view_logs $2
       exit;;
     -c | --clear )
-      clear $2
+      clear_bsm $2
       exit;;
   esac
 }
@@ -209,7 +209,7 @@ search_args() {
 # Main
 if [[ "$1" == "" ]]; then
   # No arguments passed, run walkthrough guide
-  clear
+  clear_bsm
   echo "Welcome to the BSM Installer!"
   echo "What would you like to do today?"
   select opt in Install Uninstall Repair Logs Clear Exit; do
@@ -227,10 +227,10 @@ if [[ "$1" == "" ]]; then
         select sel in All Node Python Ruby LISP Logs; do
           case $sel in
             All )
-              clear
+              clear_bsm
               break;;
             Node )
-              clear node
+              clear_bsm node
           esac
         done
         ;;
@@ -239,7 +239,7 @@ if [[ "$1" == "" ]]; then
       * )
         echo "Not an option";;
     esac
-    clear
+    clear_bsm
     echo "Welcome to the BSM Installer!"
     echo "What would you like to do today?"
     echo "1) Install    3) Repair     5) Clear"
