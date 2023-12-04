@@ -1,3 +1,9 @@
 #!/bin/bash
 
 ### BSM-INSTALL CLI MAIN ###
+
+#Vars
+version=$(cat /bsm/.version | head -n -2)
+log="/etc/bsm/logs/bsm.log"
+errlog="/etc/bsm/logs/err.log"
+scripts="/bsm/scripts"
