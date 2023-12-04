@@ -97,11 +97,11 @@ view_logs() {
   if [[ "$1" == "-o" ]]; then
     echo "Output Log:"
     cat $log
-    exit
+    break
   elif [[ "$1" == "-e" ]]; then
     echo "Error Log:"
     cat $errlog
-    exit
+    break
   else
     clear
     while true; do
@@ -113,11 +113,11 @@ view_logs() {
       if [[ "$opt" == "1" ]]; then
         echo "Output Log:"
         cat $log
-        exit
+        break
       elif [[ "$opt" == "2" ]]; then
         echo "Error Log:"
         cat $errlog
-        exit
+        break
       else
         echo "Not an option"
       fi
@@ -224,7 +224,7 @@ if [[ "$1" == "" ]]; then
       Logs )
         view_logs;;
       Clear )
-        select sel in All Node Python Ruby LISP Bash Logs; do
+        select sel in All Node Python Ruby LISP Bash Logs Exit; do
           case $sel in
             All )
               clear_bsm
@@ -243,6 +243,8 @@ if [[ "$1" == "" ]]; then
               break 2;;
             Bash )
               clear_bsm bash
+              break 2;;
+            Exit )
               break 2;;
           esac
         done
