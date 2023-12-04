@@ -259,8 +259,6 @@ if [[ "$1" == "" ]]; then
       * )
         echo "Not an option";;
     esac
-    echo "Welcome to the BSM Installer!"
-    echo "What would you like to do today?"
     echo "1) Install    3) Repair     5) Clear"
     echo "2) Uninstall  4) Logs       6) Exit"
   done
