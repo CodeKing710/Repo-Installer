@@ -209,7 +209,7 @@ search_args() {
 # Main
 if [[ "$1" == "" ]]; then
   # No arguments passed, run walkthrough guide
-  clear_bsm
+  clear
   echo "Welcome to the BSM Installer!"
   echo "What would you like to do today?"
   select opt in Install Uninstall Repair Logs Clear Exit; do
@@ -239,7 +239,7 @@ if [[ "$1" == "" ]]; then
       * )
         echo "Not an option";;
     esac
-    clear_bsm
+    clear
     echo "Welcome to the BSM Installer!"
     echo "What would you like to do today?"
     echo "1) Install    3) Repair     5) Clear"
