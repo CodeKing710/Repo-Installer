@@ -4,8 +4,8 @@
 
 # Vars
 version=$(cat /bsm/.version | tail -1)
-log="/etc/bsm/logs/bsm.log"
-errlog="/etc/bsm/logs/err.log"
+log="/bsm/logs/bsm.log"
+errlog="/bsm/logs/err.log"
 scripts="/bsm/scripts"
 
 # Functions
@@ -21,9 +21,10 @@ install() {
     echo 'export PATH="$PATH:$scripts:$scripts/_node:$scripts/_python:$scripts/_ruby:$scripts/_lisp"' >> /home/$USER/.bashrc
   fi
   echo "Setting up logging and scripts folders..."
-  if [ ! -d "$scripts" ]; then
+  if [ ! -d "/bsm" ]; then
     sudo mkdir /bsm
     sudo mkdir /bsm/scripts
+    sudo mkdir /bsm/logs
     sudo chown $USER $scripts
     sudo chgrp $USER $scripts
   fi
