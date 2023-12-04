@@ -101,11 +101,7 @@ If you don't want to clear any scripts and want to just clear logs, use
 bsm-install -c log
 ```
 
-
-### Features to come
-- Export script(s) to a specific location
-- Generate script files for quick-launching larger programs (i.e. start a web server for Node, Python, or Ruby)
-- Sample/System Tool scripts?
+Refer to changelog to features, outstanding bugs, and more.
 
 Report bugs to cjrox01@yahoo.com
 Let me know if there are any other features you may want! Feedback is welcome!

@@ -1,0 +1,36 @@
+# Changelog
+
+__This is the changelog__
+__You will see patches from here__
+__Refer to this file instead of the commits__
+__Version info, patch notes, and what's new will appear here__
+
+### What's New
+
+- BSM has no new features to report as of now, features that were new get moved to version info when new versions come out
+
+### Patch Notes
+
+- Bug fix-v1.\[32\].\[24\]: Swapped to apt-get for Python, Ruby, and LISP installs (Snap is stable)
+
+### Version Info
+
+__Features__
+
+- Create Scripts for Python, Node, Ruby, and LISP
+- Open scripts for editing (Default nano, FTC editor selector)
+- Remove Scripts
+- Add/Link Scripts to BSM directory
+- List Scripts
+- Repair BSM Installation
+- Full uninstall
+- View logs
+- Support to create and open non-existent scripts when using `-o`
+
+### Features to Come (FTC)
+
+- Choose text editor to use when opening a script
+- Predefine script type
+- Export script(s) to a specific location
+- Generate script files for quick-launching larger programs (i.e. start a web server for Node, Python, or Ruby)
+- Sample/System Tool scripts?
