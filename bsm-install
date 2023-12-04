@@ -224,13 +224,26 @@ if [[ "$1" == "" ]]; then
       Logs )
         view_logs;;
       Clear )
-        select sel in All Node Python Ruby LISP Logs; do
+        select sel in All Node Python Ruby LISP Bash Logs; do
           case $sel in
             All )
               clear_bsm
-              break;;
+              break 2;;
             Node )
               clear_bsm node
+              break 2;;
+            Python )
+              clear_bsm python
+              break 2;;
+            Ruby )
+              clear_bsm ruby
+              break 2;;
+            LISP )
+              clear_bsm lisp
+              break 2;;
+            Bash )
+              clear_bsm bash
+              break 2;;
           esac
         done
         ;;
