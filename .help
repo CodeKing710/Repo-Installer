@@ -1,0 +1,43 @@
+Bash Script Manager
+
+Usage: bsm [OPTIONS] ...
+
+Options:
+    -c | --create [NAME] [...OPTIONS]
+	Add new script(s) to your personal scripts. Specify a file extension to use a specific scripting language. Bash is default and doesn't require a file extension.
+	Available: .js, .py, .rb, .cl
+
+    -l | --list
+	Show list of available personal scripts
+
+    -L | --link [FILE] [DEST_NAME]
+	Create a shortcut executable to an existing script. FILE points to the file to link, DEST_NAME points to where the link will reside.
+
+    -o | --open [NAME]
+	Open a script for editing (ONLY PERSONAL SCRIPTS LOCATED AT /scripts).
+    Makes a new script respective to the env path (file ext). Bash creation does not require this.
+    Will still open respective file even if env path is provided
+
+    -r | --remove [NAME] [...NAMES]
+	Remove script(s) from personal scripts (DOES NOT TOUCH SYSTEM EXECUTABLES)
+
+    -a | --add
+    Add an external script directly to bsm
+
+    -I | --install
+    Installs/Reinstalls BSM to your system
+
+    -U | --uninstall
+    Completely removes any remnant of BSM from your system
+
+    -R | --reinstall-deps [...NAME]
+    Force installs all dependencies used by BSM (Node.js, Python3, Ruby, CommonLISP) and adds any folders that aren't yet created. Can add an argument after to define a specific dependency to reinstall, but it is optional.
+
+    -v | --version
+        Show version
+
+    -h | --help
+        Show this screen
+
+For more information and available commands, visit https://github.com/SubLock69/Bash-Script-Manager#readme.
+Man page in progress

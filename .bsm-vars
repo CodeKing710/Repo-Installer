@@ -1,3 +1,7 @@
 #!/bin/bash
 
 ### BSM GLOBAL VARIABLES ###
+version=$(cat /bsm/.version | head -1)
+help="cat /bsm/.help"
+log="/bsm/logs/bsm.log"
+errlog="/bsm/logs/err.log"

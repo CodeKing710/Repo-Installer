@@ -4,6 +4,7 @@
 
 # Vars
 version=$(cat /bsm/.version | tail -1)
+help="cat /bsm/.install-help"
 log="/bsm/logs/bsm.log"
 errlog="/bsm/logs/err.log"
 scripts="/bsm/scripts"
@@ -199,6 +200,9 @@ search_args() {
       exit;;
     -v | --version )
       echo "$version"
+      exit;;
+    -h | --help )
+      $help
       exit;;
     -l | --logs )
       view_logs $2

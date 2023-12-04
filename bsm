@@ -1,3 +1,22 @@
 #!/bin/bash
 
 ### BSM CLI MAIN ###
+
+# Import vars and functions
+. /bsm/.bsm-vars
+. /bsm/.bsm-funcs
+
+# Check if deps are installed
+if [[ ! -d "/bsm" ]]; then
+  . $(find ~ -type f -name bsm-install) -i
+fi
+
+# Main
+if [[ "$1" == "" ]]; then
+  # Interactive mode
+  echo "Welcome to BSM!"
+  echo "What would you like to do today?"
+else
+  #CLI Mode
+  search_args $@
+fi
