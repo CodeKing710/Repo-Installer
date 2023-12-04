@@ -246,6 +246,8 @@ if [[ "$1" == "" ]]; then
               break 2;;
             Exit )
               break 2;;
+            * )
+              echo "Not an option";;
           esac
         done
         ;;
