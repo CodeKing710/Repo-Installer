@@ -22,7 +22,8 @@ install() {
   fi
   echo "Setting up logging and scripts folders..."
   if [ ! -d "$scripts" ]; then
-    sudo mkdir $scripts
+    sudo mkdir bsm
+    sudo mkdir scripts
     sudo chown $USER $scripts
     sudo chgrp $USER $scripts
   fi
