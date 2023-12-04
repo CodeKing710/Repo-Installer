@@ -51,7 +51,6 @@ install() {
 uninstall() {
   echo "Uninstalling BSM..."
   sudo rm -r /bsm
-  sudo rm -r /etc/bsm
   sudo rm /usr/local/bin/bsm
   echo "Uninstalling BSM-install..."
   sudo rm /usr/local/sbin/bsm-install
