@@ -93,7 +93,6 @@ repair() {
 }
 
 view_logs() {
-  shift
   if [[ "$1" == "-o" ]]; then
     echo "Output Log:"
     cat $log
