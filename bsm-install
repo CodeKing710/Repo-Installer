@@ -62,34 +62,37 @@ uninstall() {
 }
 
 repair() {
-  if [[ "${2,,}" =~ "node" ]]; then
-  echo "Installing and setting up Node..."
-    sudo mkdir $scripts/_node
-    sudo snap install --edge node --classic >> $log 2>> $errlog
-  elif [[ "${2,,}" =~ "py" ]]; then
-  echo "Installing and setting up Python..."
-    sudo mkdir $scripts/_python
-    sudo apt-get install -y python3-pip >> $log 2>> $errlog
-  elif [[ "${2,,}" =~ "ruby" ]]; then
-  echo "Installing and setting up Ruby..."
-    sudo mkdir $scripts/_ruby
-    sudo apt-get install -y ruby-full >> $log 2>> $errlog
-  elif [[ "${2,,}" =~ "l" ]]; then
-  echo "Installing and setting up LISP..."
-    sudo mkdir $scripts/_lisp
-    sudo apt-get install -y sbcl >> $log 2>> $errlog
-  else
-    echo "Setting up BSM Folders..."
-    sudo mkdir $scripts/_node
-    sudo mkdir $scripts/_python
-    sudo mkdir $scripts/_ruby
-    sudo mkdir $scripts/_lisp
-    echo "Installing BSM Dependencies..."
-    sudo snap install --edge node --classic >> $log 2>> $errlog
-    sudo apt-get install -y python3-pip >> $log 2>> $errlog
-    sudo apt-get install -y ruby-full >> $log 2>> $errlog
-    sudo apt-get install -y sbcl >> $log 2>> $errlog
-  fi
+  while [[ $1 != "" ]]; do
+    if [[ "${1,,}" =~ "node" ]]; then
+    echo "Installing and setting up Node..."
+      sudo mkdir $scripts/_node
+      sudo snap install --edge node --classic >> $log 2>> $errlog
+    elif [[ "${1,,}" =~ "py" ]]; then
+    echo "Installing and setting up Python..."
+      sudo mkdir $scripts/_python
+      sudo apt-get install -y python3-pip >> $log 2>> $errlog
+    elif [[ "${1,,}" =~ "ruby" ]]; then
+    echo "Installing and setting up Ruby..."
+      sudo mkdir $scripts/_ruby
+      sudo apt-get install -y ruby-full >> $log 2>> $errlog
+    elif [[ "${1,,}" =~ "l" ]]; then
+    echo "Installing and setting up LISP..."
+      sudo mkdir $scripts/_lisp
+      sudo apt-get install -y sbcl >> $log 2>> $errlog
+    else
+      echo "Setting up BSM Folders..."
+      sudo mkdir $scripts/_node
+      sudo mkdir $scripts/_python
+      sudo mkdir $scripts/_ruby
+      sudo mkdir $scripts/_lisp
+      echo "Installing BSM Dependencies..."
+      sudo snap install --edge node --classic >> $log 2>> $errlog
+      sudo apt-get install -y python3-pip >> $log 2>> $errlog
+      sudo apt-get install -y ruby-full >> $log 2>> $errlog
+      sudo apt-get install -y sbcl >> $log 2>> $errlog
+    fi
+    shift
+  done
 }
 
 view_logs() {
@@ -191,7 +194,8 @@ search_args() {
       uninstall
       exit;;
     -r | --repair )
-      repair
+      shift
+      repair $@
       exit;;
     -v | --version )
       echo "$version"
