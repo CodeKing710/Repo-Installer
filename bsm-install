@@ -35,6 +35,10 @@ install() {
   sudo cp "$(find ~ -type f -name "bsm")" /usr/local/bin/bsm && echo "Copy of BSM added to program registry!"
   sudo cp "$(find ~ -type f -name "bsm-install")" /usr/local/sbin/bsm-install && echo "Installer copied to system registry!"
   sudo cp "$(find ~ -type f -name ".version")" /bsm/.version
+  sudo cp "$(find ~ -type f -name ".bsm-vars")" /bsm/.bsm-vars
+  sudo cp "$(find ~ -type f -name ".bsm-funcs")" /bsm/.bsm-funcs
+  sudo cp "$(find ~ -type f -name ".help")" /bsm/.help
+  sudo cp "$(find ~ -type f -name ".install-help")" /bsm/.install-help
   sudo chmod 755 /usr/local/bin/bsm
   sudo chmod 755 /usr/local/sbin/bsm-install
   echo "Updating PATH..."

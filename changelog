@@ -46,3 +46,9 @@ __BSM-Install Features__
 - Export script(s) to a specific location
 - Generate script files for quick-launching larger programs (i.e. start a web server for Node, Python, or Ruby)
 - Sample/System Tool scripts?
+
+### Extra commit messages
+
+_Added .help and .install-help for help menus_
+_Footprint for bsm started_
+_bsm-install adds all '.' files to bsm_
