@@ -205,9 +205,9 @@ search_args() {
 # Main
 if [[ "$1" == "" ]]; then
   # No arguments passed, run walkthrough guide
+  echo "Welcome to the BSM Installer!"
+  echo "What would you like to do today?"
   select opt in Install Uninstall Repair Logs Clear Exit; do
-    echo "Welcome to the BSM Installer!"
-    echo "What would you like to do today?"
     case $opt in
       Install )
         install;;
@@ -224,6 +224,8 @@ if [[ "$1" == "" ]]; then
       * )
         echo "Not an option";;
     esac
+    echo "Welcome to the BSM Installer!"
+    echo "What would you like to do today?"
   done
 else
   # Arguments passed, see what they are
