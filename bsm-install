@@ -216,7 +216,8 @@ if [[ "$1" == "" ]]; then
       Install )
         install;;
       Uninstall )
-        uninstall;;
+        uninstall
+        break;;
       Repair )
         repair;;
       Logs )
