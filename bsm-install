@@ -131,7 +131,7 @@ clear() {
   echo "" > $errlog
   echo "" > $log
   if [[ "$2" == "log" ]]; then
-    exit
+    break
   elif [[ "${2,,}" =~ "node" ]]; then
     echo -n "This will clear all Node.js scripts, are you sure you want to delete these scripts? [Y/n] "
     read yn
