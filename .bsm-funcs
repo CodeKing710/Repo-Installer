@@ -181,8 +181,15 @@ mkpwsh() {
       mkdir /bsm/scripts/_power
       echo "Set up PowerShell for use in BSM through WSL!"
     fi
+    # Make editable PowerShell file separately from the actual script executable
+    touch "/bsm/scripts/_power/${name%.***}.ps1" && chmod 755 "/bsm/scripts/_power/${name%.***}.ps1" && echo "# PowerShell code below" > "/bsm/scripts/_power/${name%.***}.ps1"
+    # Make executable that calls PowerShell passing the script
+    # This is done since using powershell.exe doesn't work in environment mode
     touch "/bsm/scripts/_power/${name%.***}" && chmod 755 "/bsm/scripts/_power/${name%.***}"
     printf "#!/bin/bash\n\npowershell.exe -F \"/bsm/scripts/_power/$name\"" > "/bsm/scripts/_power/${name%.***}"
+    if [[ -e "/bsm/scripts/_power/${name%.***}" && -e "/bsm/scripts/_power/$name" ]]; then
+      echo "Script Created!"
+    fi
   else
     echo "PowerShell not available"
   fi
@@ -303,6 +310,7 @@ remove_scripts() {
         fi
       elif [[ -e "/bsm/scripts/_power/${n%.***}" ]]; then
         rm "/bsm/scripts/_power/${n%.***}" >> $log 2>> $errlog
+        rm "/bsm/scripts/_power/${n%.***}.ps1" >> $log 2>> $errlog
         if [[ ! -e "/bsm/scripts/_power/${n%.***}" ]]; then
           echo "Script(s) Removed!"
         else
@@ -383,7 +391,7 @@ export_script() {
 }
 list_scripts() {
   echo "Available Scripts:"
-  ls -pR1 /bsm/scripts | grep -v / | tr -s '\n' ' ' | tr ' ' '\n' | xargs -i echo "- {}"
+  ls -pR1 /bsm/scripts | grep -v / | grep -v '\...' | tr -s '\n' ' ' | tr ' ' '\n' | xargs -i echo "- {}"
 }
 config_bsm() {
   if [[ "$2" == "" ]]; then
