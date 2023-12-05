@@ -60,7 +60,6 @@ search_args() {
         fi
         ;;
       -r | --remove )
-        shift
         if [[ "$1" == "" ]]; then
           echo "Missing required argument: 'SCRIPT'"
           exit
@@ -99,12 +98,12 @@ search_args() {
   done
 }
 mknode() {
-  name="${$1%.**}"
+  name=$1
   #Make Nodejs folder, exe, installation
   if [[ ! -d "/bsm/scripts/_node" ]]; then
     echo "Installing Node.js and dependencies..."
-    mkdir /bsm/scripts/_node $tologs
-    sudo snap install --edge node --classic $tologs || echo "Ran into issue installing, check /var/log/bsm_err_log.log"
+    mkdir /bsm/scripts/_node >> $log 2>> $errlog
+    sudo snap install --edge node --classic >> $log 2>> $errlog || echo "Ran into issue installing, check /var/log/bsm_err_log.log"
     echo "Finished installing Node! You may need to hit [Enter] to continue..."
   fi
   touch "/bsm/scripts/_node/${name%.js}" && chmod 757 "/bsm/scripts/_node/${name%.js}"
@@ -114,12 +113,12 @@ mknode() {
   fi
 }
 mkpyth() {
-  name="${$1%.**}"
+  name=$1
   #Make python folder and executable (Install python if not installed)
   if [[ ! -d "/bsm/scripts/_python" ]]; then
     echo "Installing Python and setting up dependencies..."
-    mkdir /bsm/scripts/_python $tologs
-    sudo apt-get install -y python3-pip $tologs || echo "Ran into issue installing, check /var/log/bsm_err_log.log"
+    mkdir /bsm/scripts/_python >> $log 2>> $errlog
+    sudo apt-get install -y python3-pip >> $log 2>> $errlog || echo "Ran into issue installing, check /var/log/bsm_err_log.log"
     echo "Finished installing Python! You may need to hit [Enter] to continue..."
   fi
   touch "/bsm/scripts/_python/${name%.py}" && chmod 757 "/bsm/scripts/_python/${name%.py}"
@@ -129,13 +128,13 @@ mkpyth() {
   fi
 }
 mklisp() {
-  name="${$1%.**}"
+  name=$1
   #LISP folder, exe, install
   if [[ ! -d "/bsm/scripts/_lisp" ]]; then
     echo "Installing CommonLISP and dependencies..."
     echo "View log file for details"
-    mkdir /bsm/scripts/_lisp $tologs
-    sudo apt-get install sbcl -y $tologs || echo "Ran into issue installing, check /var/log/bsm_err_log.log"
+    mkdir /bsm/scripts/_lisp >> $log 2>> $errlog
+    sudo apt-get install sbcl -y >> $log 2>> $errlog || echo "Ran into issue installing, check /var/log/bsm_err_log.log"
     echo "Finished installing LISP! You may need to hit [Enter] to continue..."
   fi
   touch "/bsm/scripts/_lisp/${name%.cl}" && chmod 757 "/bsm/scripts/_lisp/${name%.cl}"
@@ -145,12 +144,12 @@ mklisp() {
   fi
 }
 mkruby() {
-  name="${$1%.**}"
+  name=$1
   #Ruby folder, exe, install
   if [[ ! -d "/bsm/scripts/_ruby" ]]; then
     echo "Installing Ruby and dependencies..."
-    mkdir /bsm/scripts/_ruby $tologs
-    sudo apt-get install ruby-full -y $tologs || echo "Ran into issue installing, check /var/log/bsm_err_log.log"
+    mkdir /bsm/scripts/_ruby >> $log 2>> $errlog
+    sudo apt-get install ruby-full -y >> $log 2>> $errlog || echo "Ran into issue installing, check /var/log/bsm_err_log.log"
     echo "Finished installing Ruby! You may need to hit [Enter] to continue..."
   fi
   touch "/bsm/scripts/_ruby/${name%.rb}" && chmod 757 "/bsm/scripts/_ruby/${name%.rb}"
@@ -160,7 +159,7 @@ mkruby() {
   fi
 }
 mkpwsh() {
-  name="${$1%.***}"
+  name=$1
   if [[ "" =~ "WSL" ]]; then
     if [[ ! -d "/bsm/scripts/_power" ]]; then
       mkdir /bsm/scripts/_power
@@ -173,7 +172,7 @@ mkpwsh() {
   fi
 }
 mkbash() {
-  name="${$1%.**}"
+  name=$1
   touch "/bsm/scripts/${name%.**}" && chmod 757 "/bsm/scripts/${name%.**}"
   printf "#!/bin/bash\n\n#Write script code" > "/bsm/scripts/${name%.**}"
   if [[ -e "/bsm/scripts/${name%.**}" ]]; then
@@ -235,11 +234,11 @@ open_script() {
   # Special PowerShell check
   if [[ -e "/bsm/scripts/_power/${name%.***}" ]]; then
     echo "Script found, opening..."
-    find -L "/bsm/scripts/_power/${name%.***}" -type f -name "${name%.***}" -exec $editor {}.ps1 \; $tologs
+    find -L "/bsm/scripts/_power/${name%.***}" -type f -name "${name%.***}" -exec $editor {}.ps1 \;
   # Check rest normally
   elif [[ -e "/bsm/scripts/_lisp/${name%.**}" || -e "/bsm/scripts/_ruby/${name%.**}" || -e "/bsm/scripts/_python/${name%.**}" || -e "/bsm/scripts/_node/${name%.**}" || -e "/bsm/scripts/${name%.**}" ]]; then
     echo "Script found, opening..."
-    find -L /bsm/scripts -type f -name "${name%.**}" -exec $editor {} \; $tologs
+    find -L /bsm/scripts -type f -name "${name%.**}" -exec $editor {} \;
   else
     echo "Script not found, creating..."
     create_script "$name"
@@ -250,45 +249,45 @@ remove_scripts() {
   # Code
   while [[ $1 != "" ]]; do
     n=$1
-    if [[ -e "/scripts/${n%.**}" ]]; then
-      rm "/scripts/${n%.**}" $tologs
-      if [[ ! -e "/scripts/${n%.**}" ]]; then
+    if [[ -e "/bsm/scripts/${n%.**}" ]]; then
+      rm "/bsm/scripts/${n%.**}" >> $log 2>> $errlog
+      if [[ ! -e "/bsm/scripts/${n%.**}" ]]; then
         echo "Script Removed!"
       else
-        echo "Unable to remove script, refer to /var/log/bsm_err_log.log for details"
+        echo "Unable to remove script, refer to /bsm/logs/err.log for details"
       fi
     else
       #Check for other executables
       if [[ -e "/bsm/scripts/_python/${n%.**}" ]]; then
-        rm "/bsm/scripts/_python/${n%.**}" $tologs
+        rm "/bsm/scripts/_python/${n%.**}" >> $log 2>> $errlog
         if [[ ! -e "/bsm/scripts/_python/${n%.**}" ]]; then
           echo "Script(s) Removed!"
         else
           echo "Unable to remove script, refer to /bsm/logs/err.log for details"
         fi
       elif [[ -e "/bsm/scripts/_node/${n%.**}" ]]; then
-        rm "/bsm/scripts/_node/${n%.**}" $tologs
+        rm "/bsm/scripts/_node/${n%.**}" >> $log 2>> $errlog
         if [[ ! -e "/bsm/scripts/_node/${n%.**}" ]]; then
           echo "Script(s) Removed!"
         else
           echo "Unable to remove script, refer to /bsm/logs/err.log for details"
         fi
       elif [[ -e "/bsm/scripts/_ruby/${n%.**}" ]]; then
-        rm "/bsm/scripts/_ruby/${n%.**}" $tologs
+        rm "/bsm/scripts/_ruby/${n%.**}" >> $log 2>> $errlog
         if [[ ! -e "/bsm/scripts/_ruby/${n%.**}" ]]; then
           echo "Script(s) Removed!"
         else
           echo "Unable to remove script, refer to /bsm/logs/err.log for details"
         fi
       elif [[ -e "/bsm/scripts/_lisp/${n%.**}" ]]; then
-        rm "/bsm/scripts/_lisp/${n%.**}" $tologs
+        rm "/bsm/scripts/_lisp/${n%.**}" >> $log 2>> $errlog
         if [[ ! -e "/bsm/scripts/_lisp/${n%.**}" ]]; then
           echo "Script(s) Removed!"
         else
           echo "Unable to remove script, refer to /bsm/logs/err.log for details"
         fi
       elif [[ -e "/bsm/scripts/_power/${n%.***}" ]]; then
-        rm "/bsm/scripts/_power/${n%.***}" $tologs
+        rm "/bsm/scripts/_power/${n%.***}" >> $log 2>> $errlog
         if [[ ! -e "/bsm/scripts/_power/${n%.***}" ]]; then
           echo "Script(s) Removed!"
         else
@@ -323,7 +322,7 @@ link_script() {
   file=$1
   name=$2
   sudo chmod 757 "$file"
-  ln -s -t /bsm/scripts "$file" "$name" $tologs
+  ln -s -t /bsm/scripts "$file" "$name" >> $log 2>> $errlog
   if [[ -e "/bsm/scripts/$name" ]]; then
     echo "Script Linked!"
   else
