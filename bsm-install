@@ -15,37 +15,34 @@ install() {
   echo "Setting up logging and scripts folders..."
   if [ ! -d "/bsm" ]; then
     sudo mkdir /bsm
-    sudo mkdir /bsm/scripts
-    sudo mkdir /bsm/logs
-    sudo chown $USER $scripts
-    sudo chgrp $USER $scripts
+    sudo chgrp $USER /bsm
+    sudo chown $USER /bsm
+    mkdir /bsm/scripts
+    mkdir /bsm/logs
   fi
   if [ ! -e $errlog ]; then
-    sudo touch $errlog
-    sudo chown $USER $errlog
-    sudo chgrp $USER $errlog
-    sudo chmod 766 $errlog
+    touch $errlog
+    sudo chmod 666 $errlog
   fi
   if [ ! -e $log ]; then
-    sudo touch $log
-    sudo chown $USER $log
-    sudo chgrp $USER $log
-    sudo chmod 766 $log
+    touch $log
+    sudo chmod 666 $log
   fi
   sudo cp "$(find ~ -type f -name "bsm")" /usr/local/bin/bsm && echo "Copy of BSM added to program registry!"
   sudo cp "$(find ~ -type f -name "bsm-install")" /usr/local/sbin/bsm-install && echo "Installer copied to system registry!"
-  sudo cp "$(find ~ -type f -name ".version")" /bsm/.version
-  sudo cp "$(find ~ -type f -name "bsm.config")" /bsm/.config
-  sudo cp "$(find ~ -type f -name ".bsm-vars")" /bsm/.bsm-vars
-  sudo cp "$(find ~ -type f -name ".bsm-funcs")" /bsm/.bsm-funcs
-  sudo cp "$(find ~ -type f -name ".help")" /bsm/.help
-  sudo cp "$(find ~ -type f -name ".install-help")" /bsm/.install-help
+  cp "$(find ~ -type f -name ".version")" /bsm/.version
+  cp "$(find ~ -type f -name ".bsm-vars")" /bsm/.bsm-vars
+  cp "$(find ~ -type f -name ".bsm-funcs")" /bsm/.bsm-funcs
+  cp "$(find ~ -type f -name ".help")" /bsm/.help
+  cp "$(find ~ -type f -name ".install-help")" /bsm/.install-help
+  cp "$(find ~ -type f -name "bsm.config")" /bsm/.config
+  sudo chmod 644 /bsm/.config
   sudo chmod 755 /usr/local/bin/bsm
   sudo chmod 755 /usr/local/sbin/bsm-install
   echo "Updating PATH..."
   #This assumes you haven't modified the original bashrc file with your own things that don't end in 'fi'
   if [[ "$(echo "$PATH" | grep $scripts)" == "" ]]; then
-    echo "export PATH=\"$PATH:$scripts:$scripts/_node:$scripts/_python:$scripts/_ruby:$scripts/_lisp\"" >> /home/$USER/.bashrc
+    echo "export PATH=\"$PATH:$scripts:$scripts/_node:$scripts/_python:$scripts/_ruby:$scripts/_lisp:$scripts/_power\"" >> /home/$USER/.bashrc
     source ~/.bashrc #Attempt reload of PATH
   fi
 

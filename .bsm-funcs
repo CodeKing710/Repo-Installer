@@ -122,7 +122,7 @@ mknode() {
     sudo snap install --edge node --classic >> $log 2>> $errlog || echo "Ran into issue installing, check /var/log/bsm_err_log.log"
     echo "Finished installing Node! You may need to hit [Enter] to continue..."
   fi
-  touch "/bsm/scripts/_node/${name%.js}" && chmod 757 "/bsm/scripts/_node/${name%.js}"
+  touch "/bsm/scripts/_node/${name%.js}" && chmod 755 "/bsm/scripts/_node/${name%.js}"
   printf "#!/bin/env node\n\n//Write script code" > "/bsm/scripts/_node/${name%.js}"
   if [[ -e "/bsm/scripts/_node/${name%.js}" ]]; then
     echo "Script Created!"
@@ -137,7 +137,7 @@ mkpyth() {
     sudo apt-get install -y python3-pip >> $log 2>> $errlog || echo "Ran into issue installing, check /var/log/bsm_err_log.log"
     echo "Finished installing Python! You may need to hit [Enter] to continue..."
   fi
-  touch "/bsm/scripts/_python/${name%.py}" && chmod 757 "/bsm/scripts/_python/${name%.py}"
+  touch "/bsm/scripts/_python/${name%.py}" && chmod 755 "/bsm/scripts/_python/${name%.py}"
   printf "#!/bin/env python3\n\n#Write script code" > "/bsm/scripts/_python/${name%.py}"
   if [[ -e "/bsm/scripts/_python/${name%.py}" ]]; then
     echo "Script Created!"
@@ -153,7 +153,7 @@ mklisp() {
     sudo apt-get install sbcl -y >> $log 2>> $errlog || echo "Ran into issue installing, check /var/log/bsm_err_log.log"
     echo "Finished installing LISP! You may need to hit [Enter] to continue..."
   fi
-  touch "/bsm/scripts/_lisp/${name%.cl}" && chmod 757 "/bsm/scripts/_lisp/${name%.cl}"
+  touch "/bsm/scripts/_lisp/${name%.cl}" && chmod 755 "/bsm/scripts/_lisp/${name%.cl}"
   printf "#!/bin/env -S sbcl --script\n\n;; Write script code" > "/bsm/scripts/_lisp/${name%.cl}"
   if [[ -e "/bsm/scripts/_lisp/${name%.cl}" ]]; then
     echo "Script Created!"
@@ -168,7 +168,7 @@ mkruby() {
     sudo apt-get install ruby-full -y >> $log 2>> $errlog || echo "Ran into issue installing, check /var/log/bsm_err_log.log"
     echo "Finished installing Ruby! You may need to hit [Enter] to continue..."
   fi
-  touch "/bsm/scripts/_ruby/${name%.rb}" && chmod 757 "/bsm/scripts/_ruby/${name%.rb}"
+  touch "/bsm/scripts/_ruby/${name%.rb}" && chmod 755 "/bsm/scripts/_ruby/${name%.rb}"
   printf "#!/bin/env ruby\n\n#Write script code" > "/bsm/scripts/_ruby/${name%.rb}"
   if [[ -e "/bsm/scripts/_ruby/${name%.rb}" ]]; then
     echo "Script Created!"
@@ -181,7 +181,7 @@ mkpwsh() {
       mkdir /bsm/scripts/_power
       echo "Set up PowerShell for use in BSM through WSL!"
     fi
-    touch "/bsm/scripts/_power/${name%.***}" && chmod 757 "/bsm/scripts/_power/${name%.***}"
+    touch "/bsm/scripts/_power/${name%.***}" && chmod 755 "/bsm/scripts/_power/${name%.***}"
     printf "#!/bin/bash\n\npowershell.exe -F \"/bsm/scripts/_power/$name\"" > "/bsm/scripts/_power/${name%.***}"
   else
     echo "PowerShell not available"
@@ -189,7 +189,7 @@ mkpwsh() {
 }
 mkbash() {
   name=$1
-  touch "/bsm/scripts/${name%.**}" && chmod 757 "/bsm/scripts/${name%.**}"
+  touch "/bsm/scripts/${name%.**}" && chmod 755 "/bsm/scripts/${name%.**}"
   printf "#!/bin/bash\n\n#Write script code" > "/bsm/scripts/${name%.**}"
   if [[ -e "/bsm/scripts/${name%.**}" ]]; then
     echo "Script Created!"
@@ -375,11 +375,27 @@ export_script() {
       echo "Overwriting destination file..."
       cp "/bsm/scripts/${script%.***}" "$dest"
       echo "Script exported to '$dest'"
+    else
+      echo "Operation cancelled"
+      return
+    fi
+  else
+    cp "/bsm/scripts/${script%.***}" "$dest"
+  fi
 }
 list_scripts() {
   echo "Available Scripts:"
   ls -pR1 /bsm/scripts | grep -v / | tr -s '\n' ' ' | tr ' ' '\n' | xargs -i echo "- {}"
 }
 config_bsm() {
-  echo "In progress function"
+  if [[ "$2" == "" ]]; then
+    # Get rule
+    echo "Rule: $(cat /bsm/.config | grep "$1")"
+  else
+    # Set rule
+    sed "'s/$1=$editor/$1=$2/'" /bsm/.config >> /bsm/.config
+    echo "New rule: $(cat /bsm/.config | grep "$1")"
+    # Reload vars
+    . /bsm/.bsm-vars
+  fi
 }
