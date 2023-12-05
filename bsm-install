@@ -12,11 +12,6 @@ scripts="/bsm/scripts"
 # Functions
 install() {
   echo "Installing..."
-  # Check for repo installer as it may provide more up-to-date install code
-  if find ~ -type f -name bsm-install; then
-    . $(find ~ -type f -name bsm-install) -i
-    return
-  fi
   echo "Setting up logging and scripts folders..."
   if [ ! -d "/bsm" ]; then
     sudo mkdir /bsm
