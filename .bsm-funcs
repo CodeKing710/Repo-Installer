@@ -247,6 +247,7 @@ open_script() {
 }
 remove_scripts() {
   # Code
+  shift
   while [[ $1 != "" ]]; do
     n=$1
     if [[ -e "/bsm/scripts/${n%.**}" ]]; then
