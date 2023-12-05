@@ -30,7 +30,21 @@ search_args() {
         else
           import_script $@
         fi
-        ;;
+        exit;;
+      -e | --export )
+        shift
+        if [[ "$1" == "" ]]; then
+          echo "Missing required argument: 'SCRIPT'"
+          exit
+        else
+          if [[ "$2" == "" ]]; then
+            echo "Missing required argument: 'DESTINATION'"
+            exit
+          else
+            export_script $1 $2
+          fi
+        fi
+        exit;;
       -L | --link )
         shift
         if [[ "$1" == "" ]]; then
@@ -333,27 +347,39 @@ link_script() {
   fi
 }
 import_script() {
-  name=$1
-  bsm -c "$name"
-  scriptpath="/scripts"
-  if [[ "$name" =~ ".js" ]]; then
-      scriptpath="$scriptpath/_node"
-  elif [[ "$name" =~ ".py" ]]; then
-      scriptpath="$scriptpath/_python"
-  elif [[ "$name" =~ ".rb" ]]; then
-      scriptpath="$scriptpath/_ruby"
-  elif [[ "$name" =~ ".cl" ]]; then
-      scriptpath="$scriptpath/_lisp"
-  fi
-  cat $(find -L ~ -type f -name "$name") >> "$scriptpath/${name%.**}"
+  while [[ "$1" != "" ]]; do
+    name=$1
+    bsm -c "$name"
+    scriptpath="/scripts"
+    if [[ "$name" =~ ".js" ]]; then
+        scriptpath="$scriptpath/_node"
+    elif [[ "$name" =~ ".py" ]]; then
+        scriptpath="$scriptpath/_python"
+    elif [[ "$name" =~ ".rb" ]]; then
+        scriptpath="$scriptpath/_ruby"
+    elif [[ "$name" =~ ".cl" ]]; then
+        scriptpath="$scriptpath/_lisp"
+    fi
+    cat $(find -L ~ -type f -name "$name") >> "$scriptpath/${name%.**}"
+    shift
+  done
 }
 export_script() {
-  echo "In progress function"
-}
-config_bsm() {
-  echo "In progress function"
+  script=$1
+  dest=$2
+  echo "Exporting..."
+  if [[ "$(diff "/bsm/scripts/${script%.***}" "$dest/${script%.***}")" != "" ]]; then
+    echo -n "Script in destination doesn't match script being exported, are you sure you want to overwrite the destination? [Y/n] "
+    read yn
+    if [[ "${yn,}" == "y" ]]; then
+      echo "Overwriting destination file..."
+      cp "/bsm/scripts/${script%.***}" "$dest"
+      echo "Script exported to '$dest'"
 }
 list_scripts() {
   echo "Available Scripts:"
   ls -pR1 /bsm/scripts | grep -v / | tr -s '\n' ' ' | tr ' ' '\n' | xargs -i echo "- {}"
+}
+config_bsm() {
+  echo "In progress function"
 }
