@@ -6,36 +6,78 @@ search_args() {
     case $1 in
       -c | --create )
         shift
-        create_script $1
+        if [[ "$1" == "" ]]; then
+          echo "Missing required argument: 'NAME'"
+          exit
+        else
+          create_script $1
+        fi
         ;;
       -o | --open )
         shift
-        open_script $1
+        if [[ "$1" == "" ]]; then
+          echo "Missing required argument: 'SCRIPT'"
+          exit
+        else
+          open_script $1
+        fi
         exit;;
       -i | --import )
         shift
-        import_script $@
+        if [[ "$1" == "" ]]; then
+          echo "Missing required argument: 'SCRIPT'"
+          exit
+        else
+          import_script $@
+        fi
         ;;
       -L | --link )
         shift
-        link_script $1 $2
+        if [[ "$1" == "" ]]; then
+          echo "Missing required argument: 'SCRIPT'"
+          exit
+        else
+          if [[ "$2" == "" ]]; then
+            echo "Missing required argument: 'NAME'"
+            exit
+          else
+            link_script $1 $2
+          fi
+        fi
         shift #Ensure the shift at the end doesn't reread a used argument since this one is chainable
         ;;
       -n | --rename )
         shift
-        rename_script $1
+        if [[ "$1" == "" ]]; then
+          echo "Missing required argument: 'SCRIPT'"
+          exit
+        else
+          if [[ "$2" == "" ]]; then
+            echo "Missing required argument: 'NEW_NAME'"
+          rename_script $1 $2
+        fi
         ;;
       -r | --remove )
         shift
-        remove_scripts $@
+        if [[ "$1" == "" ]]; then
+          echo "Missing required argument: 'SCRIPT'"
+          exit
+        else
+          remove_scripts $@
+        fi
         exit;;
       -C | --config )
         shift
-        if [[ "$2" == "-C" || "$2" == "--config" ]]; then
-          config_bsm $1
+        if [[ "$1" == "" ]]; then
+          echo "Missing required argument: 'RULE'"
+          exit
         else
-          config_bsm $1 $2
-          shift
+          if [[ "$2" == "-C" || "$2" == "--config" ]]; then
+            config_bsm $1
+          else
+            config_bsm $1 $2
+            shift
+          fi
         fi
         ;;
       -l | --list )
