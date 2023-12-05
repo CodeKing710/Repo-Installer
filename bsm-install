@@ -35,6 +35,7 @@ install() {
   sudo cp "$(find ~ -type f -name "bsm")" /usr/local/bin/bsm && echo "Copy of BSM added to program registry!"
   sudo cp "$(find ~ -type f -name "bsm-install")" /usr/local/sbin/bsm-install && echo "Installer copied to system registry!"
   sudo cp "$(find ~ -type f -name ".version")" /bsm/.version
+  sudo cp "$(find ~ -type f -name "bsm.config")" /bsm/.config
   sudo cp "$(find ~ -type f -name ".bsm-vars")" /bsm/.bsm-vars
   sudo cp "$(find ~ -type f -name ".bsm-funcs")" /bsm/.bsm-funcs
   sudo cp "$(find ~ -type f -name ".help")" /bsm/.help
@@ -209,10 +210,12 @@ search_args() {
       $help
       exit;;
     -l | --logs )
-      view_logs $2
+      shift
+      view_logs $1
       exit;;
     -c | --clear )
-      clear_bsm $2
+      shift
+      clear_bsm $1
       exit;;
   esac
 }

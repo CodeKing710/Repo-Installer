@@ -4,6 +4,42 @@
 search_args() {
   while [[ "$1" != "" ]]; do
     case $1 in
+      -c | --create )
+        shift
+        create_script $1
+        ;;
+      -o | --open )
+        shift
+        open_script $1
+        exit;;
+      -i | --import )
+        shift
+        import_script $@
+        ;;
+      -L | --link )
+        shift
+        link_script $1 $2
+        shift #Ensure the shift at the end doesn't reread a used argument since this one is chainable
+        ;;
+      -n | --rename )
+        shift
+        rename_script $1
+        ;;
+      -r | --remove )
+        shift
+        remove_scripts $@
+        exit;;
+      -C | --config )
+        shift
+        if [[ "$2" == "-C" || "$2" == "--config" ]]; then
+          config_bsm $1
+        else
+          config_bsm $1 $2
+          shift
+        fi
+        ;;
+      -l | --list )
+        exit;;
       -v | --version )
         echo "$version"
         exit;;
@@ -14,6 +50,6 @@ search_args() {
         echo "Err: No argument found with '$1' in BSM"
         exit;;
     esac
-    shift
+    shift # Move onto next argument in list
   done
 }
