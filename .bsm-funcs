@@ -212,22 +212,22 @@ create_script() {
       case $1 in
         -p | --python )
           mkpyth $name
-          exit;;
+          ;;
         -n | --node )
           mknode $name
-          exit;;
+          ;;
         -r | --ruby )
           mkruby $name
-          exit;;
+          ;;
         -l | --lisp )
           mklisp $name
-          exit;;
+          ;;
         -b | --bash )
           mkbash $name
-          exit;;
+          ;;
         -P | --powershell )
           mkpwsh $name
-          exit;;
+          ;;
       esac
     else
       if [[ "$name" =~ ".js" ]]; then # Node
@@ -246,7 +246,7 @@ create_script() {
     fi
   else
     echo "Script with that name exists! Keeping Original..."
-    echo "Would you like to open this script?"
+    echo -n "Would you like to open this script? [Y/n] "
     read yn
     if [[ "${yn,}" =~ "y" ]]; then
       open_script "${name%.**}"
@@ -356,8 +356,8 @@ link_script() {
 import_script() {
   while [[ "$1" != "" ]]; do
     name=$1
-    bsm -c "$name"
-    scriptpath="/scripts"
+    create_script "$name"
+    scriptpath="/bsm/scripts"
     if [[ "$name" =~ ".js" ]]; then
         scriptpath="$scriptpath/_node"
     elif [[ "$name" =~ ".py" ]]; then
@@ -367,8 +367,7 @@ import_script() {
     elif [[ "$name" =~ ".cl" ]]; then
         scriptpath="$scriptpath/_lisp"
     fi
-    cat $(find -L ~ -type f -name "$name") >> "$scriptpath/${name%.**}"
-    shift
+    cat $(find -L -path /bsm -prune -type f -name "$name") >> "$scriptpath/${name%.**}"
   done
 }
 export_script() {

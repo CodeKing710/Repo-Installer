@@ -23,20 +23,128 @@ if [[ "$1" == "" ]]; then
         list_scripts
         ;;
       Create )
+        echo "What type of script will this be?"
+        scriptType="-b"
+        select type in Python Node Ruby LISP Bash PowerShell Cancel; do
+          echo ""
+          case $type in
+            Python )
+              scriptType="-p"
+              break;;
+            Node )
+              scriptType="-n"
+              break;;
+            Ruby )
+              scriptType="-r"
+              break;;
+            LISP )
+              scriptType="-l"
+              break;;
+            Bash )
+              break;;
+            PowerShell )
+              scriptType="-P"
+              break;;
+            Cancel )
+              scriptType="cancel"
+              break;;
+            * )
+              echo "Not an option"
+              ;;
+          esac
+          echo -e "\nWhat type of script will this be?"
+          echo "1) Python      3) Ruby       5) Bash        7) Cancel"
+          echo "2) Node        4) LISP       6) PowerShell"
+        done
+        if [[ "$scriptType" == "cancel" ]]; then
+          # Show options again
+          echo -e "\nAnything else you would like to do today?"
+          echo "1) List      3) Rename   5) Import   7) Link     9) Config"
+          echo "2) Create    4) Open     6) Export   8) Remove  10) Exit"
+          continue
+        else
+          while [[ "$name" == "" ]]; do
+            echo -n "Enter a script name: "
+            read name
+          done
+          echo "Script Name: $name"
+          echo "Script Type: $scriptType"
+          echo "Creating..."
+          create_script $scriptType $name
+        fi
         ;;
       Rename )
+        while [[ "$script" == "" ]]; do
+          echo -n "Enter script to rename: "
+          read script
+        done
+        while [[ "$name" == "" ]]; do
+          echo -n "Enter new name for script: "
+          read name
+        done
+        rename_script $script $name
         ;;
       Open )
+        while [[ "$name" == "" ]]; do
+          echo -n "Enter script to open: "
+          read name
+        done
+        open_script $name
         ;;
       Import )
+        while [[ "$script" == "" ]]; do
+          echo -n "Enter script to import (path or name): "
+          read script
+        done
+        import_script $script
         ;;
       Export )
+        while [[ "$script" == "" ]]; do
+          echo -n "Enter script to export: "
+          read script
+        done
+        while [[ "$dest" == "" ]]; do
+          echo -n "Enter destination path: "
+          read dest
+        done
+        export_script $script $dest
         ;;
       Link )
+        while [[ "$path" == "" ]]; do
+          echo -n "Enter path of script to link: "
+          read path
+        done
+        while [[ "$script" == "" ]]; do
+          echo -n "Enter name to link as: "
+          read script
+        done
+        link_script $path $script
         ;;
       Remove )
+        while [[ "$script" == "" ]]; do
+          echo -n "Enter script to remove: "
+          read script
+        done
+        remove_scripts $script
         ;;
       Config )
+        while [[ "$rule" == "" ]]; do
+          echo -n "Enter a config rule: "
+          read rule
+        done
+        while [[ "$yn" == "" ]]; do
+          echo -n "Would you like to set the '$rule' rule? [Y/n] "
+          read yn
+        done
+        if [[ "${yn,}" == "y" ]]; then
+          while [[ "$value" == "" ]]; do
+            echo -n "Set rule '$rule' to: "
+            read value
+          done
+          config_bsm $rule $value
+        else
+          config_bsm $rule
+        fi
         ;;
       Exit )
         break;;
@@ -45,7 +153,7 @@ if [[ "$1" == "" ]]; then
         ;;
     esac
     # Show options again
-    echo -e "\nWhat would you like to do today?"
+    echo -e "\nAnything else you would like to do today?"
     echo "1) List      3) Rename   5) Import   7) Link     9) Config"
     echo "2) Create    4) Open     6) Export   8) Remove  10) Exit"
   done
