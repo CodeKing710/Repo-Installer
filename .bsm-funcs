@@ -54,7 +54,9 @@ search_args() {
         else
           if [[ "$2" == "" ]]; then
             echo "Missing required argument: 'NEW_NAME'"
-          rename_script $1 $2
+          else
+            rename_script $1 $2
+          fi
         fi
         ;;
       -r | --remove )
@@ -81,6 +83,7 @@ search_args() {
         fi
         ;;
       -l | --list )
+        list_scripts
         exit;;
       -v | --version )
         echo "$version"
@@ -347,4 +350,8 @@ export_script() {
 }
 config_bsm() {
   # Code
+}
+list_scripts() {
+  echo "Available Scripts:"
+  ls -pR1 /bsm/scripts | grep -v / | tr -s '\n' ' ' | tr ' ' '\n' | xargs -i echo "- {}"
 }
