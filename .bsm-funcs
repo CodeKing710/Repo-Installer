@@ -53,3 +53,171 @@ search_args() {
     shift # Move onto next argument in list
   done
 }
+mknode() {
+  name="${$1%.**}"
+  #Make Nodejs folder, exe, installation
+  if [[ ! -d "/bsm/scripts/_node" ]]; then
+    echo "Installing Node.js and dependencies..."
+    mkdir /bsm/scripts/_node $tologs
+    sudo snap install --edge node --classic $tologs || echo "Ran into issue installing, check /var/log/bsm_err_log.log"
+    echo "Finished installing Node! You may need to hit [Enter] to continue..."
+  fi
+  touch "/bsm/scripts/_node/${name%.js}" && chmod 757 "/bsm/scripts/_node/${name%.js}"
+  printf "#!/bin/env node\n\n//Write script code" > "/bsm/scripts/_node/${name%.js}"
+  if [[ -e "/bsm/scripts/_node/${name%.js}" ]]; then
+    echo "Script Created!"
+  fi
+}
+mkpyth() {
+  name="${$1%.**}"
+  #Make python folder and executable (Install python if not installed)
+  if [[ ! -d "/bsm/scripts/_python" ]]; then
+    echo "Installing Python and setting up dependencies..."
+    mkdir /bsm/scripts/_python $tologs
+    sudo apt-get install -y python3-pip $tologs || echo "Ran into issue installing, check /var/log/bsm_err_log.log"
+    echo "Finished installing Python! You may need to hit [Enter] to continue..."
+  fi
+  touch "/bsm/scripts/_python/${name%.py}" && chmod 757 "/bsm/scripts/_python/${name%.py}"
+  printf "#!/bin/env python3\n\n#Write script code" > "/bsm/scripts/_python/${name%.py}"
+  if [[ -e "/bsm/scripts/_python/${name%.py}" ]]; then
+    echo "Script Created!"
+  fi
+}
+mklisp() {
+  name="${$1%.**}"
+  #LISP folder, exe, install
+  if [[ ! -d "/bsm/scripts/_lisp" ]]; then
+    echo "Installing CommonLISP and dependencies..."
+    echo "View log file for details"
+    mkdir /bsm/scripts/_lisp $tologs
+    sudo apt-get install sbcl -y $tologs || echo "Ran into issue installing, check /var/log/bsm_err_log.log"
+    echo "Finished installing LISP! You may need to hit [Enter] to continue..."
+  fi
+  touch "/bsm/scripts/_lisp/${name%.cl}" && chmod 757 "/bsm/scripts/_lisp/${name%.cl}"
+  printf "#!/bin/env -S sbcl --script\n\n;; Write script code" > "/bsm/scripts/_lisp/${name%.cl}"
+  if [[ -e "/bsm/scripts/_lisp/${name%.cl}" ]]; then
+    echo "Script Created!"
+  fi
+}
+mkruby() {
+  name="${$1%.**}"
+  #Ruby folder, exe, install
+  if [[ ! -d "/bsm/scripts/_ruby" ]]; then
+    echo "Installing Ruby and dependencies..."
+    mkdir /bsm/scripts/_ruby $tologs
+    sudo apt-get install ruby-full -y $tologs || echo "Ran into issue installing, check /var/log/bsm_err_log.log"
+    echo "Finished installing Ruby! You may need to hit [Enter] to continue..."
+  fi
+  touch "/bsm/scripts/_ruby/${name%.rb}" && chmod 757 "/bsm/scripts/_ruby/${name%.rb}"
+  printf "#!/bin/env ruby\n\n#Write script code" > "/bsm/scripts/_ruby/${name%.rb}"
+  if [[ -e "/bsm/scripts/_ruby/${name%.rb}" ]]; then
+    echo "Script Created!"
+  fi
+}
+mkpwsh() {
+  name="${$1%.***}"
+  if [[ "" =~ "WSL" ]]; then
+    if [[ ! -d "/bsm/scripts/_power" ]]; then
+      mkdir /bsm/scripts/_power
+      echo "Set up PowerShell for use in BSM through WSL!"
+    fi
+    touch "/bsm/scripts/_power/${name%.***}" && chmod 757 "/bsm/scripts/_power/${name%.***}"
+    printf "#!/bin/bash\n\npowershell.exe -F \"/bsm/scripts/_power/$name\"" > "/bsm/scripts/_power/${name%.***}"
+  else
+    echo "PowerShell not available"
+  fi
+}
+mkbash() {
+  name="${$1%.**}"
+  touch "/bsm/scripts/${name%.**}" && chmod 757 "/bsm/scripts/${name%.**}"
+  printf "#!/bin/bash\n\n#Write script code" > "/bsm/scripts/${name%.**}"
+  if [[ -e "/bsm/scripts/${name%.**}" ]]; then
+    echo "Script Created!"
+  fi
+}
+create_script() {
+  name=$1
+  # Check if next arg is a name or a type def
+  if [[ ! -e "/bsm/scripts/_power/${name%.***}" && ! -e "/bsm/scripts/_lisp/${name%.**}" && ! -e "/bsm/scripts/_ruby/${name%.**}" && ! -e "/bsm/scripts/_node/${name%.**}" && ! -e "/bsm/scripts/_python/${name%.**}" && ! -e "/bsm/scripts/$name" ]]; then
+    if [[ "$1" =~ "-" ]]; then
+      name=$2
+      case $1 in
+        -p | --python )
+          mkpyth $name
+          exit;;
+        -n | --node )
+          mknode $name
+          exit;;
+        -r | --ruby )
+          mkruby $name
+          exit;;
+        -l | --lisp )
+          mklisp $name
+          exit;;
+        -b | --bash )
+          mkbash $name
+          exit;;
+        -P | --powershell )
+          mkpwsh $name
+          exit;;
+      esac
+    else
+      if [[ "$name" =~ ".js" ]]; then # Node
+        mknode $name
+      elif [[ "$name" =~ ".py" ]]; then # Python
+        mkpyth $name
+      elif [[ "$name" =~ ".rb" ]]; then # Ruby
+        mkruby $name
+      elif [[ "$name" =~ ".cl" ]]; then # LISP
+        mklisp $name
+      elif [[ "$name" =~ ".ps1" ]]; then # PowerShell
+        mkpwsh $name
+      else # Bash
+        mkbash $name
+      fi
+    fi
+  else
+    echo "Script with that name exists! Keeping Original..."
+    echo "Would you like to open this script?"
+    read yn
+    if [[ "${yn,}" =~ "y" ]]; then
+      open_script "${name%.**}"
+    fi
+  fi
+  ;;
+}
+open_script() {
+  name=$1
+  # Special PowerShell check
+  if [[ -e "/bsm/scripts/_power/${name%.***}" ]]; then
+    echo "Script found, opening..."
+    find -L "/bsm/scripts/_power/${name%.***}" -type f -name "${name%.***}" -exec $editor {}.ps1 \; $tologs
+  # Check rest normally
+  elif [[ -e "/bsm/scripts/_lisp/${name%.**}" || -e "/bsm/scripts/_ruby/${name%.**}" || -e "/bsm/scripts/_python/${name%.**}" || -e "/bsm/scripts/_node/${name%.**}" || -e "/bsm/scripts/${name%.**}" ]]; then
+    echo "Script found, opening..."
+    find -L /bsm/scripts -type f -name "${name%.**}" -exec $editor {} \; $tologs
+  else
+    echo "Script not found, creating..."
+    create_script "$name"
+    open_script "${name%.***}"
+  fi
+  exit;;
+}
+remove_scripts() {
+  # Code
+}
+rename_script() {
+  # Code
+}
+link_script() {
+  # Code
+}
+import_script() {
+  # Code
+}
+export_script() {
+  # Code
+}
+config_bsm() {
+  # Code
+}
