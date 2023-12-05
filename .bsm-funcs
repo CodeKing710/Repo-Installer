@@ -5,8 +5,10 @@ search_args() {
   while [[ "$1" != "" ]]; do
     case $1 in
       -v | --version )
+        echo "$version"
         exit;;
       -h | --help )
+        $help
         exit;;
       * )
         echo "Err: No argument found with '$1' in BSM"
