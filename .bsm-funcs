@@ -189,6 +189,7 @@ mkpwsh() {
     printf "#!/bin/bash\n\npowershell.exe -F \"/bsm/scripts/_power/$name\"" > "/bsm/scripts/_power/${name%.***}"
     if [[ -e "/bsm/scripts/_power/${name%.***}" && -e "/bsm/scripts/_power/$name" ]]; then
       echo "Script Created!"
+      echo "When executing, you should consider whitelisting the script to PowerShell so you don't have to allow it each time!"
     fi
   else
     echo "PowerShell not available"
