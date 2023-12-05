@@ -18,6 +18,14 @@ if [[ "$1" == "" ]]; then
   echo "What would you like to do today?"
   select opt in List Create Rename Open Import Export Link Remove Config Exit; do
     echo "" # Insert whitespace between selection and response
+    # Force ask vars to be cleared everytime
+    script=""
+    dest=""
+    path=""
+    name=""
+    rule=""
+    value=""
+    # Loop options with ask vars set
     case $opt in
       List )
         list_scripts
