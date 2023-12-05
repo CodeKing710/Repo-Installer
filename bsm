@@ -16,7 +16,40 @@ if [[ "$1" == "" ]]; then
   # Interactive mode
   echo "Welcome to BSM!"
   echo "What would you like to do today?"
+  select opt in List Create Rename Open Import Export Link Remove Config Exit; do
+    echo "" # Insert whitespace between selection and response
+    case $opt in
+      List )
+        list_scripts
+        ;;
+      Create )
+        ;;
+      Rename )
+        ;;
+      Open )
+        ;;
+      Import )
+        ;;
+      Export )
+        ;;
+      Link )
+        ;;
+      Remove )
+        ;;
+      Config )
+        ;;
+      Exit )
+        break;;
+      * )
+        echo "Not an option"
+        ;;
+    esac
+    # Show options again
+    echo -e "\nWhat would you like to do today?"
+    echo "1) List      3) Rename   5) Import   7) Link     9) Config"
+    echo "2) Create    4) Open     6) Export   8) Remove  10) Exit"
+  done
 else
-  #CLI Mode
+  # CLI Mode
   search_args $@
 fi

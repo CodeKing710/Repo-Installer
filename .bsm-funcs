@@ -176,7 +176,7 @@ mkruby() {
 }
 mkpwsh() {
   name=$1
-  if [[ "" =~ "WSL" ]]; then
+  if [[ "$(uname -r)" =~ "WSL" ]]; then
     if [[ ! -d "/bsm/scripts/_power" ]]; then
       mkdir /bsm/scripts/_power
       echo "Set up PowerShell for use in BSM through WSL!"
@@ -262,7 +262,6 @@ open_script() {
   fi
 }
 remove_scripts() {
-  # Code
   while [[ $1 != "" ]]; do
     n=$1
     if [[ -e "/bsm/scripts/${n%.**}" ]]; then
@@ -273,7 +272,7 @@ remove_scripts() {
         echo "Unable to remove script, refer to /bsm/logs/err.log for details"
       fi
     else
-      #Check for other executables
+      # Check for other executables
       if [[ -e "/bsm/scripts/_python/${n%.**}" ]]; then
         rm "/bsm/scripts/_python/${n%.**}" >> $log 2>> $errlog
         if [[ ! -e "/bsm/scripts/_python/${n%.**}" ]]; then
