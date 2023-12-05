@@ -58,8 +58,10 @@ search_args() {
             rename_script $1 $2
           fi
         fi
-        ;;
+        shift
+        exit;;
       -r | --remove )
+        shift
         if [[ "$1" == "" ]]; then
           echo "Missing required argument: 'SCRIPT'"
           exit
@@ -303,7 +305,7 @@ remove_scripts() {
 }
 rename_script() {
   oldname=$1
-  if [[ "$(find -L /scripts -type f -name "$oldname")" == "" ]]; then
+  if [[ "$(find -L /bsm/scripts -type f -name "$oldname")" == "" ]]; then
     echo "Script to rename doesn't exist!"
     exit
   fi
@@ -316,7 +318,7 @@ rename_script() {
     newname=$1
   fi
   echo "Renaming..."
-  mv "$(find -L /scripts -type f -name "$oldname")" "$(find -L /scripts -type f -name "$oldname" | sed "s/\/$oldname/\/$newname/")"
+  mv "$(find -L /bsm/scripts -type f -name "$oldname")" "$(find -L /bsm/scripts -type f -name "$oldname" | sed "s/\/$oldname/\/$newname/")"
   echo "Script renamed!"
 }
 link_script() {
