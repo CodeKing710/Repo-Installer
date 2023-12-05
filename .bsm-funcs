@@ -346,10 +346,10 @@ import_script() {
   cat $(find -L ~ -type f -name "$name") >> "$scriptpath/${name%.**}"
 }
 export_script() {
-  # Code
+  echo "In progress function"
 }
 config_bsm() {
-  # Code
+  echo "In progress function"
 }
 list_scripts() {
   echo "Available Scripts:"
