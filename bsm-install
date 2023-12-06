@@ -8,6 +8,7 @@ help="cat /bsm/.install-help"
 log="/bsm/logs/bsm.log"
 errlog="/bsm/logs/err.log"
 scripts="/bsm/scripts"
+repo="$(find -type d -name "Bash-Script-Manager")"
 
 # Functions
 install() {
@@ -28,14 +29,15 @@ install() {
     touch $log
     sudo chmod 666 $log
   fi
-  sudo cp "$(find ~ -type f -name "bsm")" /usr/local/bin/bsm && echo "Copy of BSM added to program registry!"
-  sudo cp "$(find ~ -type f -name "bsm-install")" /usr/local/sbin/bsm-install && echo "Installer copied to system registry!"
-  cp "$(find ~ -type f -name ".version")" /bsm/.version
-  cp "$(find ~ -type f -name ".bsm-vars")" /bsm/.bsm-vars
-  cp "$(find ~ -type f -name ".bsm-funcs")" /bsm/.bsm-funcs
-  cp "$(find ~ -type f -name ".help")" /bsm/.help
-  cp "$(find ~ -type f -name ".install-help")" /bsm/.install-help
-  cp "$(find ~ -type f -name "bsm.config")" /bsm/.config
+  sudo cp "$(find $repo -type f -name "bsm")" /usr/local/bin/bsm && echo "Copy of BSM added to program registry!"
+  sudo cp "$(find $repo -type f -name "bsm-install")" /usr/local/sbin/bsm-install && echo "Installer copied to system registry!"
+  cp "$(find $repo -type f -name ".version")" /bsm/.version
+  cp "$(find $repo -type f -name ".bsm-vars")" /bsm/.bsm-vars
+  cp "$(find $repo -type f -name ".bsm-funcs")" /bsm/.bsm-funcs
+  cp "$(find $repo -type f -name ".help")" /bsm/.help
+  cp "$(find $repo -type f -name ".install-help")" /bsm/.install-help
+  cp "$(find $repo -type f -name "bsm.config")" /bsm/.config
+  cp -rf "$(find $repo -type d -name "tools")" /bsm/
   sudo chmod 644 /bsm/.config
   sudo chmod 755 /usr/local/bin/bsm
   sudo chmod 755 /usr/local/sbin/bsm-install
@@ -65,12 +67,17 @@ uninstall() {
 }
 
 repair() {
+  echo "Setting up BSM Folders..."
+  mkdir $BSM_LOGS
+  mkdir $BSM_SCRIPTS
+  mkdir $BSM_TOOLS
+  cp -rf "$(find $repo -type d -name "tools")" /bsm/
   if [[ "$1" == "" ]]; then
-    echo "Setting up BSM Folders..."
     mkdir $scripts/_node >> $log 2>> $errlog
     mkdir $scripts/_python >> $log 2>> $errlog
     mkdir $scripts/_ruby >> $log 2>> $errlog
     mkdir $scripts/_lisp >> $log 2>> $errlog
+
     if [[ "$(uname -r)" =~ "WSL" ]]; then
       mkdir $scripts/_power >> $log 2>> $errlog
     fi
