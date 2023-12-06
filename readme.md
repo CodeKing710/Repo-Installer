@@ -29,11 +29,13 @@ Making a script of any kind is very simple. You can do this one of two ways. You
 bsm -c "[SCRIPT]"
 ```
 
-Or you can have it open right away for editing.
+Or you can have it open right away for editing. Open currently only supports creation of non-existent scripts via file extension.
 
 ```
 bsm -o "[SCRIPT]"
 ```
+
+The create argument for BSM allows you predefine the script type, either through passing the type before the name, or via file extension in the script name. Both ways result in the same output, it is just a matter of what you prefer.  If you would prefer to be able to define the script type in the open argument as well as the creation argument, let me know! This program is open-source as well as open-minded!
 
 To remove a script is as simple as quoting the name of the script you want removed. Please note that to remove any script you just input the name, no file extensions necessary. If you do input a file extension the manager will still know where to look and remove the script. This argument is not chainable as it accepts any number of script names to mark for removal. (Example below)
 

@@ -20,15 +20,16 @@ bsm-install: v2.0.0
 
 __BSM Features__
 
-- Create Scripts for Python, Node, Ruby, and LISP
+- Create scripts for Python, Node, Ruby, and LISP
+  - Predefine script type without using file extensions via creation arguments
 - Open scripts for editing (Default nano, FTC editor selector)
-- Remove Scripts
-- Add/Link Scripts to BSM directory
-- List Scripts
-- Repair BSM Installation
-- Full uninstall
-- View logs
+- Remove scripts
+- Add/Link scripts to BSM directory
+- List scripts
 - Support to create and open non-existent scripts when using `-o`
+- ! NEW ! Export scipts to desired location
+- ! NEW ! Configure certain aspects of BSM
+- ! NEW ! Interactive mode for the less CLI-inclined (Base and Install)
 
 __BSM-Install Features__
 
@@ -36,19 +37,17 @@ __BSM-Install Features__
 - Uninstall BSM completely (no remnants)
 - Repair BSM
 - View BSM logs
-- Interactive use
 - Clear logs and scripts
+- Interactive mode
 
 ### Features to Come (FTC)
 
-- Choose text editor to use when opening a script
-- Predefine script type
-- Export script(s) to a specific location
 - Generate script files for quick-launching larger programs (i.e. start a web server for Node, Python, or Ruby)
 - Sample/System Tool scripts?
 
 ### Extra commit messages
 
-_Added .help and .install-help for help menus_
-_Footprint for bsm started_
-_bsm-install adds all '.' files to bsm_
+_BSMv2 is basically ready for initial release_
+_Completed interactive mode_
+_Completed interactive mode bug fixes_
+_Squashed more bugs_
