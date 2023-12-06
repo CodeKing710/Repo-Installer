@@ -1,6 +1,8 @@
 #!/bin/bash
 
-### FUNCTION PACK FOR BSM CLI FUNCTIONALITY ###
+### FUNCTION PACK FOR BSM FUNCTIONALITY ###
+
+# CLI
 search_args() {
   while [[ "$1" != "" ]]; do
     case $1 in
@@ -114,6 +116,39 @@ search_args() {
     shift # Move onto next argument in list
   done
 }
+
+# Command
+search_cmds() {
+  while [[ "$1" != "" ]]; do
+    cmd="${$1,}"
+    case $cmd in
+      create )
+        ;;
+      open )
+        ;;
+      import )
+        ;;
+      export )
+        ;;
+      link )
+        ;;
+      rename )
+        ;;
+      remove )
+        ;;
+      config )
+        ;;
+      list )
+        ;;
+      version )
+        ;;
+      help )
+        ;;
+    esac
+  shift; done
+}
+
+# General use functions
 mknode() {
   name=$1
   #Make Nodejs folder, exe, installation
