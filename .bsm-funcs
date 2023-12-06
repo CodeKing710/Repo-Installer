@@ -121,29 +121,137 @@ search_args() {
 search_cmds() {
   while [[ "$1" != "" ]]; do
     cmd="${$1,}"
+    shift
     case $cmd in
       create )
+        sub="${$1,}"
+        shift
+        name="$1"
+        case $sub in
+          ps | ps1 | powershell )
+            create_script -P $name
+            ;;
+          py | python )
+            create_script -p $name
+            ;;
+          js | node )
+            create_script -n $name
+            ;;
+          rb | ruby )
+            create_script -r $name
+            ;;
+          cl | lisp )
+            create_script -l $name
+            ;;
+          sh | bash )
+            create_script -b $name
+            ;;
+          * )
+            create_script $sub
+            ;;
+        esac
         ;;
       open )
-        ;;
+        name="$1"
+        if [[ "$name" == "" ]]; then
+          echo "Missing required argument: 'NAME'"
+          exit
+        else
+          open_script $name
+        fi
+        exit;;
       import )
-        ;;
+        script="$1"
+        if [[ "$script" == "" ]]; then
+          echo "Missing required argument: 'SCRIPT'"
+          exit
+        else
+          import_script $@
+        fi
+        exit;;
       export )
-        ;;
+        script="$1"
+        shift
+        dest="$1"
+        if [[ "$script" == "" ]]; then
+          echo "Missing required argument: 'SCRIPT'"
+          exit
+        else
+          if [[ "$dest" == "" ]]; then
+            echo "Missing required argument: 'DESTINATION'"
+            exit
+          else
+            export_script $script $dest
+          fi
+        fi
+        exit;;
       link )
+        script="$1"
+        shift
+        name="$1"
+        if [[ "$script" == "" ]]; then
+          echo "Missing required argument: 'SCRIPT'"
+          exit
+        else
+          if [[ "$name" == "" ]]; then
+            echo "Missing required argument: 'NAME'"
+            exit
+          else
+            link_script $script $name
+          fi
+        fi
         ;;
       rename )
+        name="$1"
+        shift
+        newname="$1"
+        if [[ "$name" == "" ]]; then
+          echo "Missing required argument: 'NAME'"
+          exit
+        else
+          if [[ "$newname" == "" ]]; then
+            echo "Missing required argument: 'NEW_NAME'"
+          else
+            rename_script $name $newname
+          fi
+        fi
         ;;
       remove )
-        ;;
+        name="$1"
+        if [[ "$name" == "" ]]; then
+          echo "Missing required argument: 'SCRIPT'"
+          exit
+        else
+          remove_scripts $@
+        fi
+        exit;;
       config )
+        rule="${$1,}"
+        value="${$2,}"
+        if [[ "$rule" == "" ]]; then
+          echo "Missing required argument: 'RULE'"
+          exit
+        else
+          if [[ "$value" == "" || "$value" == "config" ]]; then
+            config_bsm $rule
+          else
+            config_bsm $rule $value
+            shift
+          fi
+        fi
         ;;
       list )
-        ;;
+        list_scripts
+        exit;;
       version )
-        ;;
+        echo "$version"
+        exit;;
       help )
-        ;;
+        $help
+        exit;;
+      * )
+        echo "Err: No argument found with '$1' in BSM"
+        exit;;
     esac
   shift; done
 }
