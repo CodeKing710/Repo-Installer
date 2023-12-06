@@ -1,4 +1,4 @@
-# Bash Script Manager (v2.0.0)
+# Bash Script Manager (v2)
 
 This is a local script manager that allows you to add custom scripts to your system without affecting the baseline OS scripts.
 

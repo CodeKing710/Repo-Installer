@@ -7,7 +7,7 @@ __Version info, patch notes, and what's new will appear here__
 
 ### What's New
 
-BSM v2.0.0 comes with a major overhaul under the hood to ensure a better user experience and efficient handling of commands, as well as some much needed features to help make BSM more robust.
+BSM v2 comes with a major overhaul under the hood to ensure a better user experience and efficient handling of commands, as well as some much needed features to help make BSM more robust. BSM now supports interactive mode as well as command mode. Command mode uses sub commands instead of arguments to define actions and values.
 
 ### Patch Notes
 
@@ -15,7 +15,7 @@ BSM v2.0.0 comes with a major overhaul under the hood to ensure a better user ex
 
 ### Version Info
 
-bsm: v2.0.0
+bsm: v2.1.0
 bsm-install: v2.0.0
 
 __BSM Features__
