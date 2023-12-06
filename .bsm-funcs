@@ -10,7 +10,8 @@ search_args() {
           echo "Missing required argument: 'NAME'"
           exit
         else
-          create_script $1
+          create_script $@
+          shift # Fixes glitch with above function returning back with parsed args
         fi
         ;;
       -o | --open )
@@ -120,7 +121,7 @@ mknode() {
     echo "Installing Node.js and dependencies..."
     mkdir /bsm/scripts/_node >> $log 2>> $errlog
     sudo snap install --edge node --classic >> $log 2>> $errlog || echo "Ran into issue installing, check /var/log/bsm_err_log.log"
-    echo "Finished installing Node! You may need to hit [Enter] to continue..."
+    echo "Finished installing Node!"
   fi
   touch "/bsm/scripts/_node/${name%.js}" && chmod 755 "/bsm/scripts/_node/${name%.js}"
   printf "#!/bin/env node\n\n//Write script code" > "/bsm/scripts/_node/${name%.js}"
@@ -135,7 +136,7 @@ mkpyth() {
     echo "Installing Python and setting up dependencies..."
     mkdir /bsm/scripts/_python >> $log 2>> $errlog
     sudo apt-get install -y python3-pip >> $log 2>> $errlog || echo "Ran into issue installing, check /var/log/bsm_err_log.log"
-    echo "Finished installing Python! You may need to hit [Enter] to continue..."
+    echo "Finished installing Python!"
   fi
   touch "/bsm/scripts/_python/${name%.py}" && chmod 755 "/bsm/scripts/_python/${name%.py}"
   printf "#!/bin/env python3\n\n#Write script code" > "/bsm/scripts/_python/${name%.py}"
@@ -151,7 +152,7 @@ mklisp() {
     echo "View log file for details"
     mkdir /bsm/scripts/_lisp >> $log 2>> $errlog
     sudo apt-get install sbcl -y >> $log 2>> $errlog || echo "Ran into issue installing, check /var/log/bsm_err_log.log"
-    echo "Finished installing LISP! You may need to hit [Enter] to continue..."
+    echo "Finished installing LISP!"
   fi
   touch "/bsm/scripts/_lisp/${name%.cl}" && chmod 755 "/bsm/scripts/_lisp/${name%.cl}"
   printf "#!/bin/env -S sbcl --script\n\n;; Write script code" > "/bsm/scripts/_lisp/${name%.cl}"
@@ -166,7 +167,7 @@ mkruby() {
     echo "Installing Ruby and dependencies..."
     mkdir /bsm/scripts/_ruby >> $log 2>> $errlog
     sudo apt-get install ruby-full -y >> $log 2>> $errlog || echo "Ran into issue installing, check /var/log/bsm_err_log.log"
-    echo "Finished installing Ruby! You may need to hit [Enter] to continue..."
+    echo "Finished installing Ruby!"
   fi
   touch "/bsm/scripts/_ruby/${name%.rb}" && chmod 755 "/bsm/scripts/_ruby/${name%.rb}"
   printf "#!/bin/env ruby\n\n#Write script code" > "/bsm/scripts/_ruby/${name%.rb}"
@@ -186,8 +187,8 @@ mkpwsh() {
     # Make executable that calls PowerShell passing the script
     # This is done since using powershell.exe doesn't work in environment mode
     touch "/bsm/scripts/_power/${name%.***}" && chmod 755 "/bsm/scripts/_power/${name%.***}"
-    printf "#!/bin/bash\n\npowershell.exe -F \"/bsm/scripts/_power/$name\"" > "/bsm/scripts/_power/${name%.***}"
-    if [[ -e "/bsm/scripts/_power/${name%.***}" && -e "/bsm/scripts/_power/$name" ]]; then
+    echo -e "#!/bin/bash\n\npowershell.exe -F '/bsm/scripts/_power/${name%.***}.ps1'" > "/bsm/scripts/_power/${name%.***}"
+    if [[ -e "/bsm/scripts/_power/${name%.***}" && -e "/bsm/scripts/_power/${name%.***}.ps1" ]]; then
       echo "Script Created!"
       echo "When executing, you should consider whitelisting the script to PowerShell so you don't have to allow it each time!"
     fi
@@ -203,33 +204,66 @@ mkbash() {
     echo "Script Created!"
   fi
 }
+conflict() {
+  echo "Script with that name exists! Keeping Original..."
+  echo -n "Would you like to open this script? [Y/n] "
+  read yn
+  if [[ "${yn,}" =~ "y" ]]; then
+    open_script "${name%.**}"
+  fi
+}
 create_script() {
-  name=$1
-  # Check if next arg is a name or a type def
-  if [[ ! -e "/bsm/scripts/_power/${name%.***}" && ! -e "/bsm/scripts/_lisp/${name%.**}" && ! -e "/bsm/scripts/_ruby/${name%.**}" && ! -e "/bsm/scripts/_node/${name%.**}" && ! -e "/bsm/scripts/_python/${name%.**}" && ! -e "/bsm/scripts/$name" ]]; then
-    if [[ "$1" =~ "-" ]]; then
-      name=$2
-      case $1 in
-        -p | --python )
+  if [[ "$1" =~ "-" ]]; then
+    name=$2
+    case $1 in
+      -p | --python )
+        if [[ ! -e "/bsm/scripts/_python/${name%.**}" ]]; then
           mkpyth $name
-          ;;
-        -n | --node )
+        else
+          conflict
+        fi
+        ;;
+      -n | --node )
+        if [[ ! -e "/bsm/scripts/_node/${name%.**}" ]]; then
           mknode $name
-          ;;
-        -r | --ruby )
+        else
+          conflict
+        fi
+        ;;
+      -r | --ruby )
+        if [[ ! -e "/bsm/scripts/_ruby/${name%.**}" ]]; then
           mkruby $name
-          ;;
-        -l | --lisp )
+        else
+          conflict
+        fi
+        ;;
+      -l | --lisp )
+        if [[ ! -e "/bsm/scripts/_lisp/${name%.**}" ]]; then
           mklisp $name
-          ;;
-        -b | --bash )
+        else
+          conflict
+        fi
+        ;;
+      -b | --bash )
+        if [[ ! -e "/bsm/scripts/$name" ]]; then
           mkbash $name
-          ;;
-        -P | --powershell )
+        else
+          conflict
+        fi
+        ;;
+      -P | --powershell )
+        if [[ ! -e "/bsm/scripts/_power/${name%.***}" ]]; then
           mkpwsh $name
-          ;;
-      esac
-    else
+        else
+          conflict
+        fi
+        ;;
+    esac
+    shift # Force move past name so search args doesn't parse this again
+  else
+    name=$1
+    # Check if next arg is a name or a type def
+    if [[ ! -e "/bsm/scripts/_power/${name%.***}" && ! -e "/bsm/scripts/_lisp/${name%.**}" && ! -e "/bsm/scripts/_ruby/${name%.**}" && ! -e "/bsm/scripts/_node/${name%.**}" && ! -e "/bsm/scripts/_python/${name%.**}" && ! -e "/bsm/scripts/$name" ]]; then
       if [[ "$name" =~ ".js" ]]; then # Node
         mknode $name
       elif [[ "$name" =~ ".py" ]]; then # Python
@@ -243,13 +277,8 @@ create_script() {
       else # Bash
         mkbash $name
       fi
-    fi
-  else
-    echo "Script with that name exists! Keeping Original..."
-    echo -n "Would you like to open this script? [Y/n] "
-    read yn
-    if [[ "${yn,}" =~ "y" ]]; then
-      open_script "${name%.**}"
+    else
+      conflict
     fi
   fi
 }
@@ -309,7 +338,7 @@ remove_scripts() {
         else
           echo "Unable to remove script, refer to /bsm/logs/err.log for details"
         fi
-      elif [[ -e "/bsm/scripts/_power/${n%.***}" ]]; then
+      elif [[ -e "/bsm/scripts/_power/${n%.***}" || -e "/bsm/scripts/_power/${n%.***}.ps1" ]]; then
         rm "/bsm/scripts/_power/${n%.***}" >> $log 2>> $errlog
         rm "/bsm/scripts/_power/${n%.***}.ps1" >> $log 2>> $errlog
         if [[ ! -e "/bsm/scripts/_power/${n%.***}" ]]; then
@@ -326,7 +355,8 @@ remove_scripts() {
 }
 rename_script() {
   oldname=$1
-  if [[ "$(find -L /bsm/scripts -type f -name "$oldname")" == "" ]]; then
+  loc="$(find -L /bsm/scripts -type f -name "$oldname")"
+  if [[ "$loc" == "" ]]; then
     echo "Script to rename doesn't exist!"
     exit
   fi
@@ -339,7 +369,15 @@ rename_script() {
     newname=$1
   fi
   echo "Renaming..."
-  mv "$(find -L /bsm/scripts -type f -name "$oldname")" "$(find -L /bsm/scripts -type f -name "$oldname" | sed "s/\/$oldname/\/$newname/")"
+  # Check PowerShell
+  if [[ "$loc" =~ "/_power/" ]]; then
+    swap="$(cat "/bsm/scripts/_power/$oldname.ps1")"
+    remove_scripts $oldname >> $log
+    create_script -P $newname >> $log
+    echo -e "$swap" > /bsm/scripts/_power/$newname.ps1
+  else
+    mv "$loc" "$(echo "$loc" | sed "s/\/$oldname/\/$newname/")"
+  fi
   echo "Script renamed!"
 }
 link_script() {
