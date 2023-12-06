@@ -7,33 +7,47 @@ __Version info, patch notes, and what's new will appear here__
 
 ### What's New
 
-- BSM has no new features to report as of now, features that were new get moved to version info when new versions come out
+BSM v2.0.0 comes with a major overhaul under the hood to ensure a better user experience and efficient handling of commands, as well as some much needed features to help make BSM more robust.
 
 ### Patch Notes
 
-- Bug fix-v1.\[32\].\[24\]: Swapped to apt-get for Python, Ruby, and LISP installs (Snap is stable)
+- No patches to report
 
 ### Version Info
 
-bsm: v1.3.2
-bsm-install: v1.2.4
+bsm: v2.0.0
+bsm-install: v2.0.0
 
-__Features__
+__BSM Features__
 
-- Create Scripts for Python, Node, Ruby, and LISP
+- Create scripts for Python, Node, Ruby, and LISP
+  - Predefine script type without using file extensions via creation arguments
 - Open scripts for editing (Default nano, FTC editor selector)
-- Remove Scripts
-- Add/Link Scripts to BSM directory
-- List Scripts
-- Repair BSM Installation
-- Full uninstall
-- View logs
+- Remove scripts
+- Add/Link scripts to BSM directory
+- List scripts
 - Support to create and open non-existent scripts when using `-o`
+- ! NEW ! Export scipts to desired location
+- ! NEW ! Configure certain aspects of BSM
+- ! NEW ! Interactive mode for the less CLI-inclined (Base and Install)
+
+__BSM-Install Features__
+
+- Install BSM from cloned repo (Even when fully installed)
+- Uninstall BSM completely (no remnants)
+- Repair BSM
+- View BSM logs
+- Clear logs and scripts
+- Interactive mode
 
 ### Features to Come (FTC)
 
-- Choose text editor to use when opening a script
-- Predefine script type
-- Export script(s) to a specific location
 - Generate script files for quick-launching larger programs (i.e. start a web server for Node, Python, or Ruby)
 - Sample/System Tool scripts?
+
+### Extra commit messages
+
+_BSMv2 is basically ready for initial release_
+_Completed interactive mode_
+_Completed interactive mode bug fixes_
+_Squashed more bugs_

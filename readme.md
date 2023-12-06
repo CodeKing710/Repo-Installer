@@ -1,11 +1,11 @@
-# Bash Script Manager (v1.3.0)
+# Bash Script Manager (v2.0.0)
 
 This is a local script manager that allows you to add custom scripts to your system without affecting the baseline OS scripts.
 
 __NOTE: THIS SCRIPT IS INTENDED FOR USE ON DEBIAN/UBUNTU BASED DISTRIBUTIONS!__<br>
 __FUNCTIONS WITH WINDOWS SUBSYSTEM FOR LINUX!__
 
-Support for Bash, Node, Python, Ruby, and LISP scripts.
+Support for Bash, Node, Python, Ruby, and LISP scripts. PowerShell available on WSL.
 
 ### Installation
 
@@ -21,6 +21,8 @@ Then try running again or run the following:
 . "$(find ~ -name bsm-install)"
 ```
 
+__BSMv1 can still be installed if you prefer a lower profile version of BSM, called and installed from the /old folder in the repo__
+
 ### Usage
 
 Making a script of any kind is very simple. You can do this one of two ways. You can either create the file and be done like so;
@@ -29,11 +31,13 @@ Making a script of any kind is very simple. You can do this one of two ways. You
 bsm -c "[SCRIPT]"
 ```
 
-Or you can have it open right away for editing.
+Or you can have it open right away for editing. Open currently only supports creation of non-existent scripts via file extension.
 
 ```
 bsm -o "[SCRIPT]"
 ```
+
+The create argument for BSM allows you predefine the script type, either through passing the type before the name, or via file extension in the script name. Both ways result in the same output, it is just a matter of what you prefer.  If you would prefer to be able to define the script type in the open argument as well as the creation argument, let me know! This program is open-source as well as open-minded!
 
 To remove a script is as simple as quoting the name of the script you want removed. Please note that to remove any script you just input the name, no file extensions necessary. If you do input a file extension the manager will still know where to look and remove the script. This argument is not chainable as it accepts any number of script names to mark for removal. (Example below)
 
@@ -74,34 +78,29 @@ For any help in case you forget how to use the command, you can use `bsm -h` or 
 
 ##### Fixing BSM
 
-BSM offers a few more options, but they pertain only to the instance itself. BSM is designed to be preconfigured in such a way that you, the user, don't have to worry about where the file goes or whether it will execute or not. BSM handles all this. Sometimes though, BSM may bug out due to how the file was edited or if the file was modded by a different program other than a text editor. One way to fix this is to run `bsm -I` or `bsm --install`. Assuming normal installation from `bsm-install` went well, this command should setup BSMs configuration files again, allowing you to once again access your files.
+BSM-Install will assist in more than just installing and uninstalling BSM from your system. Utilizing the interactive feature of BSM-Install, you can choose the option to repair (3) the BSM installation. If your BSM version is out of date with the repo, you can reinstall by running the BSM-Install installer function again. On older versions of BSM, these commands can be run directly from BSM instead of BSM-Install, but also note that neither of them have interactive versions so refer to the help page for more info.
 
-**Notice** the capitalization of the argument. The capitalization in this case signifies that it modifies BSM directly.
+__NOTE: Ability to run these commands directly from BSM has been deprecated due to confliction of commands and confusion of argument names.__
 
-Another way to fix it is to just plain uninstall it and go through installation the normal way again. This can be done via `bsm -U` or `bsm --uninstall`. This will completely remove BSM from your system, including PATH links and any leftover scripts and config files.
+Another way to fix it is to just plain uninstall it and go through installation the normal way again. This can be done via `bsm-install --uninstall` or from the interactive shell. This will completely remove BSM from your system, including PATH links and any leftover scripts and config files. You may have to execute your `~/.profile` again to ensure path is updated, or restart your terminal. Same applites to reinstall and fresh installations.
 
-But let's say that your BSM install works just fine, but the underlying dependencies that run specific types of scripts are broken. Using `bsm -R` or `bsm --reinstall-deps` will reinstall a specific dependency or all of them based on whether you pass the option or not. Naming is not case sensitive and some allow for the nickname to be passed instead. Available deps include:
+But let's say that your BSM install works just fine, but the underlying dependencies that run specific types of scripts are broken. Using `bsm-install --repair` will reinstall specific dependencies or all of them based on whether you pass the option or not. Naming is not case sensitive and some allow for the nickname to be passed instead. Available deps include:
 
 - Node
 - Python
 - Ruby
 - LiSP
 
-**NOTE**
-All install related commands can also be passed to `bsm-install`, via `bsm-install`, `bsm-install -u`, and `bsm-install -rd [...]` respectively. `bsm-install` also has a special function that allows you to clear any or all script directories and keep the config structure intact. By using `bsm-install -c [...]`, you can specify a name or none to remove any or all scripts. Available script directories include:
+By using `bsm-install --clear [...]`, you can specify a name or none to remove any or all scripts. Available script directories include:
 
 - node
 - python
 - ruby
 - lisp
 - bash
+- log
 
-If you don't want to clear any scripts and want to just clear logs, use 
-```
-bsm-install -c log
-```
-
-Refer to changelog to features, outstanding bugs, and more.
+Refer to changelog for features, outstanding bugs, and more.
 
 Report bugs to cjrox01@yahoo.com
 Let me know if there are any other features you may want! Feedback is welcome!

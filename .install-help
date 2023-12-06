@@ -1,0 +1,28 @@
+Bash Script Manager
+
+Usage: bsm-install [OPTIONS] ...
+
+Options:
+    -c | --clear
+    Clear logs and any scripts. Defaults to clear everything, pass one or more script types to clear to remove those. Specify 'log' to clear only logs and leave scripts untouched.
+
+    -l | --logs
+    Allows you to view logs. Pass '-o' or '-e' to view output and error logs respectively.
+
+    -i | --install
+    Installs/Reinstalls BSM to your system
+
+    -u | --uninstall
+    Completely removes any remnant of BSM from your system
+
+    -r | --reinstall-deps [...NAME]
+    Force installs all dependencies used by BSM (Node.js, Python3, Ruby, CommonLISP) and adds any folders that aren't yet created. Can add an argument after to define a specific dependency to reinstall, but it is optional.
+
+    -v | --version
+        Show version
+
+    -h | --help
+        Show this screen
+
+For more information and available commands, visit https://github.com/SubLock69/Bash-Script-Manager#readme.
+Man page in progress

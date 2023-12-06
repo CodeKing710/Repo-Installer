@@ -1,0 +1,44 @@
+Bash Script Manager
+
+Usage: bsm [...OPTIONS] ...
+
+Options:
+    -c | --create [NAME] [...OPTIONS]
+	    Add new script(s) to your personal scripts. Specify a file extension to use a specific scripting language. Bash is default and doesn't require a file extension. You may also specify the script type by following this argument with '-p', '-n', '-r', or '-l'. Please note that even though those arguments exist outside '-c', using them here changes their meaning.
+	    Available: .js (-n), .py (-p), .rb (-r), .cl (-l)
+        FOR WSL: .ps1 (-P)
+
+    -l | --list
+	    Show list of available personal scripts
+
+    -L | --link [FILE] [DEST_NAME]
+	    Create a shortcut executable to an existing script. FILE points to the file to link, DEST_NAME points to where the link will reside.
+
+    -o | --open [NAME]
+	    Open a script for editing (ONLY PERSONAL SCRIPTS LOCATED AT /scripts).
+        Makes a new script respective to the env path (file ext). Bash creation does not require this.
+        Will still open respective file even if env path is provided
+
+    -r | --remove [NAME] [...NAMES]
+	    Remove script(s) from personal scripts (DOES NOT TOUCH SYSTEM EXECUTABLES)
+
+    -i | --import [PATH] [...]
+        Import external scripts directly to BSM
+
+    -n | --rename [SCRIPT]
+        Renames a script
+
+    -e | --export [SCRIPT] [PATH]
+        Exports BSM script to specific location
+
+    -C | --config [RULE] [...VALUE]
+        Gets or sets BSM configuration rule. Chain multiple together to get or set multiple rules
+
+    -v | --version
+        Show version
+
+    -h | --help
+        Show this screen
+
+For more information and available commands, visit https://github.com/SubLock69/Bash-Script-Manager#readme.
+Man page in progress
