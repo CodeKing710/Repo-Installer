@@ -165,7 +165,10 @@ if [[ "$1" == "" ]]; then
     echo "1) List      3) Rename   5) Import   7) Link     9) Config"
     echo "2) Create    4) Open     6) Export   8) Remove  10) Exit"
   done
-else
+elif [[ "$1" =~ "-" ]]; then
   # CLI Mode
   search_args $@
+else
+  # Command mode
+  search_cmds $@
 fi
