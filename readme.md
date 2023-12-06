@@ -1,11 +1,11 @@
-# Bash Script Manager (v1.3.0)
+# Bash Script Manager (v2.0.0)
 
 This is a local script manager that allows you to add custom scripts to your system without affecting the baseline OS scripts.
 
 __NOTE: THIS SCRIPT IS INTENDED FOR USE ON DEBIAN/UBUNTU BASED DISTRIBUTIONS!__<br>
 __FUNCTIONS WITH WINDOWS SUBSYSTEM FOR LINUX!__
 
-Support for Bash, Node, Python, Ruby, and LISP scripts.
+Support for Bash, Node, Python, Ruby, and LISP scripts. PowerShell available on WSL.
 
 ### Installation
 
@@ -20,6 +20,8 @@ Then try running again or run the following:
 ```
 . "$(find ~ -name bsm-install)"
 ```
+
+__BSMv1 can still be installed if you prefer a lower profile version of BSM, called and installed from the /old folder in the repo__
 
 ### Usage
 
