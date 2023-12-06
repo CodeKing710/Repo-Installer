@@ -120,11 +120,11 @@ search_args() {
 # Command
 search_cmds() {
   while [[ "$1" != "" ]]; do
-    cmd="${$1,}"
+    cmd="${1,}"
     shift
     case $cmd in
       create )
-        sub="${$1,}"
+        sub="${1,}"
         shift
         name="$1"
         case $sub in
@@ -226,8 +226,9 @@ search_cmds() {
         fi
         exit;;
       config )
-        rule="${$1,}"
-        value="${$2,}"
+        rule="${1,}"
+        shift
+        value="${1,}"
         if [[ "$rule" == "" ]]; then
           echo "Missing required argument: 'RULE'"
           exit
@@ -236,7 +237,6 @@ search_cmds() {
             config_bsm $rule
           else
             config_bsm $rule $value
-            shift
           fi
         fi
         ;;
