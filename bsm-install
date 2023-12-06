@@ -65,37 +65,42 @@ uninstall() {
 }
 
 repair() {
-  while [[ $1 != "" ]]; do
-    if [[ "${1,,}" =~ "node" ]]; then
-    echo "Installing and setting up Node..."
-      sudo mkdir $scripts/_node
-      sudo snap install --edge node --classic >> $log 2>> $errlog
-    elif [[ "${1,,}" =~ "py" ]]; then
-    echo "Installing and setting up Python..."
-      sudo mkdir $scripts/_python
-      sudo apt-get install -y python3-pip >> $log 2>> $errlog
-    elif [[ "${1,,}" =~ "ruby" ]]; then
-    echo "Installing and setting up Ruby..."
-      sudo mkdir $scripts/_ruby
-      sudo apt-get install -y ruby-full >> $log 2>> $errlog
-    elif [[ "${1,,}" =~ "l" ]]; then
-    echo "Installing and setting up LISP..."
-      sudo mkdir $scripts/_lisp
-      sudo apt-get install -y sbcl >> $log 2>> $errlog
-    else
-      echo "Setting up BSM Folders..."
-      sudo mkdir $scripts/_node
-      sudo mkdir $scripts/_python
-      sudo mkdir $scripts/_ruby
-      sudo mkdir $scripts/_lisp
-      echo "Installing BSM Dependencies..."
-      sudo snap install --edge node --classic >> $log 2>> $errlog
-      sudo apt-get install -y python3-pip >> $log 2>> $errlog
-      sudo apt-get install -y ruby-full >> $log 2>> $errlog
-      sudo apt-get install -y sbcl >> $log 2>> $errlog
+  if [[ "$1" == "" ]]; then
+    echo "Setting up BSM Folders..."
+    mkdir $scripts/_node >> $log 2>> $errlog
+    mkdir $scripts/_python >> $log 2>> $errlog
+    mkdir $scripts/_ruby >> $log 2>> $errlog
+    mkdir $scripts/_lisp >> $log 2>> $errlog
+    if [[ "$(uname -r)" =~ "WSL" ]]; then
+      mkdir $scripts/_power >> $log 2>> $errlog
     fi
-    shift
-  done
+    echo "Installing BSM Dependencies..."
+    sudo snap install --edge node --classic >> $log 2>> $errlog
+    sudo apt-get install -y python3-pip >> $log 2>> $errlog
+    sudo apt-get install -y ruby-full >> $log 2>> $errlog
+    sudo apt-get install -y sbcl >> $log 2>> $errlog
+  else
+    while [[ "$1" != "" ]]; do
+      if [[ "${1,,}" =~ "node" ]]; then
+      echo "Installing and setting up Node..."
+        sudo mkdir $scripts/_node
+        sudo snap install --edge node --classic >> $log 2>> $errlog
+      elif [[ "${1,,}" =~ "py" ]]; then
+      echo "Installing and setting up Python..."
+        sudo mkdir $scripts/_python
+        sudo apt-get install -y python3-pip >> $log 2>> $errlog
+      elif [[ "${1,,}" =~ "ruby" ]]; then
+      echo "Installing and setting up Ruby..."
+        sudo mkdir $scripts/_ruby
+        sudo apt-get install -y ruby-full >> $log 2>> $errlog
+      elif [[ "${1,,}" =~ "l" ]]; then
+      echo "Installing and setting up LISP..."
+        sudo mkdir $scripts/_lisp
+        sudo apt-get install -y sbcl >> $log 2>> $errlog
+      fi
+      shift
+    done
+  fi
 }
 
 view_logs() {
