@@ -45,9 +45,9 @@ elif [[ "$1" == "-u" ]]; then
   sudo rm /usr/local/bin/bsm-old
   echo "Uninstalling BSM-install..."
   sudo rm /usr/local/sbin/bsm-install-old
-  echo "Resetting PATH..."
-  # echo "$(head -n -1 ~/.bashrc)" > ~/.bashrc #Reset bashrc
-  export PATH="$(echo "$PATH" | tr -s ':' '\n' | grep -v "/scripts" | tr -s '\n' ':' | sed 's/.$//')" #Reset PATH
+  # echo "Resetting PATH..."
+  # echo "$(head -n -1 ~/.bashrc)" > ~/.bashrc #Reset bashrc (Assumes it is the last entry)
+  # export PATH="$(echo "$PATH" | tr -s ':' '\n' | grep -v "/scripts" | tr -s '\n' ':' | sed 's/.$//')" #Reset PATH
   echo "Sucessfully uninstalled BSM!"
 elif [[ "$1" == "-c" ]]; then
   #Clear log files
@@ -141,7 +141,7 @@ else
   echo "Updating PATH..."
   #This assumes you haven't modified the original bashrc file with your own things that don't end in 'fi'
   if [[ "$(echo "$PATH" | grep /scripts)" == "" ]]; then
-    export PATH="$PATH:/scripts:/scripts/_node:/scripts/_python:/scripts/_ruby:/scripts/_lisp"
+    echo "export PATH=\"$PATH:/scripts:/scripts/_node:/scripts/_python:/scripts/_ruby:/scripts/_lisp\"" >> ~/.bashrc
   fi
   echo "Setting up logging and scripts folders..."
   if [ ! -d "/scripts" ]; then
