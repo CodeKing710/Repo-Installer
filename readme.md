@@ -23,6 +23,8 @@ Then try running again or run the following:
 
 __BSMv1 can still be installed if you prefer a lower profile version of BSM, called and installed from the /old folder in the repo__
 
+To finalize installation, restart the shell or run `source ~/.bashrc` to reload your PATH. This will need done after both installation and uninstallation
+
 ### Usage
 
 Making a script of any kind is very simple. You can do this one of two ways. You can either create the file and be done like so;

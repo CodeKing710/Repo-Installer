@@ -37,15 +37,15 @@ install() {
   cp "$(find $repo -type f -name ".help")" /bsm/.help
   cp "$(find $repo -type f -name ".install-help")" /bsm/.install-help
   cp "$(find $repo -type f -name "bsm.config")" /bsm/.config
-  cp -rf "$(find $repo -type d -name "tools")" /bsm/
+  cp -r "$(find $repo -type d -name "tools")" /bsm/
   sudo chmod 644 /bsm/.config
   sudo chmod 755 /usr/local/bin/bsm
   sudo chmod 755 /usr/local/sbin/bsm-install
   echo "Updating PATH..."
   #This assumes you haven't modified the original bashrc file with your own things that don't end in 'fi'
-  if [[ "$(echo "$PATH" | grep $scripts)" == "" ]]; then
-    echo "export PATH=\"$PATH:$scripts:$scripts/_node:$scripts/_python:$scripts/_ruby:$scripts/_lisp:$scripts/_power\"" >> /home/$USER/.bashrc
-    source ~/.bashrc #Attempt reload of PATH
+  if [[ "$(echo "$PATH" | grep /bsm)" == "" ]]; then
+    echo "export PATH=\"$PATH:/bsm/tools:$scripts:$scripts/_node:$scripts/_python:$scripts/_ruby:$scripts/_lisp:$scripts/_power\"" >> /home/$USER/.bashrc
+    # source ~/.bashrc #Attempt reload of PATH
   fi
 
   #This should setup BSM, logging is sent to stdout to check for any errors
@@ -61,7 +61,7 @@ uninstall() {
   sudo rm /usr/local/sbin/bsm-install
   echo "Resetting PATH..."
   echo "$(head -n -1 /home/$USER/.bashrc)" > /home/$USER/.bashrc #Reset bashrc
-  source ~/.bashrc #Attempt reload of PATH
+  # source ~/.bashrc #Attempt reload of PATH
   # export PATH="$(echo "$PATH" | tr -s ':' '\n' | grep -v "$scripts" | tr -s '\n' ':' | sed 's/.$//')" #Reset PATH
   echo "Sucessfully uninstalled BSM!"
 }
