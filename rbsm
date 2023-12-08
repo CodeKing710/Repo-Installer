@@ -13,6 +13,11 @@ while true; do
   read -p "bsm> " stdin
   if [[ "${stdin,}" == "exit" || "${stdin,}" == "quit" ]]; then
     exit
+  elif [[ "${stdin,}" == "pass" ]]; then
+    continue
+  elif [[ "${stdin,}" =~ "pass" ]]; then
+    bash -c "$(echo "${stdin,}" | cut -d ' ' -f2-)"
+  else
+    search_cmds "${stdin,}"
   fi
-  search_cmds "${stdin,}"
 done

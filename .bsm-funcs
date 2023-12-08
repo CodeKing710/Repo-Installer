@@ -132,32 +132,36 @@ search_cmds() {
     shift
     case $cmd in
       create )
-        sub="${1,}"
-        shift
-        name="$1"
-        case $sub in
-          ps | ps1 | powershell )
-            create_script -P $name
-            ;;
-          py | python )
-            create_script -p $name
-            ;;
-          js | node )
-            create_script -n $name
-            ;;
-          rb | ruby )
-            create_script -r $name
-            ;;
-          cl | lisp )
-            create_script -l $name
-            ;;
-          sh | bash )
-            create_script -b $name
-            ;;
-          * )
-            create_script $sub
-            ;;
-        esac
+        if [[ "$1" == "" ]]; then
+          echo "Missing required argument: 'NAME'"
+        else
+          sub="${1,}"
+          shift
+          name="$1"
+          case $sub in
+            ps | ps1 | powershell )
+              create_script -P $name
+              ;;
+            py | python )
+              create_script -p $name
+              ;;
+            js | node )
+              create_script -n $name
+              ;;
+            rb | ruby )
+              create_script -r $name
+              ;;
+            cl | lisp )
+              create_script -l $name
+              ;;
+            sh | bash )
+              create_script -b $name
+              ;;
+            * )
+              create_script $sub
+              ;;
+          esac
+        fi
         ;;
       open )
         name="$1"

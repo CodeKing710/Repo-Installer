@@ -46,7 +46,7 @@ install() {
   #This assumes you haven't modified the original bashrc file with your own things that don't end in 'fi'
   if [[ "$(echo "$PATH" | grep /bsm)" == "" ]]; then
     echo "### BSM2" >> /home/$USER/.bashrc
-    echo "export PATH=\"$PATH:/bsm/tools:$scripts:$scripts/_node:$scripts/_python:$scripts/_ruby:$scripts/_lisp:$scripts/_power\"" >> /home/$USER/.bashrc
+    echo 'export PATH="$PATH:/bsm/tools:$scripts:$scripts/_node:$scripts/_python:$scripts/_ruby:$scripts/_lisp:$scripts/_power"' >> /home/$USER/.bashrc
     # source ~/.bashrc #Attempt reload of PATH
   fi
 
