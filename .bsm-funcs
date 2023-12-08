@@ -104,6 +104,10 @@ search_args() {
         shift
         get_tool $1
         exit;;
+      -S | --shell )
+        shift
+        rbsm $@
+        exit;;
       -l | --list )
         list_scripts
         exit;;
@@ -159,47 +163,41 @@ search_cmds() {
         name="$1"
         if [[ "$name" == "" ]]; then
           echo "Missing required argument: 'NAME'"
-          exit
         else
           open_script $name
         fi
-        exit;;
+        ;;
       import )
         script="$1"
         if [[ "$script" == "" ]]; then
           echo "Missing required argument: 'SCRIPT'"
-          exit
         else
           import_script $@
         fi
-        exit;;
+        ;;
       export )
         script="$1"
         shift
         dest="$1"
         if [[ "$script" == "" ]]; then
           echo "Missing required argument: 'SCRIPT'"
-          exit
         else
           if [[ "$dest" == "" ]]; then
             echo "Missing required argument: 'DESTINATION'"
-            exit
           else
             export_script $script $dest
           fi
         fi
-        exit;;
+        ;;
       link )
         script="$1"
         shift
         name="$1"
         if [[ "$script" == "" ]]; then
           echo "Missing required argument: 'SCRIPT'"
-          exit
         else
           if [[ "$name" == "" ]]; then
             echo "Missing required argument: 'NAME'"
-            exit
           else
             link_script $script $name
           fi
@@ -211,7 +209,6 @@ search_cmds() {
         newname="$1"
         if [[ "$name" == "" ]]; then
           echo "Missing required argument: 'NAME'"
-          exit
         else
           if [[ "$newname" == "" ]]; then
             echo "Missing required argument: 'NEW_NAME'"
@@ -224,18 +221,16 @@ search_cmds() {
         name="$1"
         if [[ "$name" == "" ]]; then
           echo "Missing required argument: 'SCRIPT'"
-          exit
         else
           remove_scripts $@
         fi
-        exit;;
+        ;;
       config )
         rule="${1,}"
         shift
         value="${1,}"
         if [[ "$rule" == "" ]]; then
           echo "Missing required argument: 'RULE'"
-          exit
         else
           if [[ "$value" == "" || "$value" == "config" ]]; then
             config_bsm $rule
@@ -247,19 +242,22 @@ search_cmds() {
       tool )
         tool="$1"
         get_tool $tool
-        exit;;
+        ;;
+      sh | shell | rbsm )
+        rbsm $@
+        ;;
       list )
         list_scripts
-        exit;;
+        ;;
       version )
         echo "$version"
-        exit;;
+        ;;
       help )
         $help
-        exit;;
+        ;;
       * )
         echo "Err: No argument found with '$1' in BSM"
-        exit;;
+        ;;
     esac
   shift; done
 }
