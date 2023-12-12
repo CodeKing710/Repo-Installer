@@ -8,9 +8,26 @@ help="cat /bsm/.install-help"
 log="/bsm/logs/bsm.log"
 errlog="/bsm/logs/err.log"
 scripts="/bsm/scripts"
-repo="$(find -type d -name "Bash-Script-Manager")"
+repo="$(find ~ -type d -name "Bash-Script-Manager")"
 
 # Functions
+cpdeps() {
+  sudo cp "$(find $repo -type f -name "bsm")" /usr/local/bin/bsm && echo "Copy of BSM added to program registry!"
+  sudo cp "$(find $repo -type f -name "rbsm")" /usr/local/bin/rbsm
+  sudo cp "$(find $repo -type f -name "bsm-install")" /usr/local/sbin/bsm-install && echo "Installer copied to system registry!"
+  cp "$(find $repo -type f -name ".version")" /bsm/.version
+  cp "$(find $repo -type f -name ".bsm-vars")" /bsm/.bsm-vars
+  cp "$(find $repo -type f -name ".bsm-funcs")" /bsm/.bsm-funcs
+  cp "$(find $repo -type f -name ".help")" /bsm/.help
+  cp "$(find $repo -type f -name ".install-help")" /bsm/.install-help
+  if [[ ! -e /bsm/.config ]]; then
+    cp "$(find $repo -type f -name "bsm.config")" /bsm/.config
+  fi
+  cp -r "$(find $repo -type d -name "tools")" /bsm/
+  sudo chmod 644 /bsm/.config
+  sudo chmod 755 /usr/local/bin/bsm
+  sudo chmod 755 /usr/local/sbin/bsm-install
+}
 install() {
   echo "Installing..."
   echo "Setting up logging and scripts folders..."
@@ -29,25 +46,32 @@ install() {
     touch $log
     sudo chmod 666 $log
   fi
-  sudo cp "$(find $repo -type f -name "bsm")" /usr/local/bin/bsm && echo "Copy of BSM added to program registry!"
-  sudo cp "$(find $repo -type f -name "rbsm")" /usr/local/bin/rbsm
-  sudo cp "$(find $repo -type f -name "bsm-install")" /usr/local/sbin/bsm-install && echo "Installer copied to system registry!"
-  cp "$(find $repo -type f -name ".version")" /bsm/.version
-  cp "$(find $repo -type f -name ".bsm-vars")" /bsm/.bsm-vars
-  cp "$(find $repo -type f -name ".bsm-funcs")" /bsm/.bsm-funcs
-  cp "$(find $repo -type f -name ".help")" /bsm/.help
-  cp "$(find $repo -type f -name ".install-help")" /bsm/.install-help
-  cp "$(find $repo -type f -name "bsm.config")" /bsm/.config
-  cp -r "$(find $repo -type d -name "tools")" /bsm/
-  sudo chmod 644 /bsm/.config
-  sudo chmod 755 /usr/local/bin/bsm
-  sudo chmod 755 /usr/local/sbin/bsm-install
+  if [[ "$(cat /bsm/.version | head -1)" != "$(cat "$repo/.version" | head -1)" ]]; then
+    echo "Newer version of BSM is available, installing..."
+    cpdeps
+  else
+    if [[ "$1" == "-f" ]]; then
+      echo "Force installing even though current is latest..."
+      cpdeps
+    else
+      echo "Current version is up to date!"
+    fi
+  fi
   echo "Updating PATH..."
-  #This assumes you haven't modified the original bashrc file with your own things that don't end in 'fi'
   if [[ "$(echo "$PATH" | grep /bsm)" == "" ]]; then
-    echo "### BSM2" >> /home/$USER/.bashrc
-    echo 'export PATH="$PATH:/bsm/tools:$scripts:$scripts/_node:$scripts/_python:$scripts/_ruby:$scripts/_lisp:$scripts/_power"' >> /home/$USER/.bashrc
-    # source ~/.bashrc #Attempt reload of PATH
+    if [[ "$(command -v chpath)" != "" ]]; then
+      chpath add /bsm/tools $scripts $scripts/_node $scripts/_python $scripts/_ruby $scripts/_lisp $scripts/_power
+      if [ -e ~/.path ]; then
+        echo "PATH updated successfully via chpath"
+      else
+        echo "There was an unexpected error while adding path via chpath"
+      fi
+    else
+      #This assumes you haven't modified the original bashrc file with your own things that don't end in 'fi'
+      echo "### BSM2" >> /home/$USER/.bashrc
+      echo 'export PATH="$PATH:/bsm/tools:$scripts:$scripts/_node:$scripts/_python:$scripts/_ruby:$scripts/_lisp:$scripts/_power"' >> /home/$USER/.bashrc
+      # source ~/.bashrc #Attempt reload of PATH
+    fi
   fi
 
   #This should setup BSM, logging is sent to stdout to check for any errors
