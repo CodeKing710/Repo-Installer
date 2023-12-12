@@ -16,7 +16,7 @@ BSM v2 comes with a major overhaul under the hood to ensure a better user experi
 ### Version Info
 
 bsm: v2.2.1
-bsm-install: v2.0.6
+bsm-install: v2.0.7
 
 __BSM Features__
 

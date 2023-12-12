@@ -38,6 +38,7 @@ install() {
     mkdir /bsm/scripts
     mkdir /bsm/logs
   fi
+  # Generate log files
   if [ ! -e $errlog ]; then
     touch $errlog
     sudo chmod 666 $errlog
@@ -46,9 +47,16 @@ install() {
     touch $log
     sudo chmod 666 $log
   fi
-  if [[ "$(cat /bsm/.version | head -1)" != "$(cat "$repo/.version" | head -1)" ]]; then
-    echo "Newer version of BSM is available, installing..."
-    cpdeps
+
+  # Check newer versions
+  if [[ "$(cat /bsm/.version | head -1)" != "$(cat "$repo/.version" | head -1)" || "$(cat /bsm/.version | tail -1)" != "$(cat "$repo/.version" | tail -1)" ]]; then
+    read -p "Newer version of BSM is available, would you like to install? [Y/n]" yn
+    if [[ "${yn,}" == "y" ]]; then
+      echo "Installing new version of BSM..."
+      cpdeps
+    else
+      echo "Keeping old version of BSM..."
+    fi
   else
     if [[ "$1" == "-f" ]]; then
       echo "Force installing even though current is latest..."
@@ -230,7 +238,8 @@ clear_bsm() {
 search_args() {
   case $1 in
     -i | --install )
-      install
+      shift
+      install $@
       exit;;
     -u | --uninstall )
       uninstall
@@ -265,7 +274,7 @@ if [[ "$1" == "" ]]; then
   select opt in Install Uninstall Repair Logs Clear Exit; do
     case $opt in
       Install )
-        install;;
+        install $@;;
       Uninstall )
         uninstall
         break;;
