@@ -102,7 +102,7 @@ search_args() {
         ;;
       -t | --tool )
         shift
-        get_tool $1
+        get_tool $@
         exit;;
       -S | --shell )
         shift
@@ -244,8 +244,9 @@ search_cmds() {
         fi
         ;;
       tool )
-        tool="$1"
-        get_tool $tool
+        # tool=$1
+        get_tool $@
+        while (($#)); do shift; done
         ;;
       sh | shell | rbsm )
         rbsm $@
@@ -597,17 +598,27 @@ config_bsm() {
   fi
 }
 get_tool() {
-  tools_reg="$(ls $BSM_TOOLS)"
-  if [[ "$1" == "" ]]; then
+  tools_reg=$(ls -1 $BSM_TOOLS)
+  ptool=$1
+  if [[ "$ptool" == "" ]]; then
     # List all tools
     echo "Available tools: "
     echo "$tools_reg"
   else
-    if [[ "$tools_reg" =~ "$1" ]]; then
-      . "$BSM_TOOLS/$(echo "$tools_reg" | grep "$1")"
-    else
-      echo "Tool doesn't exist or name is incorrect!"
-    fi
+    for tool in $tools_reg; do
+      for segment in $(echo "$ptool" | cut -d '-' -f2); do
+        if [[ "$tool" =~ "$segment" ]]; then
+          echo "Tool with like name found!"
+          echo "You can call this tool from the command line via '$tool [options]'"
+          read -p "Open tool now? [Y/n] " yn
+          if [[ "${yn,}" =~ "y" ]]; then
+            shift # Include arbitrary args
+            $tool $@
+          fi
+          break
+        fi
+      done
+    done
   fi
 }
 # add_tool() {}
