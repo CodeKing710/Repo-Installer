@@ -10,6 +10,8 @@ errlog="/bsm/logs/err.log"
 scripts="/bsm/scripts"
 repo="$(find ~ -type d -name "Bash-Script-Manager")"
 
+. /bsm/.bsm-vars
+
 # Functions
 cpdeps() {
   sudo cp "$(find $repo -type f -name "bsm")" /usr/local/bin/bsm && echo "Copy of BSM added to program registry!"
@@ -102,43 +104,54 @@ uninstall() {
 }
 
 repair() {
+  # Ensure snap is setup properly
+  [[ `stat / | grep -I "(0755"` == "" ]] && sudo chmod 755 /
+  # Begin repair
   echo "Setting up BSM Folders..."
-  mkdir $BSM_LOGS
-  mkdir $BSM_SCRIPTS
-  mkdir $BSM_TOOLS
+  [ ! -d /bsm ] && mkdir $BSM_ROOT
+  [ ! -d /bsm/logs ] && mkdir $BSM_LOGS
+  [ ! -d /bsm/scripts ] && mkdir $BSM_SCRIPTS
+  [ ! -d /bsm/tools ] && mkdir $BSM_TOOLS
   cp -rf "$(find $repo -type d -name "tools")" /bsm/
   if [[ "$1" == "" ]]; then
     mkdir $scripts/_node >> $log 2>> $errlog
     mkdir $scripts/_python >> $log 2>> $errlog
     mkdir $scripts/_ruby >> $log 2>> $errlog
     mkdir $scripts/_lisp >> $log 2>> $errlog
-
-    if [[ "$(uname -r)" =~ "WSL" ]]; then
-      mkdir $scripts/_power >> $log 2>> $errlog
-    fi
+    mkdir $scripts/_power >> $log 2>> $errlog
     echo "Installing BSM Dependencies..."
     sudo snap install --edge node --classic >> $log 2>> $errlog
     sudo apt-get install -y python3-pip >> $log 2>> $errlog
     sudo apt-get install -y ruby-full >> $log 2>> $errlog
     sudo apt-get install -y sbcl >> $log 2>> $errlog
+    [[ ! `uname -r` =~ "WSL" ]] && sudo snap install powershell --classic
   else
     while [[ "$1" != "" ]]; do
       if [[ "${1,,}" =~ "node" ]]; then
-      echo "Installing and setting up Node..."
-        sudo mkdir $scripts/_node
+        echo "Installing and setting up Node..."
+        mkdir $scripts/_node >> $log 2>> $errlog
         sudo snap install --edge node --classic >> $log 2>> $errlog
       elif [[ "${1,,}" =~ "py" ]]; then
-      echo "Installing and setting up Python..."
-        sudo mkdir $scripts/_python
+        echo "Installing and setting up Python..."
+        mkdir $scripts/_python >> $log 2>> $errlog
         sudo apt-get install -y python3-pip >> $log 2>> $errlog
       elif [[ "${1,,}" =~ "ruby" ]]; then
-      echo "Installing and setting up Ruby..."
-        sudo mkdir $scripts/_ruby
+        echo "Installing and setting up Ruby..."
+        mkdir $scripts/_ruby >> $log 2>> $errlog
         sudo apt-get install -y ruby-full >> $log 2>> $errlog
-      elif [[ "${1,,}" =~ "l" ]]; then
-      echo "Installing and setting up LISP..."
-        sudo mkdir $scripts/_lisp
+      elif [[ "${1,,}" =~ "li" ]]; then
+        echo "Installing and setting up LISP..."
+        mkdir $scripts/_lisp >> $log 2>> $errlog
         sudo apt-get install -y sbcl >> $log 2>> $errlog
+      elif [[ "${1,,}" =~ "p" ]]; then
+        if [[ `uname -r` =~ "WSL" ]]; then
+          echo "Using WSL, PowerShell accessible via powershell.exe"
+          exit
+        else 
+          echo "Installing and setting up PowerShell..."
+          mkdir $scripts/_power >> $log 2>> $errlog
+          sudo snap install powershell --classic >> $log 2>> $errlog
+        fi
       fi
       shift
     done
