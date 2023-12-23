@@ -1,0 +1,154 @@
+#!/bin/bash
+
+################################################################
+#                          chpath                              #
+#                                                              #
+# USAGE:                                                       #
+# chpath [add/remove/edit/reset/get/list] [-e|-o] [path] [...] #
+#                                                              #
+# FEATURES:                                                    #
+#   - add : Add new item(s) to path                            #
+#   - edit : Change a path description                         #
+#   - remove : Remove item(s) from path                        #
+#   - reset : Reset to original path or vise versa             #
+#   - get : Return a list of matching or specific path         #
+#   - list : Return all available paths                        #
+#                                                              #
+################################################################
+
+# Vars
+tmpPath="`echo -e "$(cat ~/.path | tr -s ":" "\n")\n"`"
+cmdList="get\nadd\nedit\nremove\nlist\nreset"
+
+# echo "$tmpPath"
+
+# Funcs
+add() {
+  while [[ "$1" != "" ]]; do
+    # Check priority
+    if [[ "${1,,}" == "FIRST" ]]; then
+      shift
+      # Put new path at top
+      tmpPath="$(echo -e "$1\n$tmpPath")"
+    else
+      tmpPath="$(echo -e "$tmpPath\n$1")"
+    fi
+  shift; done
+}
+get() {
+  if [[ "$1" == "-e" ]]; then
+    shift
+    echo "$tmpPath" | grep "^$1$"
+  else
+    echo "$tmpPath" | grep "$1"
+  fi
+}
+edit() {
+  # Check if a real path is specified
+  if [[ "$(find -type d -name "$2")" == "" ]]; then
+    echo "Path specified to replace doesn't exist!"
+    exit
+  fi
+
+  # Set old path to new path
+  tmpPath="$(echo "$tmpPath" | sed "s/$1/$2/")"
+}
+remove() {
+  while [[ "$1" != "" ]]; do
+    echo "Attempting to remove path '$1'"
+    if [[ "$(echo -e "$tmpPath" | grep "^$1$")" != "" ]]; then
+      tmpPath="$(echo -e "$tmpPath" | grep -v "^$1$")"
+      echo "Successfully removed '$1' from path!"
+    else
+      echo "Failed to remove!"
+      echo "Path specified to remove doesn't exist!"
+    fi
+  shift; done
+}
+reset() {
+  if [[ "$1" == "-o" ]]; then
+    cat ~/.path > ~/.pathog
+    echo "Original path set to current path!"
+  else
+    cat ~/.pathog > ~/.path
+    echo "Path reset to original path!"
+  fi
+}
+missingArg() {
+  if [[ "$1" == "" ]]; then
+    echo "Missing required argument: [PATH]"
+    exit
+  # elif [[ ! "$1" =~ "$tmpPath" ]]; then
+  #   echo "Path specified doesn't exist!"
+  #   echo -e "Did you mean:\n$(echo "$tmpPath" | grep "$1")"
+  #   exit
+  fi
+}
+updatePath() {
+  echo -e "$(echo "$tmpPath" | tr -s "\n" ":")\n" > ~/.path
+  # Final messages
+  echo "PATH variable changed! Use 'source ~/.bashrc' to reload your path variables!"
+  return
+}
+
+# MAIN
+
+# Set bashrc to read .path
+if [[ "$(cat ~/.bashrc | grep 'export PATH="$(cat ~/.path)"')" == "" ]]; then
+  echo 'export PATH="$(cat ~/.path)"' >> ~/.bashrc
+fi
+
+# Save users original path
+if [ ! -e ~/.pathog ]; then
+  echo "Updating .pathog"
+  touch ~/.pathog
+  echo -e "$PATH\n" > ~/.pathog
+fi
+
+# Set .path file if it doesn't exist
+if [ ! -e ~/.path ]; then
+  echo "Updating .path"
+  touch ~/.path
+  echo -e "$PATH\n" > ~/.path
+fi
+
+# Run args
+if [[ "$1" == "" ]]; then
+  echo "USAGE: chpath [get/add/list/edit/remove/reset] [path] [optionalPath]"
+  exit
+else
+  cmd="$1"
+  shift # Move to next argument
+  case $cmd in
+    get ) # Search and return paths that contain the path specified (can be exact)
+      # missingArg $1
+      get $1
+      # updatePath
+      exit;;
+    add ) # Add new record to path (can change priority)
+      missingArg $1
+      add $@
+      updatePath
+      exit;;
+    edit ) # Edit existing record
+      missingArg $1
+      edit $@
+      updatePath
+      exit;;
+    remove ) # Remove path records
+      missingArg $1
+      remove $@
+      updatePath
+      exit;;
+    reset ) # Reset to path snapshot taken at installation
+      reset
+      exit;;
+    list ) # List paths
+      echo "$tmpPath"
+      exit;;
+    * )
+      echo "Subcommand '$cmd' not found"
+      echo "Did you mean: $(echo -e "$cmdList" | grep $cmd)?"
+      exit;;
+  esac
+fi

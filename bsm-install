@@ -3,13 +3,33 @@
 ### BSM-INSTALL CLI ###
 
 # Vars
+. /bsm/.bsm-vars
 version=$(cat /bsm/.version | tail -1)
 help="cat /bsm/.install-help"
 log="/bsm/logs/bsm.log"
 errlog="/bsm/logs/err.log"
 scripts="/bsm/scripts"
+repo="$(find ~ -type d -name "Bash-Script-Manager")"
+
 
 # Functions
+cpdeps() {
+  sudo cp -f "$(find $repo -type f -name "bsm")" /usr/local/bin/bsm && echo "Copy of BSM added to program registry!"
+  sudo cp -f "$(find $repo -type f -name "rbsm")" /usr/local/bin/rbsm
+  sudo cp -f "$(find $repo -type f -name "bsm-install")" /usr/local/sbin/bsm-install && echo "Installer copied to system registry!"
+  cp -f "$(find $repo -type f -name ".version")" /bsm/.version
+  cp -f "$(find $repo -type f -name ".bsm-vars")" /bsm/.bsm-vars
+  cp -f "$(find $repo -type f -name ".bsm-funcs")" /bsm/.bsm-funcs
+  cp -f "$(find $repo -type f -name ".help")" /bsm/.help
+  cp -f "$(find $repo -type f -name ".install-help")" /bsm/.install-help
+  if [[ ! -e /bsm/.config ]]; then
+    cp -f "$(find $repo -type f -name "bsm.config")" /bsm/.config
+  fi
+  cp -rf "$(find $repo -type d -name "tools")" /bsm/
+  sudo chmod 644 /bsm/.config
+  sudo chmod 755 /usr/local/bin/bsm
+  sudo chmod 755 /usr/local/sbin/bsm-install
+}
 install() {
   echo "Installing..."
   echo "Setting up logging and scripts folders..."
@@ -20,6 +40,7 @@ install() {
     mkdir /bsm/scripts
     mkdir /bsm/logs
   fi
+  # Generate log files
   if [ ! -e $errlog ]; then
     touch $errlog
     sudo chmod 666 $errlog
@@ -28,22 +49,39 @@ install() {
     touch $log
     sudo chmod 666 $log
   fi
-  sudo cp "$(find ~ -type f -name "bsm")" /usr/local/bin/bsm && echo "Copy of BSM added to program registry!"
-  sudo cp "$(find ~ -type f -name "bsm-install")" /usr/local/sbin/bsm-install && echo "Installer copied to system registry!"
-  cp "$(find ~ -type f -name ".version")" /bsm/.version
-  cp "$(find ~ -type f -name ".bsm-vars")" /bsm/.bsm-vars
-  cp "$(find ~ -type f -name ".bsm-funcs")" /bsm/.bsm-funcs
-  cp "$(find ~ -type f -name ".help")" /bsm/.help
-  cp "$(find ~ -type f -name ".install-help")" /bsm/.install-help
-  cp "$(find ~ -type f -name "bsm.config")" /bsm/.config
-  sudo chmod 644 /bsm/.config
-  sudo chmod 755 /usr/local/bin/bsm
-  sudo chmod 755 /usr/local/sbin/bsm-install
+
+  # Check newer versions
+  if [[ "$(cat /bsm/.version | head -1)" != "$(cat "$repo/.version" | head -1)" || "$(cat /bsm/.version | tail -1)" != "$(cat "$repo/.version" | tail -1)" ]]; then
+    read -p "Newer version of BSM is available, would you like to install? [Y/n]" yn
+    if [[ "${yn,}" == "y" ]]; then
+      echo "Installing new version of BSM..."
+      cpdeps
+    else
+      echo "Keeping old version of BSM..."
+    fi
+  else
+    if [[ "$1" == "-f" ]]; then
+      echo "Force installing even though current is latest..."
+      cpdeps
+    else
+      echo "Current version is up to date!"
+    fi
+  fi
   echo "Updating PATH..."
-  #This assumes you haven't modified the original bashrc file with your own things that don't end in 'fi'
-  if [[ "$(echo "$PATH" | grep $scripts)" == "" ]]; then
-    echo "export PATH=\"$PATH:$scripts:$scripts/_node:$scripts/_python:$scripts/_ruby:$scripts/_lisp:$scripts/_power\"" >> /home/$USER/.bashrc
-    source ~/.bashrc #Attempt reload of PATH
+  if [[ "$(echo "$PATH" | grep /bsm)" == "" ]]; then
+    if [[ "$(command -v chpath)" != "" ]]; then
+      chpath add /bsm/tools $scripts $scripts/_node $scripts/_python $scripts/_ruby $scripts/_lisp $scripts/_power
+      if [ -e ~/.path ]; then
+        echo "PATH updated successfully via chpath"
+      else
+        echo "There was an unexpected error while adding path via chpath"
+      fi
+    else
+      #This assumes you haven't modified the original bashrc file with your own things that don't end in 'fi'
+      echo "### BSM2" >> /home/$USER/.bashrc
+      echo 'export PATH="$PATH:/bsm/tools:$scripts:$scripts/_node:$scripts/_python:$scripts/_ruby:$scripts/_lisp:$scripts/_power"' >> /home/$USER/.bashrc
+      # source ~/.bashrc #Attempt reload of PATH
+    fi
   fi
 
   #This should setup BSM, logging is sent to stdout to check for any errors
@@ -55,48 +93,65 @@ uninstall() {
   echo "Uninstalling BSM..."
   sudo rm -r /bsm
   sudo rm /usr/local/bin/bsm
+  sudo rm /usr/local/bin/rbsm
   echo "Uninstalling BSM-install..."
   sudo rm /usr/local/sbin/bsm-install
-  echo "Resetting PATH..."
-  echo "$(head -n -1 /home/$USER/.bashrc)" > /home/$USER/.bashrc #Reset bashrc
-  source ~/.bashrc #Attempt reload of PATH
+  # echo "Resetting PATH..."
+  # echo "$(head -n -1 /home/$USER/.bashrc)" > /home/$USER/.bashrc #Reset bashrc
+  # source ~/.bashrc #Attempt reload of PATH
   # export PATH="$(echo "$PATH" | tr -s ':' '\n' | grep -v "$scripts" | tr -s '\n' ':' | sed 's/.$//')" #Reset PATH
   echo "Sucessfully uninstalled BSM!"
 }
 
 repair() {
+  # Ensure snap is setup properly
+  [[ `stat / | grep -I "(0755"` == "" ]] && sudo chmod 755 /
+  # Begin repair
+  echo "Setting up BSM Folders..."
+  [ ! -d /bsm ] && mkdir $BSM_ROOT
+  [ ! -d /bsm/logs ] && mkdir $BSM_LOGS
+  [ ! -d /bsm/scripts ] && mkdir $BSM_SCRIPTS
+  [ ! -d /bsm/tools ] && mkdir $BSM_TOOLS
+  cp -rf "$(find $repo -type d -name "tools")" /bsm/
   if [[ "$1" == "" ]]; then
-    echo "Setting up BSM Folders..."
     mkdir $scripts/_node >> $log 2>> $errlog
     mkdir $scripts/_python >> $log 2>> $errlog
     mkdir $scripts/_ruby >> $log 2>> $errlog
     mkdir $scripts/_lisp >> $log 2>> $errlog
-    if [[ "$(uname -r)" =~ "WSL" ]]; then
-      mkdir $scripts/_power >> $log 2>> $errlog
-    fi
+    mkdir $scripts/_power >> $log 2>> $errlog
     echo "Installing BSM Dependencies..."
     sudo snap install --edge node --classic >> $log 2>> $errlog
     sudo apt-get install -y python3-pip >> $log 2>> $errlog
     sudo apt-get install -y ruby-full >> $log 2>> $errlog
     sudo apt-get install -y sbcl >> $log 2>> $errlog
+    [[ ! `uname -r` =~ "WSL" ]] && sudo snap install powershell --classic
   else
     while [[ "$1" != "" ]]; do
       if [[ "${1,,}" =~ "node" ]]; then
-      echo "Installing and setting up Node..."
-        sudo mkdir $scripts/_node
+        echo "Installing and setting up Node..."
+        mkdir $scripts/_node >> $log 2>> $errlog
         sudo snap install --edge node --classic >> $log 2>> $errlog
       elif [[ "${1,,}" =~ "py" ]]; then
-      echo "Installing and setting up Python..."
-        sudo mkdir $scripts/_python
+        echo "Installing and setting up Python..."
+        mkdir $scripts/_python >> $log 2>> $errlog
         sudo apt-get install -y python3-pip >> $log 2>> $errlog
       elif [[ "${1,,}" =~ "ruby" ]]; then
-      echo "Installing and setting up Ruby..."
-        sudo mkdir $scripts/_ruby
+        echo "Installing and setting up Ruby..."
+        mkdir $scripts/_ruby >> $log 2>> $errlog
         sudo apt-get install -y ruby-full >> $log 2>> $errlog
-      elif [[ "${1,,}" =~ "l" ]]; then
-      echo "Installing and setting up LISP..."
-        sudo mkdir $scripts/_lisp
+      elif [[ "${1,,}" =~ "li" ]]; then
+        echo "Installing and setting up LISP..."
+        mkdir $scripts/_lisp >> $log 2>> $errlog
         sudo apt-get install -y sbcl >> $log 2>> $errlog
+      elif [[ "${1,,}" =~ "p" ]]; then
+        if [[ `uname -r` =~ "WSL" ]]; then
+          echo "Using WSL, PowerShell accessible via powershell.exe"
+          exit
+        else 
+          echo "Installing and setting up PowerShell..."
+          mkdir $scripts/_power >> $log 2>> $errlog
+          sudo snap install powershell --classic >> $log 2>> $errlog
+        fi
       fi
       shift
     done
@@ -196,7 +251,8 @@ clear_bsm() {
 search_args() {
   case $1 in
     -i | --install )
-      install
+      shift
+      install $@
       exit;;
     -u | --uninstall )
       uninstall
@@ -231,7 +287,7 @@ if [[ "$1" == "" ]]; then
   select opt in Install Uninstall Repair Logs Clear Exit; do
     case $opt in
       Install )
-        install;;
+        install $@;;
       Uninstall )
         uninstall
         break;;

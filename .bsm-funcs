@@ -100,6 +100,14 @@ search_args() {
           fi
         fi
         ;;
+      -t | --tool )
+        shift
+        get_tool $@
+        exit;;
+      -S | --shell )
+        shift
+        rbsm $@
+        exit;;
       -l | --list )
         list_scripts
         exit;;
@@ -124,78 +132,76 @@ search_cmds() {
     shift
     case $cmd in
       create )
-        sub="${1,}"
-        shift
-        name="$1"
-        case $sub in
-          ps | ps1 | powershell )
-            create_script -P $name
-            ;;
-          py | python )
-            create_script -p $name
-            ;;
-          js | node )
-            create_script -n $name
-            ;;
-          rb | ruby )
-            create_script -r $name
-            ;;
-          cl | lisp )
-            create_script -l $name
-            ;;
-          sh | bash )
-            create_script -b $name
-            ;;
-          * )
-            create_script $sub
-            ;;
-        esac
+        if [[ "$1" == "" ]]; then
+          echo "Missing required argument: 'NAME'"
+        else
+          sub="${1,}"
+          shift
+          name="$1"
+          case $sub in
+            ps | ps1 | powershell )
+              create_script -P $name
+              ;;
+            py | python )
+              create_script -p $name
+              ;;
+            js | node )
+              create_script -n $name
+              ;;
+            rb | ruby )
+              create_script -r $name
+              ;;
+            cl | lisp )
+              create_script -l $name
+              ;;
+            sh | bash )
+              create_script -b $name
+              ;;
+            * )
+              create_script $sub
+              ;;
+          esac
+        fi
         ;;
       open )
         name="$1"
         if [[ "$name" == "" ]]; then
           echo "Missing required argument: 'NAME'"
-          exit
         else
           open_script $name
         fi
-        exit;;
+        ;;
       import )
         script="$1"
         if [[ "$script" == "" ]]; then
           echo "Missing required argument: 'SCRIPT'"
-          exit
         else
           import_script $@
         fi
-        exit;;
+        ;;
       export )
         script="$1"
         shift
         dest="$1"
         if [[ "$script" == "" ]]; then
           echo "Missing required argument: 'SCRIPT'"
-          exit
         else
           if [[ "$dest" == "" ]]; then
             echo "Missing required argument: 'DESTINATION'"
-            exit
           else
             export_script $script $dest
           fi
         fi
-        exit;;
+        ;;
       link )
         script="$1"
         shift
         name="$1"
         if [[ "$script" == "" ]]; then
           echo "Missing required argument: 'SCRIPT'"
-          exit
         else
           if [[ "$name" == "" ]]; then
             echo "Missing required argument: 'NAME'"
-            exit
           else
             link_script $script $name
           fi
@@ -207,7 +213,6 @@ search_cmds() {
         newname="$1"
         if [[ "$name" == "" ]]; then
           echo "Missing required argument: 'NAME'"
-          exit
         else
           if [[ "$newname" == "" ]]; then
             echo "Missing required argument: 'NEW_NAME'"
@@ -220,18 +225,16 @@ search_cmds() {
         name="$1"
         if [[ "$name" == "" ]]; then
           echo "Missing required argument: 'SCRIPT'"
-          exit
         else
           remove_scripts $@
         fi
-        exit;;
+        ;;
       config )
         rule="${1,}"
         shift
         value="${1,}"
         if [[ "$rule" == "" ]]; then
           echo "Missing required argument: 'RULE'"
-          exit
         else
           if [[ "$value" == "" || "$value" == "config" ]]; then
             config_bsm $rule
@@ -240,18 +243,26 @@ search_cmds() {
           fi
         fi
         ;;
+      tool )
+        # tool=$1
+        get_tool $@
+        while (($#)); do shift; done
+        ;;
+      sh | shell | rbsm )
+        rbsm $@
+        ;;
       list )
         list_scripts
-        exit;;
+        ;;
       version )
         echo "$version"
-        exit;;
+        ;;
       help )
         $help
-        exit;;
+        ;;
       * )
         echo "Err: No argument found with '$1' in BSM"
-        exit;;
+        ;;
     esac
   shift; done
 }
@@ -260,78 +271,78 @@ search_cmds() {
 mknode() {
   name=$1
   #Make Nodejs folder, exe, installation
-  if [[ ! -d "/bsm/scripts/_node" ]]; then
+  if [[ ! -d "$BSM_SCRIPTS/_node" ]]; then
     echo "Installing Node.js and dependencies..."
-    mkdir /bsm/scripts/_node >> $log 2>> $errlog
-    sudo snap install --edge node --classic >> $log 2>> $errlog || echo "Ran into issue installing, check /var/log/bsm_err_log.log"
+    mkdir $BSM_SCRIPTS/_node >> $log 2>> $errlog
+    sudo snap install --edge node --classic >> $log 2>> $errlog || echo "Ran into issue installing, check /bsm/logs/err_log.log"
     echo "Finished installing Node!"
   fi
-  touch "/bsm/scripts/_node/${name%.js}" && chmod 755 "/bsm/scripts/_node/${name%.js}"
-  printf "#!/bin/env node\n\n//Write script code" > "/bsm/scripts/_node/${name%.js}"
-  if [[ -e "/bsm/scripts/_node/${name%.js}" ]]; then
+  touch "$BSM_SCRIPTS/_node/${name%.js}" && chmod 755 "$BSM_SCRIPTS/_node/${name%.js}"
+  printf "#!/bin/env node\n\n//Write script code" > "$BSM_SCRIPTS/_node/${name%.js}"
+  if [[ -e "$BSM_SCRIPTS/_node/${name%.js}" ]]; then
     echo "Script Created!"
   fi
 }
 mkpyth() {
   name=$1
   #Make python folder and executable (Install python if not installed)
-  if [[ ! -d "/bsm/scripts/_python" ]]; then
+  if [[ ! -d "$BSM_SCRIPTS/_python" ]]; then
     echo "Installing Python and setting up dependencies..."
-    mkdir /bsm/scripts/_python >> $log 2>> $errlog
-    sudo apt-get install -y python3-pip >> $log 2>> $errlog || echo "Ran into issue installing, check /var/log/bsm_err_log.log"
+    mkdir $BSM_SCRIPTS/_python >> $log 2>> $errlog
+    sudo apt-get install -y python3-pip >> $log 2>> $errlog || echo "Ran into issue installing, check /bsm/logs/err_log.log"
     echo "Finished installing Python!"
   fi
-  touch "/bsm/scripts/_python/${name%.py}" && chmod 755 "/bsm/scripts/_python/${name%.py}"
-  printf "#!/bin/env python3\n\n#Write script code" > "/bsm/scripts/_python/${name%.py}"
-  if [[ -e "/bsm/scripts/_python/${name%.py}" ]]; then
+  touch "$BSM_SCRIPTS/_python/${name%.py}" && chmod 755 "$BSM_SCRIPTS/_python/${name%.py}"
+  printf "#!/bin/env python3\n\n#Write script code" > "$BSM_SCRIPTS/_python/${name%.py}"
+  if [[ -e "$BSM_SCRIPTS/_python/${name%.py}" ]]; then
     echo "Script Created!"
   fi
 }
 mklisp() {
   name=$1
   #LISP folder, exe, install
-  if [[ ! -d "/bsm/scripts/_lisp" ]]; then
+  if [[ ! -d "$BSM_SCRIPTS/_lisp" ]]; then
     echo "Installing CommonLISP and dependencies..."
     echo "View log file for details"
-    mkdir /bsm/scripts/_lisp >> $log 2>> $errlog
-    sudo apt-get install sbcl -y >> $log 2>> $errlog || echo "Ran into issue installing, check /var/log/bsm_err_log.log"
+    mkdir $BSM_SCRIPTS/_lisp >> $log 2>> $errlog
+    sudo apt-get install sbcl -y >> $log 2>> $errlog || echo "Ran into issue installing, check /bsm/logs/err_log.log"
     echo "Finished installing LISP!"
   fi
-  touch "/bsm/scripts/_lisp/${name%.cl}" && chmod 755 "/bsm/scripts/_lisp/${name%.cl}"
-  printf "#!/bin/env -S sbcl --script\n\n;; Write script code" > "/bsm/scripts/_lisp/${name%.cl}"
-  if [[ -e "/bsm/scripts/_lisp/${name%.cl}" ]]; then
+  touch "$BSM_SCRIPTS/_lisp/${name%.cl}" && chmod 755 "$BSM_SCRIPTS/_lisp/${name%.cl}"
+  printf "#!/bin/env -S sbcl --script\n\n;; Write script code" > "$BSM_SCRIPTS/_lisp/${name%.cl}"
+  if [[ -e "$BSM_SCRIPTS/_lisp/${name%.cl}" ]]; then
     echo "Script Created!"
   fi
 }
 mkruby() {
   name=$1
   #Ruby folder, exe, install
-  if [[ ! -d "/bsm/scripts/_ruby" ]]; then
+  if [[ ! -d "$BSM_SCRIPTS/_ruby" ]]; then
     echo "Installing Ruby and dependencies..."
-    mkdir /bsm/scripts/_ruby >> $log 2>> $errlog
-    sudo apt-get install ruby-full -y >> $log 2>> $errlog || echo "Ran into issue installing, check /var/log/bsm_err_log.log"
+    mkdir $BSM_SCRIPTS/_ruby >> $log 2>> $errlog
+    sudo apt-get install ruby-full -y >> $log 2>> $errlog || echo "Ran into issue installing, check /bsm/logs/err_log.log"
     echo "Finished installing Ruby!"
   fi
-  touch "/bsm/scripts/_ruby/${name%.rb}" && chmod 755 "/bsm/scripts/_ruby/${name%.rb}"
-  printf "#!/bin/env ruby\n\n#Write script code" > "/bsm/scripts/_ruby/${name%.rb}"
-  if [[ -e "/bsm/scripts/_ruby/${name%.rb}" ]]; then
+  touch "$BSM_SCRIPTS/_ruby/${name%.rb}" && chmod 755 "$BSM_SCRIPTS/_ruby/${name%.rb}"
+  printf "#!/bin/env ruby\n\n#Write script code" > "$BSM_SCRIPTS/_ruby/${name%.rb}"
+  if [[ -e "$BSM_SCRIPTS/_ruby/${name%.rb}" ]]; then
     echo "Script Created!"
   fi
 }
 mkpwsh() {
   name=$1
   if [[ "$(uname -r)" =~ "WSL" ]]; then
-    if [[ ! -d "/bsm/scripts/_power" ]]; then
-      mkdir /bsm/scripts/_power
+    if [[ ! -d "$BSM_SCRIPTS/_power" ]]; then
+      mkdir $BSM_SCRIPTS/_power
       echo "Set up PowerShell for use in BSM through WSL!"
     fi
     # Make editable PowerShell file separately from the actual script executable
-    touch "/bsm/scripts/_power/${name%.***}.ps1" && chmod 755 "/bsm/scripts/_power/${name%.***}.ps1" && echo "# PowerShell code below" > "/bsm/scripts/_power/${name%.***}.ps1"
+    touch "$BSM_SCRIPTS/_power/${name%.***}.ps1" && chmod 755 "$BSM_SCRIPTS/_power/${name%.***}.ps1" && echo "# PowerShell code below" > "$BSM_SCRIPTS/_power/${name%.***}.ps1"
     # Make executable that calls PowerShell passing the script
     # This is done since using powershell.exe doesn't work in environment mode
-    touch "/bsm/scripts/_power/${name%.***}" && chmod 755 "/bsm/scripts/_power/${name%.***}"
-    echo -e "#!/bin/bash\n\npowershell.exe -F '/bsm/scripts/_power/${name%.***}.ps1'" > "/bsm/scripts/_power/${name%.***}"
-    if [[ -e "/bsm/scripts/_power/${name%.***}" && -e "/bsm/scripts/_power/${name%.***}.ps1" ]]; then
+    touch "$BSM_SCRIPTS/_power/${name%.***}" && chmod 755 "$BSM_SCRIPTS/_power/${name%.***}"
+    echo -e "#!/bin/bash\n\npowershell.exe -F '$BSM_SCRIPTS/_power/${name%.***}.ps1'" > "$BSM_SCRIPTS/_power/${name%.***}"
+    if [[ -e "$BSM_SCRIPTS/_power/${name%.***}" && -e "$BSM_SCRIPTS/_power/${name%.***}.ps1" ]]; then
       echo "Script Created!"
       echo "When executing, you should consider whitelisting the script to PowerShell so you don't have to allow it each time!"
     fi
@@ -341,9 +352,9 @@ mkpwsh() {
 }
 mkbash() {
   name=$1
-  touch "/bsm/scripts/${name%.**}" && chmod 755 "/bsm/scripts/${name%.**}"
-  printf "#!/bin/bash\n\n#Write script code" > "/bsm/scripts/${name%.**}"
-  if [[ -e "/bsm/scripts/${name%.**}" ]]; then
+  touch "$BSM_SCRIPTS/${name%.**}" && chmod 755 "$BSM_SCRIPTS/${name%.**}"
+  printf "#!/bin/bash\n\n#Write script code" > "$BSM_SCRIPTS/${name%.**}"
+  if [[ -e "$BSM_SCRIPTS/${name%.**}" ]]; then
     echo "Script Created!"
   fi
 }
@@ -360,42 +371,42 @@ create_script() {
     name=$2
     case $1 in
       -p | --python )
-        if [[ ! -e "/bsm/scripts/_python/${name%.**}" ]]; then
+        if [[ ! -e "$BSM_SCRIPTS/_python/${name%.**}" ]]; then
           mkpyth $name
         else
           conflict
         fi
         ;;
       -n | --node )
-        if [[ ! -e "/bsm/scripts/_node/${name%.**}" ]]; then
+        if [[ ! -e "$BSM_SCRIPTS/_node/${name%.**}" ]]; then
           mknode $name
         else
           conflict
         fi
         ;;
       -r | --ruby )
-        if [[ ! -e "/bsm/scripts/_ruby/${name%.**}" ]]; then
+        if [[ ! -e "$BSM_SCRIPTS/_ruby/${name%.**}" ]]; then
           mkruby $name
         else
           conflict
         fi
         ;;
       -l | --lisp )
-        if [[ ! -e "/bsm/scripts/_lisp/${name%.**}" ]]; then
+        if [[ ! -e "$BSM_SCRIPTS/_lisp/${name%.**}" ]]; then
           mklisp $name
         else
           conflict
         fi
         ;;
       -b | --bash )
-        if [[ ! -e "/bsm/scripts/$name" ]]; then
+        if [[ ! -e "$BSM_SCRIPTS/$name" ]]; then
           mkbash $name
         else
           conflict
         fi
         ;;
       -P | --powershell )
-        if [[ ! -e "/bsm/scripts/_power/${name%.***}" ]]; then
+        if [[ ! -e "$BSM_SCRIPTS/_power/${name%.***}" ]]; then
           mkpwsh $name
         else
           conflict
@@ -406,7 +417,7 @@ create_script() {
   else
     name=$1
     # Check if next arg is a name or a type def
-    if [[ ! -e "/bsm/scripts/_power/${name%.***}" && ! -e "/bsm/scripts/_lisp/${name%.**}" && ! -e "/bsm/scripts/_ruby/${name%.**}" && ! -e "/bsm/scripts/_node/${name%.**}" && ! -e "/bsm/scripts/_python/${name%.**}" && ! -e "/bsm/scripts/$name" ]]; then
+    if [[ ! -e "$BSM_SCRIPTS/_power/${name%.***}" && ! -e "$BSM_SCRIPTS/_lisp/${name%.**}" && ! -e "$BSM_SCRIPTS/_ruby/${name%.**}" && ! -e "$BSM_SCRIPTS/_node/${name%.**}" && ! -e "$BSM_SCRIPTS/_python/${name%.**}" && ! -e "$BSM_SCRIPTS/$name" ]]; then
       if [[ "$name" =~ ".js" ]]; then # Node
         mknode $name
       elif [[ "$name" =~ ".py" ]]; then # Python
@@ -428,13 +439,13 @@ create_script() {
 open_script() {
   name=$1
   # Special PowerShell check
-  if [[ -e "/bsm/scripts/_power/${name%.***}" ]]; then
+  if [[ -e "$BSM_SCRIPTS/_power/${name%.***}" ]]; then
     echo "Script found, opening..."
-    find -L "/bsm/scripts/_power/${name%.***}" -type f -name "${name%.***}" -exec $editor {}.ps1 \;
+    find -L "$BSM_SCRIPTS/_power/${name%.***}" -type f -name "${name%.***}" -exec $editor {}.ps1 \;
   # Check rest normally
-  elif [[ -e "/bsm/scripts/_lisp/${name%.**}" || -e "/bsm/scripts/_ruby/${name%.**}" || -e "/bsm/scripts/_python/${name%.**}" || -e "/bsm/scripts/_node/${name%.**}" || -e "/bsm/scripts/${name%.**}" ]]; then
+  elif [[ -e "$BSM_SCRIPTS/_lisp/${name%.**}" || -e "$BSM_SCRIPTS/_ruby/${name%.**}" || -e "$BSM_SCRIPTS/_python/${name%.**}" || -e "$BSM_SCRIPTS/_node/${name%.**}" || -e "$BSM_SCRIPTS/${name%.**}" ]]; then
     echo "Script found, opening..."
-    find -L /bsm/scripts -type f -name "${name%.**}" -exec $editor {} \;
+    find -L $BSM_SCRIPTS -type f -name "${name%.**}" -exec $editor {} \;
   else
     echo "Script not found, creating..."
     create_script "$name"
@@ -444,47 +455,47 @@ open_script() {
 remove_scripts() {
   while [[ $1 != "" ]]; do
     n=$1
-    if [[ -e "/bsm/scripts/${n%.**}" ]]; then
-      rm "/bsm/scripts/${n%.**}" >> $log 2>> $errlog
-      if [[ ! -e "/bsm/scripts/${n%.**}" ]]; then
+    if [[ -e "$BSM_SCRIPTS/${n%.**}" ]]; then
+      rm "$BSM_SCRIPTS/${n%.**}" >> $log 2>> $errlog
+      if [[ ! -e "$BSM_SCRIPTS/${n%.**}" ]]; then
         echo "Script Removed!"
       else
         echo "Unable to remove script, refer to /bsm/logs/err.log for details"
       fi
     else
       # Check for other executables
-      if [[ -e "/bsm/scripts/_python/${n%.**}" ]]; then
-        rm "/bsm/scripts/_python/${n%.**}" >> $log 2>> $errlog
-        if [[ ! -e "/bsm/scripts/_python/${n%.**}" ]]; then
+      if [[ -e "$BSM_SCRIPTS/_python/${n%.**}" ]]; then
+        rm "$BSM_SCRIPTS/_python/${n%.**}" >> $log 2>> $errlog
+        if [[ ! -e "$BSM_SCRIPTS/_python/${n%.**}" ]]; then
           echo "Script(s) Removed!"
         else
           echo "Unable to remove script, refer to /bsm/logs/err.log for details"
         fi
-      elif [[ -e "/bsm/scripts/_node/${n%.**}" ]]; then
-        rm "/bsm/scripts/_node/${n%.**}" >> $log 2>> $errlog
-        if [[ ! -e "/bsm/scripts/_node/${n%.**}" ]]; then
+      elif [[ -e "$BSM_SCRIPTS/_node/${n%.**}" ]]; then
+        rm "$BSM_SCRIPTS/_node/${n%.**}" >> $log 2>> $errlog
+        if [[ ! -e "$BSM_SCRIPTS/_node/${n%.**}" ]]; then
           echo "Script(s) Removed!"
         else
           echo "Unable to remove script, refer to /bsm/logs/err.log for details"
         fi
-      elif [[ -e "/bsm/scripts/_ruby/${n%.**}" ]]; then
-        rm "/bsm/scripts/_ruby/${n%.**}" >> $log 2>> $errlog
-        if [[ ! -e "/bsm/scripts/_ruby/${n%.**}" ]]; then
+      elif [[ -e "$BSM_SCRIPTS/_ruby/${n%.**}" ]]; then
+        rm "$BSM_SCRIPTS/_ruby/${n%.**}" >> $log 2>> $errlog
+        if [[ ! -e "$BSM_SCRIPTS/_ruby/${n%.**}" ]]; then
           echo "Script(s) Removed!"
         else
           echo "Unable to remove script, refer to /bsm/logs/err.log for details"
         fi
-      elif [[ -e "/bsm/scripts/_lisp/${n%.**}" ]]; then
-        rm "/bsm/scripts/_lisp/${n%.**}" >> $log 2>> $errlog
-        if [[ ! -e "/bsm/scripts/_lisp/${n%.**}" ]]; then
+      elif [[ -e "$BSM_SCRIPTS/_lisp/${n%.**}" ]]; then
+        rm "$BSM_SCRIPTS/_lisp/${n%.**}" >> $log 2>> $errlog
+        if [[ ! -e "$BSM_SCRIPTS/_lisp/${n%.**}" ]]; then
           echo "Script(s) Removed!"
         else
           echo "Unable to remove script, refer to /bsm/logs/err.log for details"
         fi
-      elif [[ -e "/bsm/scripts/_power/${n%.***}" || -e "/bsm/scripts/_power/${n%.***}.ps1" ]]; then
-        rm "/bsm/scripts/_power/${n%.***}" >> $log 2>> $errlog
-        rm "/bsm/scripts/_power/${n%.***}.ps1" >> $log 2>> $errlog
-        if [[ ! -e "/bsm/scripts/_power/${n%.***}" ]]; then
+      elif [[ -e "$BSM_SCRIPTS/_power/${n%.***}" || -e "$BSM_SCRIPTS/_power/${n%.***}.ps1" ]]; then
+        rm "$BSM_SCRIPTS/_power/${n%.***}" >> $log 2>> $errlog
+        rm "$BSM_SCRIPTS/_power/${n%.***}.ps1" >> $log 2>> $errlog
+        if [[ ! -e "$BSM_SCRIPTS/_power/${n%.***}" ]]; then
           echo "Script(s) Removed!"
         else
           echo "Unable to remove script, refer to /bsm/logs/err.log for details"
@@ -498,7 +509,7 @@ remove_scripts() {
 }
 rename_script() {
   oldname=$1
-  loc="$(find -L /bsm/scripts -type f -name "$oldname")"
+  loc="$(find -L $BSM_SCRIPTS -type f -name "$oldname")"
   if [[ "$loc" == "" ]]; then
     echo "Script to rename doesn't exist!"
     exit
@@ -514,10 +525,10 @@ rename_script() {
   echo "Renaming..."
   # Check PowerShell
   if [[ "$loc" =~ "/_power/" ]]; then
-    swap="$(cat "/bsm/scripts/_power/$oldname.ps1")"
+    swap="$(cat "$BSM_SCRIPTS/_power/$oldname.ps1")"
     remove_scripts $oldname >> $log
     create_script -P $newname >> $log
-    echo -e "$swap" > /bsm/scripts/_power/$newname.ps1
+    echo -e "$swap" > $BSM_SCRIPTS/_power/$newname.ps1
   else
     mv "$loc" "$(echo "$loc" | sed "s/\/$oldname/\/$newname/")"
   fi
@@ -527,8 +538,8 @@ link_script() {
   file=$1
   name=$2
   sudo chmod 757 "$file"
-  ln -s -t /bsm/scripts "$file" "$name" >> $log 2>> $errlog
-  if [[ -e "/bsm/scripts/$name" ]]; then
+  ln -s -t $BSM_SCRIPTS "$file" "$name" >> $log 2>> $errlog
+  if [[ -e "$BSM_SCRIPTS/$name" ]]; then
     echo "Script Linked!"
   else
     echo "Failed to Link!"
@@ -538,7 +549,7 @@ import_script() {
   while [[ "$1" != "" ]]; do
     name=$1
     create_script "$name"
-    scriptpath="/bsm/scripts"
+    scriptpath="$BSM_SCRIPTS"
     if [[ "$name" =~ ".js" ]]; then
         scriptpath="$scriptpath/_node"
     elif [[ "$name" =~ ".py" ]]; then
@@ -555,24 +566,24 @@ export_script() {
   script=$1
   dest=$2
   echo "Exporting..."
-  if [[ "$(diff "/bsm/scripts/${script%.***}" "$dest/${script%.***}")" != "" ]]; then
+  if [[ "$(diff "$BSM_SCRIPTS/${script%.***}" "$dest/${script%.***}")" != "" ]]; then
     echo -n "Script in destination doesn't match script being exported, are you sure you want to overwrite the destination? [Y/n] "
     read yn
     if [[ "${yn,}" == "y" ]]; then
       echo "Overwriting destination file..."
-      cp "/bsm/scripts/${script%.***}" "$dest"
+      cp "$BSM_SCRIPTS/${script%.***}" "$dest"
       echo "Script exported to '$dest'"
     else
       echo "Operation cancelled"
       return
     fi
   else
-    cp "/bsm/scripts/${script%.***}" "$dest"
+    cp "$BSM_SCRIPTS/${script%.***}" "$dest"
   fi
 }
 list_scripts() {
   echo "Available Scripts:"
-  ls -pR1 /bsm/scripts | grep -v / | grep -v '\...' | tr -s '\n' ' ' | tr ' ' '\n' | xargs -i echo "- {}"
+  ls -pR1 $BSM_SCRIPTS | grep -v / | grep -v '\...' | tr -s '\n' ' ' | tr ' ' '\n' | xargs -i echo "- {}"
 }
 config_bsm() {
   if [[ "$2" == "" ]]; then
@@ -586,3 +597,29 @@ config_bsm() {
     . /bsm/.bsm-vars
   fi
 }
+get_tool() {
+  tools_reg=$(ls -1 $BSM_TOOLS)
+  ptool=$1
+  if [[ "$ptool" == "" ]]; then
+    # List all tools
+    echo "Available tools: "
+    echo "$tools_reg"
+  else
+    for tool in $tools_reg; do
+      for segment in $(echo "$ptool" | cut -d '-' -f2); do
+        if [[ "$tool" =~ "$segment" ]]; then
+          echo "Tool with like name found!"
+          echo "You can call this tool from the command line via '$tool [options]'"
+          read -p "Open tool now? [Y/n] " yn
+          if [[ "${yn,}" =~ "y" ]]; then
+            shift # Include arbitrary args
+            $tool $@
+          fi
+          break
+        fi
+      done
+    done
+  fi
+}
+# add_tool() {}
+# remove_tool() {}
