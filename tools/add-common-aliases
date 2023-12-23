@@ -35,9 +35,9 @@ fi
 ALIAS
 )
 
-read -p "This script adds common aliases to root and user(s), continue? [Y/n] " yn
+read -p "This script adds common aliases to a user, continue? [Y/n] " yn
 if [[ "${yn,}" == "y" ]]; then
   read -p "Enter user: " user
-  sudo echo "$aliasFile" > /root/.bash_aliases
-  echo "$aliasFile" > ~/.bash_aliases
+  # sudo echo "$aliasFile" > /root/.bash_aliases
+  echo "$aliasFile" > "/home/${user,}/.bash_aliases"
 fi
