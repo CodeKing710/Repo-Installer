@@ -14,18 +14,18 @@ repo="$(find ~ -type d -name "Bash-Script-Manager")"
 
 # Functions
 cpdeps() {
-  sudo cp "$(find $repo -type f -name "bsm")" /usr/local/bin/bsm && echo "Copy of BSM added to program registry!"
-  sudo cp "$(find $repo -type f -name "rbsm")" /usr/local/bin/rbsm
-  sudo cp "$(find $repo -type f -name "bsm-install")" /usr/local/sbin/bsm-install && echo "Installer copied to system registry!"
-  cp "$(find $repo -type f -name ".version")" /bsm/.version
-  cp "$(find $repo -type f -name ".bsm-vars")" /bsm/.bsm-vars
-  cp "$(find $repo -type f -name ".bsm-funcs")" /bsm/.bsm-funcs
-  cp "$(find $repo -type f -name ".help")" /bsm/.help
-  cp "$(find $repo -type f -name ".install-help")" /bsm/.install-help
+  sudo cp -f "$(find $repo -type f -name "bsm")" /usr/local/bin/bsm && echo "Copy of BSM added to program registry!"
+  sudo cp -f "$(find $repo -type f -name "rbsm")" /usr/local/bin/rbsm
+  sudo cp -f "$(find $repo -type f -name "bsm-install")" /usr/local/sbin/bsm-install && echo "Installer copied to system registry!"
+  cp -f "$(find $repo -type f -name ".version")" /bsm/.version
+  cp -f "$(find $repo -type f -name ".bsm-vars")" /bsm/.bsm-vars
+  cp -f "$(find $repo -type f -name ".bsm-funcs")" /bsm/.bsm-funcs
+  cp -f "$(find $repo -type f -name ".help")" /bsm/.help
+  cp -f "$(find $repo -type f -name ".install-help")" /bsm/.install-help
   if [[ ! -e /bsm/.config ]]; then
-    cp "$(find $repo -type f -name "bsm.config")" /bsm/.config
+    cp -f "$(find $repo -type f -name "bsm.config")" /bsm/.config
   fi
-  cp -r "$(find $repo -type d -name "tools")" /bsm/
+  cp -rf "$(find $repo -type d -name "tools")" /bsm/
   sudo chmod 644 /bsm/.config
   sudo chmod 755 /usr/local/bin/bsm
   sudo chmod 755 /usr/local/sbin/bsm-install
