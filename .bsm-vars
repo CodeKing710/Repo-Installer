@@ -7,9 +7,6 @@ BSM_LOGS="$BSM_ROOT/logs"
 BSM_SCRIPTS="$BSM_ROOT/scripts"
 BSM_TOOLS="$BSM_ROOT/tools"
 
-# Runtime vars
-version="$(cat /bsm/.version | head -1)"
-help="cat $BSM_ROOT/.help"
+# Log vars
 log="$BSM_LOGS/bsm.log"
 errlog="$BSM_LOGS/err.log"
-editor="$(cat $BSM_ROOT/.config | grep "editor" | sed 's/editor=//')"

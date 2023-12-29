@@ -47,7 +47,10 @@ __BSM-Install Features__
 
 ### Extra commit messages
 
-_BSMv2 is basically ready for initial release_
-_Completed interactive mode_
-_Completed interactive mode bug fixes_
-_Squashed more bugs_
+__
+
+### BSM-Next
+
+__Features__
+
+- Add autocompletion for CLI users (command and arg modes)

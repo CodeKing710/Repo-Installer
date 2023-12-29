@@ -4,6 +4,9 @@
 
 # Import vars and functions
 . /bsm/.bsm-vars
+version="$(cat /bsm/.version | head -1)"
+help="cat $BSM_ROOT/.help"
+editor="$(cat $BSM_ROOT/.config | grep "editor" | sed 's/editor=//')"
 . /bsm/.bsm-funcs
 
 # Check if deps are installed

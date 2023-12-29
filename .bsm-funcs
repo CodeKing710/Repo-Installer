@@ -128,7 +128,7 @@ search_args() {
 # Command
 search_cmds() {
   while [[ "$1" != "" ]]; do
-    cmd="${1,}"
+    local cmd="${1,}"
     shift
     case $cmd in
       create )
@@ -269,7 +269,7 @@ search_cmds() {
 
 # General use functions
 mknode() {
-  name=$1
+  local name=$1
   #Make Nodejs folder, exe, installation
   if [[ ! -d "$BSM_SCRIPTS/_node" ]]; then
     echo "Installing Node.js and dependencies..."
@@ -284,7 +284,7 @@ mknode() {
   fi
 }
 mkpyth() {
-  name=$1
+  local name=$1
   #Make python folder and executable (Install python if not installed)
   if [[ ! -d "$BSM_SCRIPTS/_python" ]]; then
     echo "Installing Python and setting up dependencies..."
@@ -299,7 +299,7 @@ mkpyth() {
   fi
 }
 mklisp() {
-  name=$1
+  local name=$1
   #LISP folder, exe, install
   if [[ ! -d "$BSM_SCRIPTS/_lisp" ]]; then
     echo "Installing CommonLISP and dependencies..."
@@ -315,7 +315,7 @@ mklisp() {
   fi
 }
 mkruby() {
-  name=$1
+  local name=$1
   #Ruby folder, exe, install
   if [[ ! -d "$BSM_SCRIPTS/_ruby" ]]; then
     echo "Installing Ruby and dependencies..."
@@ -330,7 +330,7 @@ mkruby() {
   fi
 }
 mkpwsh() {
-  name=$1
+  local name=$1
   if [[ "$(uname -r)" =~ "WSL" ]]; then
     if [[ ! -d "$BSM_SCRIPTS/_power" ]]; then
       mkdir $BSM_SCRIPTS/_power
@@ -351,7 +351,7 @@ mkpwsh() {
   fi
 }
 mkbash() {
-  name=$1
+  local name=$1
   touch "$BSM_SCRIPTS/${name%.**}" && chmod 755 "$BSM_SCRIPTS/${name%.**}"
   printf "#!/bin/bash\n\n#Write script code" > "$BSM_SCRIPTS/${name%.**}"
   if [[ -e "$BSM_SCRIPTS/${name%.**}" ]]; then
@@ -368,7 +368,7 @@ conflict() {
 }
 create_script() {
   if [[ "$1" =~ "-" ]]; then
-    name=$2
+    local name=$2
     case $1 in
       -p | --python )
         if [[ ! -e "$BSM_SCRIPTS/_python/${name%.**}" ]]; then
@@ -415,7 +415,7 @@ create_script() {
     esac
     shift # Force move past name so search args doesn't parse this again
   else
-    name=$1
+    local name=$1
     # Check if next arg is a name or a type def
     if [[ ! -e "$BSM_SCRIPTS/_power/${name%.***}" && ! -e "$BSM_SCRIPTS/_lisp/${name%.**}" && ! -e "$BSM_SCRIPTS/_ruby/${name%.**}" && ! -e "$BSM_SCRIPTS/_node/${name%.**}" && ! -e "$BSM_SCRIPTS/_python/${name%.**}" && ! -e "$BSM_SCRIPTS/$name" ]]; then
       if [[ "$name" =~ ".js" ]]; then # Node
@@ -437,7 +437,7 @@ create_script() {
   fi
 }
 open_script() {
-  name=$1
+  local name=$1
   # Special PowerShell check
   if [[ -e "$BSM_SCRIPTS/_power/${name%.***}" ]]; then
     echo "Script found, opening..."
@@ -454,7 +454,7 @@ open_script() {
 }
 remove_scripts() {
   while [[ $1 != "" ]]; do
-    n=$1
+    local n=$1
     if [[ -e "$BSM_SCRIPTS/${n%.**}" ]]; then
       rm "$BSM_SCRIPTS/${n%.**}" >> $log 2>> $errlog
       if [[ ! -e "$BSM_SCRIPTS/${n%.**}" ]]; then
@@ -508,8 +508,8 @@ remove_scripts() {
   done
 }
 rename_script() {
-  oldname=$1
-  loc="$(find -L $BSM_SCRIPTS -type f -name "$oldname")"
+  local oldname=$1
+  local loc="$(find -L $BSM_SCRIPTS -type f -name "$oldname")"
   if [[ "$loc" == "" ]]; then
     echo "Script to rename doesn't exist!"
     exit
@@ -520,7 +520,7 @@ rename_script() {
     echo -n "Enter name: "
     read newname
   else
-    newname=$1
+    local newname=$1
   fi
   echo "Renaming..."
   # Check PowerShell
@@ -535,8 +535,8 @@ rename_script() {
   echo "Script renamed!"
 }
 link_script() {
-  file=$1
-  name=$2
+  local file=$1
+  local name=$2
   sudo chmod 757 "$file"
   ln -s -t $BSM_SCRIPTS "$file" "$name" >> $log 2>> $errlog
   if [[ -e "$BSM_SCRIPTS/$name" ]]; then
@@ -547,9 +547,9 @@ link_script() {
 }
 import_script() {
   while [[ "$1" != "" ]]; do
-    name=$1
+    local name=$1
     create_script "$name"
-    scriptpath="$BSM_SCRIPTS"
+    local scriptpath="$BSM_SCRIPTS"
     if [[ "$name" =~ ".js" ]]; then
         scriptpath="$scriptpath/_node"
     elif [[ "$name" =~ ".py" ]]; then
@@ -563,8 +563,8 @@ import_script() {
   done
 }
 export_script() {
-  script=$1
-  dest=$2
+  local script=$1
+  local dest=$2
   echo "Exporting..."
   if [[ "$(diff "$BSM_SCRIPTS/${script%.***}" "$dest/${script%.***}")" != "" ]]; then
     echo -n "Script in destination doesn't match script being exported, are you sure you want to overwrite the destination? [Y/n] "
@@ -582,8 +582,13 @@ export_script() {
   fi
 }
 list_scripts() {
-  echo "Available Scripts:"
-  ls -pR1 $BSM_SCRIPTS | grep -v / | grep -v '\...' | tr -s '\n' ' ' | tr ' ' '\n' | xargs -i echo "- {}"
+  local list=`ls -pR1 $BSM_SCRIPTS | grep -v / | grep -v '\...' | tr -s '\n' ' ' | tr ' ' '\n' | xargs -i echo "- {}"`
+  if [[ "$list" == "" ]]; then
+    echo "No Scripts Created Yet!"
+  else
+    echo -e "Available Scripts:\n$list"
+    # ls -pR1 $BSM_SCRIPTS | grep -v / | grep -v '\...' | tr -s '\n' ' ' | tr ' ' '\n' | xargs -i echo "- {}"
+  fi
 }
 config_bsm() {
   if [[ "$2" == "" ]]; then
@@ -598,8 +603,8 @@ config_bsm() {
   fi
 }
 get_tool() {
-  tools_reg=$(ls -1 $BSM_TOOLS)
-  ptool=$1
+  local tools_reg=$(ls -1 $BSM_TOOLS)
+  local ptool=$1
   if [[ "$ptool" == "" ]]; then
     # List all tools
     echo "Available tools: "

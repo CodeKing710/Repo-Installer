@@ -6,8 +6,6 @@
 . /bsm/.bsm-vars
 version=$(cat /bsm/.version | tail -1)
 help="cat /bsm/.install-help"
-log="/bsm/logs/bsm.log"
-errlog="/bsm/logs/err.log"
 scripts="/bsm/scripts"
 repo="$(find ~ -type d -name "Bash-Script-Manager")"
 
@@ -20,6 +18,7 @@ cpdeps() {
   cp -f "$(find $repo -type f -name ".version")" /bsm/.version
   cp -f "$(find $repo -type f -name ".bsm-vars")" /bsm/.bsm-vars
   cp -f "$(find $repo -type f -name ".bsm-funcs")" /bsm/.bsm-funcs
+  cp -f "$(find $repo -type f -name ".bsm-ac")" /bsm/.bsm-ac
   cp -f "$(find $repo -type f -name ".help")" /bsm/.help
   cp -f "$(find $repo -type f -name ".install-help")" /bsm/.install-help
   if [[ ! -e /bsm/.config ]]; then
@@ -79,7 +78,7 @@ install() {
     else
       #This assumes you haven't modified the original bashrc file with your own things that don't end in 'fi'
       echo "### BSM2" >> /home/$USER/.bashrc
-      echo 'export PATH="$PATH:/bsm/tools:$scripts:$scripts/_node:$scripts/_python:$scripts/_ruby:$scripts/_lisp:$scripts/_power"' >> /home/$USER/.bashrc
+      echo -e 'source /bsm/.bsm-ac\nexport PATH="$PATH:/bsm/tools:$scripts:$scripts/_node:$scripts/_python:$scripts/_ruby:$scripts/_lisp:$scripts/_power"' >> /home/$USER/.bashrc
       # source ~/.bashrc #Attempt reload of PATH
     fi
   fi
