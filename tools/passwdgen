@@ -1,0 +1,29 @@
+#!/bin/bash
+
+###### passwdgen ######
+# Generates Passwords #
+# Can take plaintext, #
+# uncased, passwords  #
+# and convert them to #
+# secure passwords!   #
+#######################
+# genPass() {}
+# convertPass() {}
+
+echo "PasswdGen v1.0"
+
+while true; do
+  read -p "Enter password to convert: " pass
+
+  [[ `echo "$pass" | grep -E "cancel|exit|quit"` != "" ]] && exit
+
+  # [[ "$pass" == "gen" ]] && $(genPass; continue) || [[ "$pass" == "" ]] && $(echo "Please enter a value"; continue) || $(convertPass; continue)
+  if [[ "$pass" == "gen" ]]; then
+    genPass
+  elif [[ "$pass" == "" ]]; then
+    echo "Please enter a value"
+    continue
+  else
+    convertPass
+  fi
+done
