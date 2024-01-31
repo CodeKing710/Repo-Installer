@@ -274,7 +274,7 @@ mknode() {
   if [[ ! -d "$BSM_SCRIPTS/_node" ]]; then
     echo "Installing Node.js and dependencies..."
     mkdir $BSM_SCRIPTS/_node >> $log 2>> $errlog
-    sudo snap install --edge node --classic >> $log 2>> $errlog || echo "Ran into issue installing, check /bsm/logs/err_log.log"
+    [ ! $MSYSTEM ] && sudo snap install --edge node --classic >> $log 2>> $errlog || echo "Ran into issue installing, check /bsm/logs/err_log.log"
     echo "Finished installing Node!"
   fi
   touch "$BSM_SCRIPTS/_node/${name%.js}" && chmod 755 "$BSM_SCRIPTS/_node/${name%.js}"
@@ -289,11 +289,11 @@ mkpyth() {
   if [[ ! -d "$BSM_SCRIPTS/_python" ]]; then
     echo "Installing Python and setting up dependencies..."
     mkdir $BSM_SCRIPTS/_python >> $log 2>> $errlog
-    sudo apt-get install -y python3-pip >> $log 2>> $errlog || echo "Ran into issue installing, check /bsm/logs/err_log.log"
+    [ ! $MSYSTEM ] && sudo apt-get install -y python3-pip >> $log 2>> $errlog || echo "Ran into issue installing, check /bsm/logs/err_log.log"
     echo "Finished installing Python!"
   fi
   touch "$BSM_SCRIPTS/_python/${name%.py}" && chmod 755 "$BSM_SCRIPTS/_python/${name%.py}"
-  printf "#!/bin/env python3\n\n#Write script code" > "$BSM_SCRIPTS/_python/${name%.py}"
+  [ $MSYSTEM ] && printf "#!/bin/env python\n\n#Write script code" > "$BSM_SCRIPTS/_python/${name%.py}" || printf "#!/bin/env python3\n\n#Write script code" > "$BSM_SCRIPTS/_python/${name%.py}"
   if [[ -e "$BSM_SCRIPTS/_python/${name%.py}" ]]; then
     echo "Script Created!"
   fi
@@ -305,11 +305,11 @@ mklisp() {
     echo "Installing CommonLISP and dependencies..."
     echo "View log file for details"
     mkdir $BSM_SCRIPTS/_lisp >> $log 2>> $errlog
-    sudo apt-get install sbcl -y >> $log 2>> $errlog || echo "Ran into issue installing, check /bsm/logs/err_log.log"
+    [ ! $MSYSTEM ] && sudo apt-get install sbcl -y >> $log 2>> $errlog || echo "Ran into issue installing, check /bsm/logs/err_log.log"
     echo "Finished installing LISP!"
   fi
   touch "$BSM_SCRIPTS/_lisp/${name%.cl}" && chmod 755 "$BSM_SCRIPTS/_lisp/${name%.cl}"
-  printf "#!/bin/env -S sbcl --script\n\n;; Write script code" > "$BSM_SCRIPTS/_lisp/${name%.cl}"
+  [ $MSYSTEM ] && printf "#!/bin/env -S sbcl --script\n\n;; Write script code (Might need to change env shebang value!)" > "$BSM_SCRIPTS/_lisp/${name%.cl}" || printf "#!/bin/env -S sbcl --script\n\n;; Write script code" > "$BSM_SCRIPTS/_lisp/${name%.cl}"
   if [[ -e "$BSM_SCRIPTS/_lisp/${name%.cl}" ]]; then
     echo "Script Created!"
   fi
@@ -331,10 +331,10 @@ mkruby() {
 }
 mkpwsh() {
   local name=$1
-  if [[ "$(uname -r)" =~ "WSL" ]]; then
+  if [[ "$(uname -r)" =~ "WSL" || "$(uname -s)" =~ "MINGW" ]]; then
     if [[ ! -d "$BSM_SCRIPTS/_power" ]]; then
       mkdir $BSM_SCRIPTS/_power
-      echo "Set up PowerShell for use in BSM through WSL!"
+      echo "Set up PowerShell for use in BSM!"
     fi
     # Make editable PowerShell file separately from the actual script executable
     touch "$BSM_SCRIPTS/_power/${name%.***}.ps1" && chmod 755 "$BSM_SCRIPTS/_power/${name%.***}.ps1" && echo "# PowerShell code below" > "$BSM_SCRIPTS/_power/${name%.***}.ps1"
@@ -347,7 +347,7 @@ mkpwsh() {
       echo "When executing, you should consider whitelisting the script to PowerShell so you don't have to allow it each time!"
     fi
   else
-    echo "PowerShell not available"
+    echo "PowerShell not integrated to true Linux BSM yet"
   fi
 }
 mkbash() {

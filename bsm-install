@@ -3,54 +3,77 @@
 ### BSM-INSTALL CLI ###
 
 # Vars
-. /bsm/.bsm-vars
-version=$(cat /bsm/.version | tail -1)
-help="cat /bsm/.install-help"
-scripts="/bsm/scripts"
 repo="$(find ~ -type d -name "Bash-Script-Manager")"
+if [ -e /bsm/.bsm-vars ]; then
+  . /bsm/.bsm-vars
+elif [ -e ~/bsm/.bsm-vars ]; then
+  . ~/bsm/.bsm-vars
+else
+  . $repo/.bsm-vars # Fallback to repo version
+fi
+version=$(cat $BSM_ROOT/.version | tail -1)
+help="cat $BSM_ROOT/.install-help"
 
 
 # Functions
 cpdeps() {
-  sudo cp -f "$(find $repo -type f -name "bsm")" /usr/local/bin/bsm && echo "Copy of BSM added to program registry!"
-  sudo cp -f "$(find $repo -type f -name "rbsm")" /usr/local/bin/rbsm
-  sudo cp -f "$(find $repo -type f -name "bsm-install")" /usr/local/sbin/bsm-install && echo "Installer copied to system registry!"
-  cp -f "$(find $repo -type f -name ".version")" /bsm/.version
-  cp -f "$(find $repo -type f -name ".bsm-vars")" /bsm/.bsm-vars
-  cp -f "$(find $repo -type f -name ".bsm-funcs")" /bsm/.bsm-funcs
-  cp -f "$(find $repo -type f -name ".bsm-ac")" /etc/bash_completion.d/bsm-ac
-  cp -f "$(find $repo -type f -name ".help")" /bsm/.help
-  cp -f "$(find $repo -type f -name ".install-help")" /bsm/.install-help
-  if [[ ! -e /bsm/.config ]]; then
-    cp -f "$(find $repo -type f -name "bsm.config")" /bsm/.config
+  if [ $MSYSTEM ]; then
+    # Handle Git Bash integration
+    cp -f "$(find $repo -type f -name "bsm")" ~/bin/bsm && echo "Copy of BSM added to program registry!"
+    cp -f "$(find $repo -type f -name "rbsm")" ~/bin/rbsm
+    cp -f "$(find $repo -type f -name "bsm-install")" ~/bin/bsm-install && echo "Installer copied to system registry!"
+    cp -f "$(find $repo -type f -name ".version")" $BSM_ROOT/.version
+    cp -f "$(find $repo -type f -name ".bsm-vars")" $BSM_ROOT/.bsm-vars
+    cp -f "$(find $repo -type f -name ".bsm-funcs")" $BSM_ROOT/.bsm-funcs
+    # cp -f "$(find $repo -type f -name ".bsm-ac")" /etc/bash_completion.d/bsm-ac
+    cp -f "$(find $repo -type f -name ".help")" $BSM_ROOT/.help
+    cp -f "$(find $repo -type f -name ".install-help")" $BSM_ROOT/.install-help
+    if [[ ! -e $BSM_ROOT/.config ]]; then
+      cp -f "$(find $repo -type f -name "bsm.config")" $BSM_ROOT/.config
+    fi
+    cp -rf "$(find $repo -type d -name "tools")" $BSM_ROOT/
+  else
+    # Handle like any other Linux flavor
+    sudo cp -f "$(find $repo -type f -name "bsm")" /usr/local/bin/bsm && echo "Copy of BSM added to program registry!"
+    sudo cp -f "$(find $repo -type f -name "rbsm")" /usr/local/bin/rbsm
+    sudo cp -f "$(find $repo -type f -name "bsm-install")" /usr/local/sbin/bsm-install && echo "Installer copied to system registry!"
+    cp -f "$(find $repo -type f -name ".version")" $BSM_ROOT/.version
+    cp -f "$(find $repo -type f -name ".bsm-vars")" $BSM_ROOT/.bsm-vars
+    cp -f "$(find $repo -type f -name ".bsm-funcs")" $BSM_ROOT/.bsm-funcs
+    cp -f "$(find $repo -type f -name ".bsm-ac")" /etc/bash_completion.d/bsm-ac
+    cp -f "$(find $repo -type f -name ".help")" $BSM_ROOT/.help
+    cp -f "$(find $repo -type f -name ".install-help")" $BSM_ROOT/.install-help
+    if [[ ! -e $BSM_ROOT/.config ]]; then
+      cp -f "$(find $repo -type f -name "bsm.config")" $BSM_ROOT/.config
+    fi
+    cp -rf "$(find $repo -type d -name "tools")" $BSM_ROOT/
+    sudo chmod 644 $BSM_ROOT/.config
+    sudo chmod 755 /usr/local/bin/bsm
+    sudo chmod 755 /usr/local/sbin/bsm-install
   fi
-  cp -rf "$(find $repo -type d -name "tools")" /bsm/
-  sudo chmod 644 /bsm/.config
-  sudo chmod 755 /usr/local/bin/bsm
-  sudo chmod 755 /usr/local/sbin/bsm-install
 }
 install() {
   echo "Installing..."
   echo "Setting up logging and scripts folders..."
-  if [ ! -d "/bsm" ]; then
-    sudo mkdir /bsm
-    sudo chgrp $USER /bsm
-    sudo chown $USER /bsm
-    mkdir /bsm/scripts
-    mkdir /bsm/logs
+  if [ ! -d "$BSM_ROOT" ]; then
+    [ $MSYSTEM ] && mkdir $BSM_ROOT || sudo mkdir $BSM_ROOT
+    [ ! $MSYSTEM ] && sudo chgrp $USER $BSM_ROOT
+    [ ! $MSYSTEM ] && sudo chown $USER $BSM_ROOT
+    mkdir $BSM_ROOT/scripts
+    mkdir $BSM_ROOT/logs
   fi
   # Generate log files
   if [ ! -e $errlog ]; then
     touch $errlog
-    sudo chmod 666 $errlog
+    [ ! $MSYSTEM ] && sudo chmod 666 $errlog
   fi
   if [ ! -e $log ]; then
     touch $log
-    sudo chmod 666 $log
+    [ ! $MSYSTEM ] && sudo chmod 666 $log
   fi
 
   # Check newer versions
-  if [[ "$(cat /bsm/.version | head -1)" != "$(cat "$repo/.version" | head -1)" || "$(cat /bsm/.version | tail -1)" != "$(cat "$repo/.version" | tail -1)" ]]; then
+  if [[ "$(cat $BSM_ROOT/.version | head -1)" != "$(cat "$repo/.version" | head -1)" || "$(cat $BSM_ROOT/.version | tail -1)" != "$(cat "$repo/.version" | tail -1)" ]]; then
     read -p "Newer version of BSM is available, would you like to install? [Y/n]" yn
     if [[ "${yn,}" == "y" ]]; then
       echo "Installing new version of BSM..."
@@ -67,9 +90,9 @@ install() {
     fi
   fi
   echo "Updating PATH..."
-  if [[ "$(echo "$PATH" | grep /bsm)" == "" ]]; then
+  if [[ "$(echo "$PATH" | grep $BSM_ROOT)" == "" ]]; then
     if [[ "$(command -v chpath)" != "" ]]; then
-      chpath add /bsm/tools $scripts $scripts/_node $scripts/_python $scripts/_ruby $scripts/_lisp $scripts/_power
+      chpath add $BSM_ROOT/tools $BSM_SCRIPTS $BSM_SCRIPTS/_node $BSM_SCRIPTS/_python $BSM_SCRIPTS/_ruby $BSM_SCRIPTS/_lisp $BSM_SCRIPTS/_power
       if [ -e ~/.path ]; then
         echo "PATH updated successfully via chpath"
       else
@@ -77,8 +100,8 @@ install() {
       fi
     else
       #This assumes you haven't modified the original bashrc file with your own things that don't end in 'fi'
-      echo "### BSM2" >> /home/$USER/.bashrc
-      echo 'export PATH="$PATH:/bsm/tools:$scripts:$scripts/_node:$scripts/_python:$scripts/_ruby:$scripts/_lisp:$scripts/_power"' >> /home/$USER/.bashrc
+      echo "### BSM2" >> $HOME/.bashrc
+      echo "export PATH=\"\$PATH:$BSM_ROOT/tools:$BSM_SCRIPTS:$BSM_SCRIPTS/_node:$BSM_SCRIPTS/_python:$BSM_SCRIPTS/_ruby:$BSM_SCRIPTS/_lisp:$BSM_SCRIPTS/_power\"" >> $HOME/.bashrc
       # source ~/.bashrc #Attempt reload of PATH
     fi
   fi
@@ -90,11 +113,11 @@ install() {
 
 uninstall() {
   echo "Uninstalling BSM..."
-  sudo rm -r /bsm
-  sudo rm /usr/local/bin/bsm
-  sudo rm /usr/local/bin/rbsm
+  [ $MSYSTEM ] && rm -r $BSM_ROOT || sudo rm -r $BSM_ROOT
+  [ $MSYSTEM ] && rm ~/bin/bsm || sudo rm /usr/local/bin/bsm
+  [ $MSYSTEM ] && rm ~/bin/rbsm || sudo rm /usr/local/bin/rbsm
   echo "Uninstalling BSM-install..."
-  sudo rm /usr/local/sbin/bsm-install
+  [ $MSYSTEM ] && rm ~/bin/bsm-install || sudo rm /usr/local/sbin/bsm-install
   # echo "Resetting PATH..."
   # echo "$(head -n -1 /home/$USER/.bashrc)" > /home/$USER/.bashrc #Reset bashrc
   # source ~/.bashrc #Attempt reload of PATH
@@ -103,15 +126,17 @@ uninstall() {
 }
 
 repair() {
+  ### FUNCTION NOT SUPPORTED IN GIT BASH DUE TO PROGRAM AMBIGUITY ###
+  [ $MSYSTEM ] && return
   # Ensure snap is setup properly
   [[ `stat / | grep -I "(0755"` == "" ]] && sudo chmod 755 /
   # Begin repair
   echo "Setting up BSM Folders..."
-  [ ! -d /bsm ] && mkdir $BSM_ROOT
-  [ ! -d /bsm/logs ] && mkdir $BSM_LOGS
-  [ ! -d /bsm/scripts ] && mkdir $BSM_SCRIPTS
-  [ ! -d /bsm/tools ] && mkdir $BSM_TOOLS
-  cp -rf "$(find $repo -type d -name "tools")" /bsm/
+  [ ! -d $BSM_ROOT ] && mkdir $BSM_ROOT
+  [ ! -d $BSM_LOGS ] && mkdir $BSM_LOGS
+  [ ! -d $BSM_SCRIPTS ] && mkdir $BSM_SCRIPTS
+  [ ! -d $BSM_TOOLS ] && mkdir $BSM_TOOLS
+  cp -rf "$(find $repo -type d -name "tools")" $BSM_ROOT/
   if [[ "$1" == "" ]]; then
     mkdir $scripts/_node >> $log 2>> $errlog
     mkdir $scripts/_python >> $log 2>> $errlog
@@ -201,46 +226,46 @@ clear_bsm() {
     read yn
     if [[ "${yn,,}" == 'y' ]]; then
       echo "Removing Node.js scripts..."
-      sudo rm $scripts/_node/*
+      rm $BSM_SCRIPTS/_node/*
     fi
   elif [[ "${1,,}" =~ "py" ]]; then
     echo -n "This will clear all Python scripts, are you sure you want to delete these scripts? [Y/n] "
     read yn
     if [[ "${yn,,}" == 'y' ]]; then
       echo "Removing Python scripts..."
-      sudo rm $scripts/_python/*
+      rm $BSM_SCRIPTS/_python/*
     fi
   elif [[ "${1,,}" =~ "ruby" ]]; then
     echo -n "This will clear all Ruby scripts, are you sure you want to delete these scripts? [Y/n] "
     read yn
     if [[ "${yn,,}" == 'y' ]]; then
       echo "Removing Ruby scripts..."
-      sudo rm $scripts/_ruby/*
+      rm $BSM_SCRIPTS/_ruby/*
     fi
   elif [[ "${1,,}" =~ "l" ]]; then
     echo -n "This will clear all LISP scripts, are you sure you want to delete these scripts? [Y/n] "
     read yn
     if [[ "${yn,,}" == 'y' ]]; then
       echo "Removing LISP scripts..."
-      sudo rm $scripts/_lisp/*
+      rm $BSM_SCRIPTS/_lisp/*
     fi
   elif [[ "${1,,}" =~ "sh" ]]; then
     echo -n "This will clear all Bash scripts, are you sure you want to delete these scripts? [Y/n] "
     read yn
     if [[ "${yn,,}" == 'y' ]]; then
       echo "Removing Bash scripts..."
-      sudo rm $scripts/* 2> /dev/null
+      rm $BSM_SCRIPTS/* 2> /dev/null
     fi
   else
     echo -n "This will clear ALL SCRIPTS. Do you want to continue? [Y/n] "
     read yn
     if [[ "${yn,,}" == 'y' ]]; then
       echo "Removing all scripts..."
-      sudo rm $scripts/_node/* 2> /dev/null
-      sudo rm $scripts/_ruby/* 2> /dev/null
-      sudo rm $scripts/_python/* 2> /dev/null
-      sudo rm $scripts/_lisp/* 2> /dev/null
-      sudo rm $scripts/* 2> /dev/null
+      rm $BSM_SCRIPTS/_node/* 2> /dev/null
+      rm $BSM_SCRIPTS/_ruby/* 2> /dev/null
+      rm $BSM_SCRIPTS/_python/* 2> /dev/null
+      rm $BSM_SCRIPTS/_lisp/* 2> /dev/null
+      rm $BSM_SCRIPTS/* 2> /dev/null
     else
       return
     fi

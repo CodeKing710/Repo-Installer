@@ -3,14 +3,21 @@
 ### BSM CLI MAIN ###
 
 # Import vars and functions
-. /bsm/.bsm-vars
-version="$(cat /bsm/.version | head -1)"
+repo="$(find ~ -type d -name "Bash-Script-Manager")"
+if [ -e /bsm/.bsm-vars ]; then
+  . /bsm/.bsm-vars
+elif [ -e ~/bsm/.bsm-vars ]; then
+  . ~/bsm/.bsm-vars
+else
+  . $repo/.bsm-vars # Fallback to repo version
+fi
+version="$(cat $BSM_ROOT/.version | head -1)"
 help="cat $BSM_ROOT/.help"
 editor="$(cat $BSM_ROOT/.config | grep "editor" | sed 's/editor=//')"
-. /bsm/.bsm-funcs
+. $BSM_ROOT/.bsm-funcs
 
 # Check if deps are installed
-if [[ ! -d "/bsm" ]]; then
+if [[ ! -d $BSM_ROOT ]]; then
   . $(find ~ -type f -name bsm-install) -i
 fi
 
