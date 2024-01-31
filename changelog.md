@@ -43,7 +43,8 @@ __BSM-Install Features__
 ### Features to Come (FTC)
 
 - Generate script files for quick-launching larger programs (i.e. start a web server for Node, Python, or Ruby)
-- Sample/System Tool scripts?
+- Sample/System Tool scripts
+- Git Bash support (doesn't work like normal Linux so special checks will need done and a different install style)
 
 ### Extra commit messages
 
