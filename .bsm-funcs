@@ -274,7 +274,7 @@ mknode() {
   if [[ ! -d "$BSM_SCRIPTS/_node" ]]; then
     echo "Installing Node.js and dependencies..."
     mkdir $BSM_SCRIPTS/_node >> $log 2>> $errlog
-    [ ! $MSYSTEM ] && sudo snap install --edge node --classic >> $log 2>> $errlog || echo "Ran into issue installing, check /bsm/logs/err_log.log"
+    [ ! $MSYSTEM ] && sudo snap install --edge node --classic >> $log 2>> $errlog || echo "Ran into issue installing, check $BSM_ROOT/logs/err_log.log"
     echo "Finished installing Node!"
   fi
   touch "$BSM_SCRIPTS/_node/${name%.js}" && chmod 755 "$BSM_SCRIPTS/_node/${name%.js}"
@@ -289,7 +289,7 @@ mkpyth() {
   if [[ ! -d "$BSM_SCRIPTS/_python" ]]; then
     echo "Installing Python and setting up dependencies..."
     mkdir $BSM_SCRIPTS/_python >> $log 2>> $errlog
-    [ ! $MSYSTEM ] && sudo apt-get install -y python3-pip >> $log 2>> $errlog || echo "Ran into issue installing, check /bsm/logs/err_log.log"
+    [ ! $MSYSTEM ] && sudo apt-get install -y python3-pip >> $log 2>> $errlog || echo "Ran into issue installing, check $BSM_ROOT/logs/err_log.log"
     echo "Finished installing Python!"
   fi
   touch "$BSM_SCRIPTS/_python/${name%.py}" && chmod 755 "$BSM_SCRIPTS/_python/${name%.py}"
@@ -305,7 +305,7 @@ mklisp() {
     echo "Installing CommonLISP and dependencies..."
     echo "View log file for details"
     mkdir $BSM_SCRIPTS/_lisp >> $log 2>> $errlog
-    [ ! $MSYSTEM ] && sudo apt-get install sbcl -y >> $log 2>> $errlog || echo "Ran into issue installing, check /bsm/logs/err_log.log"
+    [ ! $MSYSTEM ] && sudo apt-get install sbcl -y >> $log 2>> $errlog || echo "Ran into issue installing, check $BSM_ROOT/logs/err_log.log"
     echo "Finished installing LISP!"
   fi
   touch "$BSM_SCRIPTS/_lisp/${name%.cl}" && chmod 755 "$BSM_SCRIPTS/_lisp/${name%.cl}"
@@ -320,7 +320,7 @@ mkruby() {
   if [[ ! -d "$BSM_SCRIPTS/_ruby" ]]; then
     echo "Installing Ruby and dependencies..."
     mkdir $BSM_SCRIPTS/_ruby >> $log 2>> $errlog
-    sudo apt-get install ruby-full -y >> $log 2>> $errlog || echo "Ran into issue installing, check /bsm/logs/err_log.log"
+    sudo apt-get install ruby-full -y >> $log 2>> $errlog || echo "Ran into issue installing, check $BSM_ROOT/logs/err_log.log"
     echo "Finished installing Ruby!"
   fi
   touch "$BSM_SCRIPTS/_ruby/${name%.rb}" && chmod 755 "$BSM_SCRIPTS/_ruby/${name%.rb}"
@@ -460,7 +460,7 @@ remove_scripts() {
       if [[ ! -e "$BSM_SCRIPTS/${n%.**}" ]]; then
         echo "Script Removed!"
       else
-        echo "Unable to remove script, refer to /bsm/logs/err.log for details"
+        echo "Unable to remove script, refer to $BSM_ROOT/logs/err.log for details"
       fi
     else
       # Check for other executables
@@ -469,28 +469,28 @@ remove_scripts() {
         if [[ ! -e "$BSM_SCRIPTS/_python/${n%.**}" ]]; then
           echo "Script(s) Removed!"
         else
-          echo "Unable to remove script, refer to /bsm/logs/err.log for details"
+          echo "Unable to remove script, refer to $BSM_ROOT/logs/err.log for details"
         fi
       elif [[ -e "$BSM_SCRIPTS/_node/${n%.**}" ]]; then
         rm "$BSM_SCRIPTS/_node/${n%.**}" >> $log 2>> $errlog
         if [[ ! -e "$BSM_SCRIPTS/_node/${n%.**}" ]]; then
           echo "Script(s) Removed!"
         else
-          echo "Unable to remove script, refer to /bsm/logs/err.log for details"
+          echo "Unable to remove script, refer to $BSM_ROOT/logs/err.log for details"
         fi
       elif [[ -e "$BSM_SCRIPTS/_ruby/${n%.**}" ]]; then
         rm "$BSM_SCRIPTS/_ruby/${n%.**}" >> $log 2>> $errlog
         if [[ ! -e "$BSM_SCRIPTS/_ruby/${n%.**}" ]]; then
           echo "Script(s) Removed!"
         else
-          echo "Unable to remove script, refer to /bsm/logs/err.log for details"
+          echo "Unable to remove script, refer to $BSM_ROOT/logs/err.log for details"
         fi
       elif [[ -e "$BSM_SCRIPTS/_lisp/${n%.**}" ]]; then
         rm "$BSM_SCRIPTS/_lisp/${n%.**}" >> $log 2>> $errlog
         if [[ ! -e "$BSM_SCRIPTS/_lisp/${n%.**}" ]]; then
           echo "Script(s) Removed!"
         else
-          echo "Unable to remove script, refer to /bsm/logs/err.log for details"
+          echo "Unable to remove script, refer to $BSM_ROOT/logs/err.log for details"
         fi
       elif [[ -e "$BSM_SCRIPTS/_power/${n%.***}" || -e "$BSM_SCRIPTS/_power/${n%.***}.ps1" ]]; then
         rm "$BSM_SCRIPTS/_power/${n%.***}" >> $log 2>> $errlog
@@ -498,7 +498,7 @@ remove_scripts() {
         if [[ ! -e "$BSM_SCRIPTS/_power/${n%.***}" ]]; then
           echo "Script(s) Removed!"
         else
-          echo "Unable to remove script, refer to /bsm/logs/err.log for details"
+          echo "Unable to remove script, refer to $BSM_ROOT/logs/err.log for details"
         fi
       else
         echo "Script doesn't exist!"
@@ -559,7 +559,7 @@ import_script() {
     elif [[ "$name" =~ ".cl" ]]; then
         scriptpath="$scriptpath/_lisp"
     fi
-    cat $(find -L -path /bsm -prune -type f -name "$name") >> "$scriptpath/${name%.**}"
+    cat $(find -L -path $BSM_ROOT -prune -type f -name "$name") >> "$scriptpath/${name%.**}"
   done
 }
 export_script() {
@@ -593,13 +593,13 @@ list_scripts() {
 config_bsm() {
   if [[ "$2" == "" ]]; then
     # Get rule
-    echo "Rule: $(cat /bsm/.config | grep "$1")"
+    echo "Rule: $(cat $BSM_ROOT/.config | grep "$1")"
   else
     # Set rule
-    sed -i -e "s/$1=$editor/$1=$2/" /bsm/.config
-    echo "Rule change: $(cat /bsm/.config | grep "$1")"
+    sed -i -e "s/$1=$editor/$1=$2/" $BSM_ROOT/.config
+    echo "Rule change: $(cat $BSM_ROOT/.config | grep "$1")"
     # Reload vars
-    . /bsm/.bsm-vars
+    . $BSM_ROOT/.bsm-vars
   fi
 }
 get_tool() {
