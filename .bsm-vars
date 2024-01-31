@@ -2,11 +2,11 @@
 
 ### BSM GLOBAL VARIABLES ###
 # Environment vars
-[ $MSYSTEM ] && BSM_ROOT="~/bsm" || BSM_ROOT="/bsm"
-BSM_LOGS="$BSM_ROOT/logs"
-BSM_SCRIPTS="$BSM_ROOT/scripts"
-BSM_TOOLS="$BSM_ROOT/tools"
+[ $MSYSTEM ] && BSM_ROOT=~/bsm || BSM_ROOT=/bsm
+BSM_LOGS=$BSM_ROOT/logs
+BSM_SCRIPTS=$BSM_ROOT/scripts
+BSM_TOOLS=$BSM_ROOT/tools
 
 # Log vars
-log="$BSM_LOGS/bsm.log"
-errlog="$BSM_LOGS/err.log"
+log=$BSM_LOGS/bsm.log
+errlog=$BSM_LOGS/err.log
