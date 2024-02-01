@@ -111,7 +111,7 @@ install() {
 
   #This should setup BSM, logging is sent to stdout to check for any errors
   echo "BSM has been successfully installed!"
-  echo "If you can't access BSM, try running \"source ~/.profile\""
+  echo "If you can't access BSM, try running \"source ~/.bashrc\""
 }
 
 uninstall() {
