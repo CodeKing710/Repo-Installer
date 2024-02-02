@@ -1,0 +1,8 @@
+#!/bin/bash
+
+####################### Script-to-Tool #######################
+#        Tool for BSM to allow conversion of scripts         #
+#           into BSM tool. Tool creation is local            #
+#              Tool can be exported and shipped              #
+# Utilize `bsm <-a|--add-tool> <tool>` to add external tools #
+##############################################################

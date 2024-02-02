@@ -27,9 +27,10 @@ __BSM Features__
 - Add/Link scripts to BSM directory
 - List scripts
 - Support to create and open non-existent scripts when using `-o`
-- ! NEW ! Export scipts to desired location
-- ! NEW ! Configure certain aspects of BSM
-- ! NEW ! Interactive mode for the less CLI-inclined (Base and Install)
+- Export scipts to desired location
+- Configure certain aspects of BSM
+- Interactive mode for the less CLI-inclined (Base and Install)
+- ! NEW ! Git Bash support
 
 __BSM-Install Features__
 
@@ -44,7 +45,8 @@ __BSM-Install Features__
 
 - Generate script files for quick-launching larger programs (i.e. start a web server for Node, Python, or Ruby)
 - Sample/System Tool scripts
-- Git Bash support (doesn't work like normal Linux so special checks will need done and a different install style)
+- Tool Manager (add,remove,update tools)
+- STT (Script-to-Tool converter)
 
 ### Extra commit messages
 
@@ -55,3 +57,6 @@ __
 __Features__
 
 - Add autocompletion for CLI users (command and arg modes)
+- Swap installer to repo-installer
+- Tool manager for managing toolset
+- Adjust BSM to be even more efficient and robust

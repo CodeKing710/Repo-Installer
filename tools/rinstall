@@ -1,0 +1,10 @@
+#!/bin/bash
+
+############### REPO Installer ################
+#    Script designed to wrap a GitHub repo    #
+#    Allows for program installation as if    #
+#    coming from a package manager like apt   #
+#  Requires a ri.cfg file so the script knows #
+# what files to copy where and where the PATH #
+#        will point to for said program       #
+###############################################
