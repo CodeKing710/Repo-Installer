@@ -15,8 +15,8 @@ BSM v2 comes with a major overhaul under the hood to ensure a better user experi
 
 ### Version Info
 
-bsm: v2.2.1
-bsm-install: v2.0.7
+BSM: v2.5.2a
+BSM-Install: v2.2.0b
 
 __BSM Features__
 
@@ -31,6 +31,7 @@ __BSM Features__
 - Configure certain aspects of BSM
 - Interactive mode for the less CLI-inclined (Base and Install)
 - ! NEW ! Git Bash support
+- ! NEW ! STT (Script-to-Tool converter)
 
 __BSM-Install Features__
 
@@ -46,7 +47,6 @@ __BSM-Install Features__
 - Generate script files for quick-launching larger programs (i.e. start a web server for Node, Python, or Ruby)
 - Sample/System Tool scripts
 - Tool Manager (add,remove,update tools)
-- STT (Script-to-Tool converter)
 
 ### Extra commit messages
 
