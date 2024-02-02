@@ -102,7 +102,11 @@ search_args() {
         ;;
       -t | --tool )
         shift
-        get_tool $@
+        if [[ "$1" == "-a" || "$1" == "--add" ]]; then
+          add_tool $@
+        else
+          get_tool $@
+        fi
         exit;;
       -S | --shell )
         shift
@@ -245,7 +249,11 @@ search_cmds() {
         ;;
       tool )
         # tool=$1
-        get_tool $@
+        if [[ "$1" == "add" ]]; then
+          add_tool $@
+        else
+          get_tool $@
+        fi
         while (($#)); do shift; done
         ;;
       sh | shell | rbsm )
@@ -599,7 +607,7 @@ config_bsm() {
     sed -i -e "s/$1=$editor/$1=$2/" $BSM_ROOT/.config
     echo "Rule change: $(cat $BSM_ROOT/.config | grep "$1")"
     # Reload vars
-    . $BSM_ROOT/.bsm-vars
+    # . $BSM_ROOT/.bsm-vars
   fi
 }
 get_tool() {
@@ -626,5 +634,7 @@ get_tool() {
     done
   fi
 }
-# add_tool() {}
+add_tool() {
+
+}
 # remove_tool() {}

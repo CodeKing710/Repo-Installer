@@ -6,3 +6,5 @@
 #              Tool can be exported and shipped              #
 # Utilize `bsm <-a|--add-tool> <tool>` to add external tools #
 ##############################################################
+
+if [[ `` ]]

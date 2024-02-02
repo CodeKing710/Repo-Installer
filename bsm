@@ -26,7 +26,7 @@ if [[ "$1" == "" ]]; then
   # Interactive mode
   echo "Welcome to BSM!"
   echo "What would you like to do today?"
-  select opt in List Create Rename Open Import Export Link Remove Config Exit; do
+  select opt in List Create Rename Open Import Export Link Remove Config Tools Exit; do
     echo "" # Insert whitespace between selection and response
     # Force ask vars to be cleared everytime
     script=""
@@ -77,8 +77,8 @@ if [[ "$1" == "" ]]; then
         if [[ "$scriptType" == "cancel" ]]; then
           # Show options again
           echo -e "\nAnything else you would like to do today?"
-          echo "1) List      3) Rename   5) Import   7) Link     9) Config"
-          echo "2) Create    4) Open     6) Export   8) Remove  10) Exit"
+          echo "1) List      3) Rename   5) Import   7) Link     9) Config  11) Exit"
+          echo "2) Create    4) Open     6) Export   8) Remove  10) Tools"
           continue
         else
           while [[ "$name" == "" ]]; do
@@ -164,6 +164,29 @@ if [[ "$1" == "" ]]; then
           config_bsm $rule
         fi
         ;;
+      Tools )
+        echo "Did you want to add a tool, or use a tool:"
+        select choice in Add Use; do
+          case $choice in
+            Add )
+              read -p "Name of script to add to tool registry: " tool
+              echo "Adding tool..."
+              add_tool $tool
+              echo "Tool '$tool' added to registry!"
+              break;;
+            Use )
+              echo "Tools are a part of the system path, to use a tool for now just enter it in the command line"
+              echo "Showing available tools"
+              get_tool
+              break;;
+            Cancel )
+              break;;
+            * )
+              echo "Not an option"
+              ;;
+          esac
+        done
+        ;;
       Exit )
         break;;
       * )
@@ -172,8 +195,8 @@ if [[ "$1" == "" ]]; then
     esac
     # Show options again
     echo -e "\nAnything else you would like to do today?"
-    echo "1) List      3) Rename   5) Import   7) Link     9) Config"
-    echo "2) Create    4) Open     6) Export   8) Remove  10) Exit"
+    echo "1) List      3) Rename   5) Import   7) Link     9) Config  11) Exit"
+    echo "2) Create    4) Open     6) Export   8) Remove  10) Tools"
   done
 elif [[ "$1" =~ "-" ]]; then
   # CLI Mode

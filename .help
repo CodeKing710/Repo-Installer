@@ -1,9 +1,9 @@
 Bash Script Manager
 
-Usage: bsm [...OPTIONS] ...
+Usage: bsm [OPTIONS] ...
 
 Options:
-    -c | --create [NAME] [...OPTIONS]
+    -c | --create [NAME] [OPTIONS]
 	    Add new script(s) to your personal scripts. Specify a file extension to use a specific scripting language. Bash is default and doesn't require a file extension. You may also specify the script type by following this argument with '-p', '-n', '-r', or '-l'. Please note that even though those arguments exist outside '-c', using them here changes their meaning.
 	    Available: .js (-n), .py (-p), .rb (-r), .cl (-l)
         FOR WSL: .ps1 (-P)
@@ -33,6 +33,9 @@ Options:
 
     -C | --config [RULE] [...VALUE]
         Gets or sets BSM configuration rule. Chain multiple together to get or set multiple rules
+
+    -t | --tool [OPTIONS] [NAME]
+        Gets or adds tool(s) from/to the tool registry. Use -a or --add after this argument to add a tool to the registry
 
     -v | --version
         Show version
