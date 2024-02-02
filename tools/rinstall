@@ -8,3 +8,17 @@
 # what files to copy where and where the PATH #
 #        will point to for said program       #
 ###############################################
+
+# Default action is to move every file in the folder that doesn't match the global ignore rule
+# Default destination is the user's ~/bin folder
+if [ -e ./ri.cfg ]; then
+  # Read cfg line by line to determine destination for program files
+  while IFS= read -r line; do
+    [[ "$line" =~ "#" ]] && continue
+    for c in $line; do
+      echo $c
+    done
+  done < ./ri.cfg
+else
+  cp -r ./* ~/bin
+fi
