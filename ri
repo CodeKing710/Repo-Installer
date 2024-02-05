@@ -1,0 +1,26 @@
+#!/bin/bash
+
+############### REPO Installer ################
+#    Script designed to wrap a GitHub repo    #
+#    Allows for program installation as if    #
+#    coming from a package manager like apt   #
+#  Requires a ri.cfg file so the script knows #
+# what files to copy where and where the PATH #
+#        will point to for said program       #
+###############################################
+
+# Default action is to move every file in the folder that doesn't match the global ignore rule
+# Default destination is the user's ~/bin folder
+if [ -e ./ri.cfg ]; then
+  # Read cfg line by line to determine destination for program files
+  while read -r line; do
+    # [[ -z "$line" || "$line" == "\r\n" ]] && continue
+    # [[ "$line" =~ "#" ]] && continue
+    if [[ "$line" =~ ">" ]]; then
+      echo "$line"
+      # Do install parse
+    else; continue; fi
+  done < ./ri.cfg
+else
+  cp -r ./* ~/bin
+fi
