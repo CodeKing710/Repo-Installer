@@ -14,11 +14,11 @@
 
 # Functions
 parse() {
-  local installDesc=`echo $1 | cut -d '>' -f1`
-  local toBeCopied=`echo $1 | cut -d '>' -f2`
-  local destination=`echo $1 | cut -d '>' -f3`
-  local onTrue=`echo $1 | cut -d '>' -f4`
-  local onFalse=`echo $1 | cut -d '>' -f5`
+  local installDesc=`echo "$1" | cut -d '>' -f1`
+  local toBeCopied=`echo "$1" | cut -d '>' -f2`
+  local destination=`echo "$1" | cut -d '>' -f3`
+  local onTrue=`echo "$1" | cut -d '>' -f4`
+  local onFalse=`echo "$1" | cut -d '>' -f5`
   [[ $destination == "BIN" ]] && destination=$BIN
   [[ $destination == "HOME" ]] && destination=~
   case $installDesc in
@@ -28,7 +28,7 @@ parse() {
       ;;
     d )
       echo "Copying folder '$toBeCopied' to $destination"
-      cp $toBeCopied $destination/$toBeCopied
+      cp $toBeCopied/* $destination/$toBeCopied/
       ;;
     r )
       echo "Copying folder and subfolders of '$toBeCopied' to $destination"
@@ -39,11 +39,11 @@ parse() {
       source $toBeCopied || `chmod +x $toBeCopied && source $toBeCopied`
       ;;
     e )
-      echo "$toBeCopied"
+      echo "$1" | cut -d '>' -f2
       ;;
     c )
       # Use destination to hold condition
-      [ $destination ] && cp $toBeCopied $onTrue/$toBeCopied || cp $toBeCopied $onFalse/$toBeCopied
+      [ $destination ] && cp $toBeCopied $onTrue/ || cp $toBeCopied $onFalse/
       ;;
     * )
       echo "Flag '$installDesc' doesn't exist!"
@@ -56,9 +56,10 @@ parse() {
 [ ! -e $(pwd)/.git ] && `echo "Not a git repository!" && exit`
 if [ -e ./ri.cfg ]; then
   # Read cfg line by line to determine destination for program files
-  if [[ `cat ./ri.cfg | head -1` =~ ">" ]]; then
+  if [[ `cat ./ri.cfg | wc -l` == "1" ]]; then
     parse `cat ./ri.cfg | sed -E 's/\s*>\s*/>/g'`
   else
+    IFS=''
     while read line; do
       # [[ -z "$line" || "$line" == "\r\n" ]] && continue
       # Preemptively grab comments before processing
