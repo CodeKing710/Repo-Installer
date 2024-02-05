@@ -31,8 +31,8 @@ cpdeps() {
     # cp -f "$(find $repo -type f -name ".bsm-ac")" /etc/bash_completion.d/bsm-ac
     cp -f "$(find $repo -type f -name ".help")" $BSM_ROOT/.help
     cp -f "$(find $repo -type f -name ".install-help")" $BSM_ROOT/.install-help
-    if [[ ! -e $BSM_ROOT/.config ]]; then
-      cp -f "$(find $repo -type f -name "bsm.config")" $BSM_ROOT/.config
+    if [[ ! -e $BSM_ROOT/.cfg ]]; then
+      cp -f "$(find $repo -type f -name ".cfg")" $BSM_ROOT/.cfg
     fi
     cp -rf "$(find $repo -type d -name "tools")" $BSM_ROOT/
   else
@@ -47,10 +47,10 @@ cpdeps() {
     cp -f "$(find $repo -type f -name ".help")" $BSM_ROOT/.help
     cp -f "$(find $repo -type f -name ".install-help")" $BSM_ROOT/.install-help
     if [[ ! -e $BSM_ROOT/.config ]]; then
-      cp -f "$(find $repo -type f -name "bsm.config")" $BSM_ROOT/.config
+      cp -f "$(find $repo -type f -name ".cfg")" $BSM_ROOT/.cfg
     fi
     cp -rf "$(find $repo -type d -name "tools")" $BSM_ROOT/
-    sudo chmod 644 $BSM_ROOT/.config
+    sudo chmod 644 $BSM_ROOT/.cfg
     sudo chmod 755 /usr/local/bin/bsm
     sudo chmod 755 /usr/local/sbin/bsm-install
   fi
@@ -76,22 +76,7 @@ install() {
   fi
 
   # Check newer versions
-  if [[ "$(cat $BSM_ROOT/.version | head -1)" != "$(cat "$repo/.version" | head -1)" || "$(cat $BSM_ROOT/.version | tail -1)" != "$(cat "$repo/.version" | tail -1)" ]]; then
-    read -p "Newer version of BSM is available, would you like to install? [Y/n]" yn
-    if [[ "${yn,}" == "y" ]]; then
-      echo "Installing new version of BSM..."
-      cpdeps
-    else
-      echo "Keeping old version of BSM..."
-    fi
-  else
-    if [[ "$1" == "-f" ]]; then
-      echo "Force installing even though current is latest..."
-      cpdeps
-    else
-      echo "Current version is up to date!"
-    fi
-  fi
+  bsm-update
   echo "Updating PATH..."
   if [[ "$(echo "$PATH" | grep $BSM_ROOT)" == "" ]]; then
     if [[ "$(command -v chpath)" != "" ]]; then
@@ -302,10 +287,36 @@ search_args() {
       shift
       clear_bsm $1
       exit;;
+    -R | --ri-fin )
+      echo "Updating PATH..."
+      if [[ "$(echo "$PATH" | grep $BSM_ROOT)" == "" ]]; then
+        if [[ "$(command -v chpath)" != "" ]]; then
+          chpath add $BSM_ROOT/tools $BSM_SCRIPTS $BSM_SCRIPTS/_node $BSM_SCRIPTS/_python $BSM_SCRIPTS/_ruby $BSM_SCRIPTS/_lisp $BSM_SCRIPTS/_power
+          if [ -e ~/.path ]; then
+            echo "PATH updated successfully via chpath"
+          else
+            echo "There was an unexpected error while adding path via chpath"
+          fi
+        else
+          #This assumes you haven't modified the original bashrc file with your own things that don't end in 'fi'
+          echo "### BSM2" >> $HOME/.bashrc
+          echo "export PATH=\"\$PATH:$BSM_ROOT/tools:$BSM_SCRIPTS:$BSM_SCRIPTS/_node:$BSM_SCRIPTS/_python:$BSM_SCRIPTS/_ruby:$BSM_SCRIPTS/_lisp:$BSM_SCRIPTS/_power\"" >> $HOME/.bashrc
+          # source ~/.bashrc #Attempt reload of PATH
+        fi
+      fi
+      exit;;
   esac
 }
 
 # Main
+if [ `command -v ri` ]; then
+  read -p "Repo Installer found! Would you like to install via 'ri'? [Y\n] " yn
+  if [[ "${yn,}" == "y" ]]; then 
+    ri
+    exit
+  fi
+fi
+
 if [[ "$1" == "" ]]; then
   # No arguments passed, run walkthrough guide
   clear

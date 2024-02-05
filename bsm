@@ -13,13 +13,16 @@ else
 fi
 version="$(cat $BSM_ROOT/.version | head -1)"
 help="cat $BSM_ROOT/.help"
-editor="$(cat $BSM_ROOT/.config | grep "editor" | sed 's/editor=//')"
+editor="$(cat $BSM_ROOT/.cfg | grep "editor" | sed 's/editor=//')"
 . $BSM_ROOT/.bsm-funcs
 
 # Check if deps are installed
 if [[ ! -d $BSM_ROOT ]]; then
   . $(find ~ -type f -name bsm-install) -i
 fi
+
+# Check for updates
+bsm-update
 
 # Main
 if [[ "$1" == "" ]]; then

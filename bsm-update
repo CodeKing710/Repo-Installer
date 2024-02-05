@@ -1,0 +1,30 @@
+#!/bin/bash
+
+repo="$(find ~ -type d -name "Bash-Script-Manager")"
+if [ -e /bsm/.bsm-vars ]; then
+  echo "Loading vars from BSM assets"
+  . /bsm/.bsm-vars
+elif [ -e ~/bsm/.bsm-vars ]; then
+  echo "Loading vars from BSM assets (Git Bash)"
+  . ~/bsm/.bsm-vars
+else
+  echo "Loading vars from repo"
+  . $repo/.bsm-vars # Fallback to repo version
+fi
+
+if [[ "$(cat $BSM_ROOT/.version | head -1)" != "$(cat "$repo/.version" | head -1)" || "$(cat $BSM_ROOT/.version | tail -1)" != "$(cat "$repo/.version" | tail -1)" ]]; then
+  read -p "Newer version of BSM is available, would you like to install? [Y/n]" yn
+  if [[ "${yn,}" == "y" ]]; then
+    echo "Installing new version of BSM..."
+    cd $repo && bsm-install -i
+  else
+    echo "Keeping old version of BSM..."
+  fi
+else
+  if [[ "$1" == "-f" ]]; then
+    echo "Force installing even though current is latest..."
+    cd $repo && bsm-install -i
+  else
+    echo "Current version is up to date!"
+  fi
+fi

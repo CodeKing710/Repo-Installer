@@ -634,7 +634,5 @@ get_tool() {
     done
   fi
 }
-add_tool() {
-
-}
+add_tool() {}
 # remove_tool() {}
