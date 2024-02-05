@@ -17,6 +17,8 @@ parse() {
   local installDesc=`echo $1 | cut -d '>' -f1`
   local toBeCopied=`echo $1 | cut -d '>' -f2`
   local destination=`echo $1 | cut -d '>' -f3`
+  local onTrue=`echo $1 | cut -d '>' -f4`
+  local onFalse=`echo $1 | cut -d '>' -f5`
   [[ $destination == "BIN" ]] && destination=$BIN
   [[ $destination == "HOME" ]] && destination=~
   case $installDesc in
@@ -32,10 +34,16 @@ parse() {
       echo "Copying folder and subfolders of '$toBeCopied' to $destination"
       cp -r $toBeCopied $destination/$toBeCopied
       ;;
-    e )
+    x )
       echo "Executing file '$toBeCopied'"
       source $toBeCopied || `chmod +x $toBeCopied && source $toBeCopied`
       ;;
+    e )
+      echo "$toBeCopied"
+      ;;
+    c )
+      # Use destination to hold condition
+      [ $destination ] && cp $toBeCopied $onTrue/$toBeCopied || cp $toBeCopied $onFalse/$toBeCopied
     * )
       echo "Flag '$installDesc' doesn't exist!"
       break;;
