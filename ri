@@ -19,12 +19,8 @@ parse() {
   local destination=`echo "$1" | cut -d '>' -f3`
   local onTrue=`echo "$1" | cut -d '>' -f4`
   local onFalse=`echo "$1" | cut -d '>' -f5`
-  [[ $destination == "BIN" ]] && destination=$BIN
-  [[ $destination == "HOME" ]] && destination=~
-  [[ $onTrue == "BIN" ]] && onTrue=$BIN
-  [[ $onTrue == "HOME" ]] && onTrue=~
-  [[ $onFalse == "BIN" ]] && onFalse=$BIN
-  [[ $onFalse == "HOME" ]] && onFalse=~
+  [[ $destination =~ "BIN" ]] && destination=$(echo "$destination" | sed "s|BIN|$BIN|g")
+  [[ $destination =~ "HOME" ]] && destination=$(echo "$destination" | sed "s|HOME|$HOME|g")
   case $installDesc in
     f )
       echo "Copying '$toBeCopied' to $destination"
@@ -39,15 +35,19 @@ parse() {
       cp -r $toBeCopied $destination/
       ;;
     x )
-      echo "Executing file '$toBeCopied'"
-      source $toBeCopied || `chmod +x $toBeCopied && source $toBeCopied`
+      echo "Executing file '$toBeCopied' in directory $PWD"
+      source ./$toBeCopied $destination
       ;;
     e )
       echo "$1" | cut -d '>' -f2
       ;;
     c )
       # Use destination to hold condition
-      [ $destination ] && cp $toBeCopied $onTrue/ || cp $toBeCopied $onFalse/
+      [[ $onTrue =~ "BIN" ]] && onTrue=$(echo "$onTrue" | sed "s|BIN|$BIN|g")
+      [[ $onTrue =~ "HOME" ]] && onTrue=$(echo "$onTrue" | sed "s|HOME|$HOME|g")
+      [[ $onFalse =~ "BIN" ]] && onFalse=$(echo "$onFalse" | sed "s|BIN|$BIN|g")
+      [[ $onFalse =~ "HOME" ]] && onFalse=$(echo "$onFalse" | sed "s|HOME|$HOME|g")
+      if [[ $destination ]]; then cp $toBeCopied $onTrue/; else cp $toBeCopied $onFalse/; fi
       ;;
     * )
       echo "Flag '$installDesc' doesn't exist!"
