@@ -57,17 +57,17 @@ parse() {
 if [ -e ./ri.cfg ]; then
   # Read cfg line by line to determine destination for program files
   if [[ `cat ./ri.cfg | head -1` =~ ">" ]]; then
-    parse `cat ./ri.cfg | tr -s '? >? ' '>'`
+    parse `cat ./ri.cfg | sed -E 's/\s*>\s*/>/g'`
   else
     while read line; do
       # [[ -z "$line" || "$line" == "\r\n" ]] && continue
       # Preemptively grab comments before processing
       [[ "$line" =~ "#" ]] && continue
       if [[ "$line" =~ ">" ]]; then
-        line=$(echo "$line" | tr -s '? >? ' '>' )
-        echo "$line"
+        line=$(echo "$line" | sed -E 's/\s*>\s*/>/g' )
+        # echo "$line"
         # Do install parse
-        
+        parse $line
       else continue; fi
     done < ./ri.cfg
   fi
