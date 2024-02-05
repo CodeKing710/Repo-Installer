@@ -8,19 +8,57 @@
 # what files to copy where and where the PATH #
 #        will point to for said program       #
 ###############################################
+[ $MSYSTEM ] && BIN=~/bin || BIN='/usr/local/bin'
+# Functions
+parse() {
+  local installDesc=`echo $1 | cut -d '>' -f1`
+  local toBeCopied=`echo $1 | cut -d '>' -f2`
+  local destination=`echo $1 | cut -d '>' -f3`
+  [[ $destination == "BIN" ]] && destination=$BIN
+  [[ $destination == "HOME" ]] && destination=~
+  case $installDesc in
+    f )
+      echo "Copying '$toBeCopied' to $destination"
+      cp $toBeCopied $destination/$toBeCopied
+      ;;
+    d )
+      echo "Copying folder '$toBeCopied' to $destination"
+      cp $toBeCopied $destination/$toBeCopied
+      ;;
+    r )
+      echo "Copying folder and subfolders of '$toBeCopied' to $destination"
+      cp -r $toBeCopied $destination/$toBeCopied
+      ;;
+    e )
+      echo "Executing file '$toBeCopied'"
+      source $toBeCopied || `chmod +x $toBeCopied && source $toBeCopied`
+      ;;
+    * )
+      echo "Flag '$installDesc' doesn't exist!"
+      break;;
+  esac
+}
 
 # Default action is to move every file in the folder that doesn't match the global ignore rule
 # Default destination is the user's ~/bin folder
+[ ! -e $(pwd)/.git ] && `echo "Not a git repository!" && exit`
 if [ -e ./ri.cfg ]; then
   # Read cfg line by line to determine destination for program files
-  while read -r line; do
-    # [[ -z "$line" || "$line" == "\r\n" ]] && continue
-    # [[ "$line" =~ "#" ]] && continue
-    if [[ "$line" =~ ">" ]]; then
-      echo "$line"
-      # Do install parse
-    else; continue; fi
-  done < ./ri.cfg
+  if [[ `cat ./ri.cfg | head -1` =~ ">" ]]; then
+    parse `cat ./ri.cfg | tr -d ' '`
+  else
+    while read line; do
+      # [[ -z "$line" || "$line" == "\r\n" ]] && continue
+      # Preemptively grab comments before processing
+      [[ "$line" =~ "#" ]] && continue
+      if [[ "$line" =~ ">" ]]; then
+        line=$(echo "$line" | tr -d ' ' )
+        echo "$line"
+        # Do install parse
+        
+      else continue; fi
+    done < ./ri.cfg
+  fi
 else
   cp -r ./* ~/bin
 fi
