@@ -21,18 +21,22 @@ parse() {
   local onFalse=`echo "$1" | cut -d '>' -f5`
   [[ $destination == "BIN" ]] && destination=$BIN
   [[ $destination == "HOME" ]] && destination=~
+  [[ $onTrue == "BIN" ]] && onTrue=$BIN
+  [[ $onTrue == "HOME" ]] && onTrue=~
+  [[ $onFalse == "BIN" ]] && onFalse=$BIN
+  [[ $onFalse == "HOME" ]] && onFalse=~
   case $installDesc in
     f )
       echo "Copying '$toBeCopied' to $destination"
-      cp $toBeCopied $destination/$toBeCopied
+      cp $toBeCopied $destination/
       ;;
     d )
       echo "Copying folder '$toBeCopied' to $destination"
-      cp $toBeCopied/* $destination/$toBeCopied/
+      cp $toBeCopied/* $destination/
       ;;
     r )
       echo "Copying folder and subfolders of '$toBeCopied' to $destination"
-      cp -r $toBeCopied $destination/$toBeCopied
+      cp -r $toBeCopied $destination/
       ;;
     x )
       echo "Executing file '$toBeCopied'"
