@@ -10,7 +10,7 @@
 ###############################################
 
 [ $MSYSTEM ] && BIN=~/bin || BIN='/usr/local/bin'
-[ $1 == '-v' ] && echo "v1.0.0" && exit
+[ "$1" == '-v' ] && echo "v1.0.0" && exit
 
 # Functions
 parse() {
