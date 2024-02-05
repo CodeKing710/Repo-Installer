@@ -7,11 +7,17 @@ This script will install a GitHub repo designed with program installation in min
 Using Repo-Installer is as simple as navigating to the repo you want to install and running `ri`. The `ri.cfg` file will take care of any install parameters. The structure of a config file is as follows;
 
 __f__ - `f > file > destination` - Tells ri where to put a file
+
 __d__ - `d > folder > destination` - Tells ri where to put a folder
+
 __r__ - `r > folder > destination` - Tells ri where to put a folder (moves sub folders as well, same as `cp -r`)
+
 __c__ - `c > file(s) > condition > destination_on_true > destination_on_false` - Tells ri where to put files based on the condition
+
 __x__ - `x > script_file` - Tells ri to execute the script before moving on
+
 __e__ - `e > message` - Tells ri to display a message
+
 
 ## Genereate config file (WiP)
 
