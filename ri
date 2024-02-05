@@ -25,25 +25,26 @@ parse() {
     f )
       echo "Copying '$toBeCopied' to $destination"
       cp $toBeCopied $destination/$toBeCopied
-      ;;
+      break;;
     d )
       echo "Copying folder '$toBeCopied' to $destination"
       cp $toBeCopied $destination/$toBeCopied
-      ;;
+      break;;
     r )
       echo "Copying folder and subfolders of '$toBeCopied' to $destination"
       cp -r $toBeCopied $destination/$toBeCopied
-      ;;
+      break;;
     x )
       echo "Executing file '$toBeCopied'"
       source $toBeCopied || `chmod +x $toBeCopied && source $toBeCopied`
-      ;;
+      break;;
     e )
       echo "$toBeCopied"
-      ;;
+      break;;
     c )
       # Use destination to hold condition
       [ $destination ] && cp $toBeCopied $onTrue/$toBeCopied || cp $toBeCopied $onFalse/$toBeCopied
+      break;;
     * )
       echo "Flag '$installDesc' doesn't exist!"
       break;;
