@@ -47,6 +47,7 @@ __BSM-Install Features__
 - Generate script files for quick-launching larger programs (i.e. start a web server for Node, Python, or Ruby)
 - Sample/System Tool scripts
 - Tool Manager (add,remove,update tools)
+- Perl Script Support
 
 ### Extra commit messages
 
