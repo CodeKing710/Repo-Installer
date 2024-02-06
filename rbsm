@@ -2,8 +2,18 @@
 
 ### BSM: reverse shell ###
 
-. /bsm/.bsm-vars
-. /bsm/.bsm-funcs
+repo="$(find ~ -type d -name "Bash-Script-Manager")"
+if [ -e /bsm/.bsm-vars ]; then
+  echo "Loading vars from BSM assets"
+  . /bsm/.bsm-vars
+elif [ -e ~/bsm/.bsm-vars ]; then
+  echo "Loading vars from BSM assets (Git Bash)"
+  . ~/bsm/.bsm-vars
+else
+  echo "Loading vars from repo"
+  . $repo/.bsm-vars # Fallback to repo version
+fi
+. $BSM_ROOT/.bsm-funcs
 
 # Welcome message
 echo "Welcome to BSM shell!"

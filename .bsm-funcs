@@ -634,5 +634,7 @@ get_tool() {
     done
   fi
 }
-add_tool() {}
+add_tool() {
+  echo "Tool in progress"
+}
 # remove_tool() {}
