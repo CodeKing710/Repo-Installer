@@ -10,6 +10,7 @@
 ###############################################
 
 [ $MSYSTEM ] && BIN=~/bin || BIN='/usr/local/bin'
+[ `command -v sudo` ] && sudo=sudo || `sudo=""; echo "GitBashEnv"`
 [ "$1" == '-v' ] && echo "v1.0.0" && exit
 
 # Functions
@@ -24,7 +25,7 @@ parse() {
   case $installDesc in
     f )
       echo "Copying '$toBeCopied' to $destination/$toBeCopied"
-      sudo cp $toBeCopied $destination/$toBeCopied > /dev/null || cp $toBeCopied $destination/$toBeCopied
+      $sudo cp $toBeCopied $destination/$toBeCopied
       ;;
     d )
       echo "Copying folder '$toBeCopied' to $destination"
