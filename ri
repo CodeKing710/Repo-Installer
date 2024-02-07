@@ -21,7 +21,7 @@ parse() {
   local onTrue=`echo "$1" | cut -d '>' -f4`
   local onFalse=`echo "$1" | cut -d '>' -f5`
   [[ $destination =~ "BIN" ]] && destination=$(echo "$destination" | sed "s|BIN|$BIN|g")
-  [[ $destination =~ "HOME" ]] && destination=$(echo "$destination" | sed "s|HOME|/home/`id -u -n`|g")
+  [[ $destination =~ "HOME" ]] && destination=$(echo "$destination" | sed "s|HOME|$HOME|g")
   case $installDesc in
     f )
       echo "Copying '$toBeCopied' to $destination/$toBeCopied"
