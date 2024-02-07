@@ -29,11 +29,11 @@ parse() {
       ;;
     d )
       echo "Copying folder '$toBeCopied' to $destination"
-      sudo cp $toBeCopied/* $destination/ > /dev/null || cp $toBeCopied/* $destination/
+      $sudo cp $toBeCopied/* $destination/
       ;;
     r )
       echo "Copying folder and subfolders of '$toBeCopied' to $destination"
-      sudo cp -r $toBeCopied $destination/ > /dev/null || cp -r $toBeCopied $destination/
+      $sudo cp -r $toBeCopied $destination/
       ;;
     x )
       echo "Executing file '$toBeCopied' in directory $PWD"
