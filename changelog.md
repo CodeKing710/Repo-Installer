@@ -20,9 +20,9 @@ BSM-Install: v2.2.0b
 
 __BSM Features__
 
-- Create scripts for Python, Node, Ruby, and LISP
+- Create scripts for Python, Node, Ruby, Perl, and LISP
   - Predefine script type without using file extensions via creation arguments
-- Open scripts for editing (Default nano, FTC editor selector)
+- Open scripts for editing in your favorite editor
 - Remove scripts
 - Add/Link scripts to BSM directory
 - List scripts
@@ -30,8 +30,8 @@ __BSM Features__
 - Export scipts to desired location
 - Configure certain aspects of BSM
 - Interactive mode for the less CLI-inclined (Base and Install)
-- ! NEW ! Git Bash support
-- ! NEW ! STT (Script-to-Tool converter)
+- Git Bash support
+- STT (Script-to-Tool converter)
 
 __BSM-Install Features__
 
@@ -41,13 +41,13 @@ __BSM-Install Features__
 - View BSM logs
 - Clear logs and scripts
 - Interactive mode
+- Full integration with Repo-Installer (run `ri` in the repo)
 
 ### Features to Come (FTC)
 
 - Generate script files for quick-launching larger programs (i.e. start a web server for Node, Python, or Ruby)
 - Sample/System Tool scripts
 - Tool Manager (add,remove,update tools)
-- Perl Script Support
 
 ### Extra commit messages
 

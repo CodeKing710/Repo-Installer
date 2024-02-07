@@ -5,7 +5,7 @@ Usage: bsm [OPTIONS] ...
 Options:
     -c | --create [NAME] [OPTIONS]
 	    Add new script(s) to your personal scripts. Specify a file extension to use a specific scripting language. Bash is default and doesn't require a file extension. You may also specify the script type by following this argument with '-p', '-n', '-r', or '-l'. Please note that even though those arguments exist outside '-c', using them here changes their meaning.
-	    Available: .js (-n), .py (-p), .rb (-r), .cl (-l)
+	    Available: .js (-n), .py (-p), .rb (-r), .cl (-l), .pl (-e)
         FOR WSL: .ps1 (-P)
 
     -l | --list

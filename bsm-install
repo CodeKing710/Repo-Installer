@@ -80,7 +80,7 @@ install() {
   echo "Updating PATH..."
   if [[ "$(echo "$PATH" | grep $BSM_ROOT)" == "" ]]; then
     if [[ "$(command -v chpath)" != "" ]]; then
-      chpath add $BSM_ROOT/tools $BSM_SCRIPTS $BSM_SCRIPTS/_node $BSM_SCRIPTS/_python $BSM_SCRIPTS/_ruby $BSM_SCRIPTS/_lisp $BSM_SCRIPTS/_power
+      chpath add $BSM_ROOT/tools $BSM_SCRIPTS $BSM_SCRIPTS/_node $BSM_SCRIPTS/_python $BSM_SCRIPTS/_ruby $BSM_SCRIPTS/_lisp $BSM_SCRIPTS/_power $BSM_SCRIPTS/_perl
       if [ -e ~/.path ]; then
         echo "PATH updated successfully via chpath"
       else
@@ -89,7 +89,7 @@ install() {
     else
       #This assumes you haven't modified the original bashrc file with your own things that don't end in 'fi'
       echo "### BSM2" >> $HOME/.bashrc
-      echo "export PATH=\"\$PATH:$BSM_ROOT/tools:$BSM_SCRIPTS:$BSM_SCRIPTS/_node:$BSM_SCRIPTS/_python:$BSM_SCRIPTS/_ruby:$BSM_SCRIPTS/_lisp:$BSM_SCRIPTS/_power\"" >> $HOME/.bashrc
+      echo "export PATH=\"\$PATH:$BSM_ROOT/tools:$BSM_SCRIPTS:$BSM_SCRIPTS/_node:$BSM_SCRIPTS/_python:$BSM_SCRIPTS/_ruby:$BSM_SCRIPTS/_lisp:$BSM_SCRIPTS/_power:$BSM_SCRIPTS/_perl\"" >> $HOME/.bashrc
       # source ~/.bashrc #Attempt reload of PATH
     fi
   fi
@@ -312,7 +312,7 @@ search_args() {
 if [ `command -v ri` ]; then
   read -p "Repo Installer found! Would you like to install via 'ri'? [Y\n] " yn
   if [[ "${yn,}" == "y" ]]; then 
-    ri
+    cd $repo; ri
     exit
   fi
 fi

@@ -2,7 +2,7 @@
 
 ### FUNCTION PACK FOR BSM FUNCTIONALITY ###
 
-# CLI
+# CLI-arg mode
 search_args() {
   while [[ "$1" != "" ]]; do
     case $1 in
@@ -129,7 +129,7 @@ search_args() {
   done
 }
 
-# Command
+# CLI-cmd mode
 search_cmds() {
   while [[ "$1" != "" ]]; do
     local cmd="${1,}"
@@ -148,6 +148,9 @@ search_cmds() {
               ;;
             py | python )
               create_script -p $name
+              ;;
+            pl | perl )
+              create_script -e $name
               ;;
             js | node )
               create_script -n $name
@@ -275,7 +278,19 @@ search_cmds() {
   shift; done
 }
 
-# General use functions
+# Functions
+mkperl() {
+  local name=$1
+  if [[ ! -d "$BSM_SCRIPTS/_perl" ]]; then
+    echo "Setting up BSM for usage with Perl..."
+    mkdir $BSM_SCRIPTS/_perl >> $log 2>> $errlog
+  fi
+  touch "$BSM_SCRIPTS/_perl/${name%.pl}" && chmod 755 "$BSM_SCRIPTS/_perl/${name%.pl}"
+  printf "#!/bin/perl\n\n# Write script code" > "$BSM_SCRIPTS/_node/${name%.pl}"
+  if [[ -e "$BSM_SCRIPTS/_node/${name%.pl}" ]]; then
+    echo "Script Created!"
+  fi
+}
 mknode() {
   local name=$1
   #Make Nodejs folder, exe, installation
@@ -415,6 +430,13 @@ create_script() {
         ;;
       -P | --powershell )
         if [[ ! -e "$BSM_SCRIPTS/_power/${name%.***}" ]]; then
+          mkpwsh $name
+        else
+          conflict
+        fi
+        ;;
+      -e | --perl )
+        if [[ ! -e "$BSM_SCRIPTS/_perl/${name%.**}" ]]; then
           mkpwsh $name
         else
           conflict
