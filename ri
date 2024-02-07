@@ -20,19 +20,19 @@ parse() {
   local onTrue=`echo "$1" | cut -d '>' -f4`
   local onFalse=`echo "$1" | cut -d '>' -f5`
   [[ $destination =~ "BIN" ]] && destination=$(echo "$destination" | sed "s|BIN|$BIN|g")
-  [[ $destination =~ "HOME" ]] && destination=$(echo "$destination" | sed "s|HOME|$HOME|g")
+  [[ $destination =~ "HOME" ]] && destination=$(echo "$destination" | sed "s|HOME|/home/`id -u -n`|g")
   case $installDesc in
     f )
-      echo "Copying '$toBeCopied' to $destination"
-      cp $toBeCopied $destination/
+      echo "Copying '$toBeCopied' to $destination/$toBeCopied"
+      sudo cp $toBeCopied $destination/$toBeCopied > /dev/null || cp $toBeCopied $destination/$toBeCopied
       ;;
     d )
       echo "Copying folder '$toBeCopied' to $destination"
-      cp $toBeCopied/* $destination/
+      sudo cp $toBeCopied/* $destination/ > /dev/null || cp $toBeCopied/* $destination/
       ;;
     r )
       echo "Copying folder and subfolders of '$toBeCopied' to $destination"
-      cp -r $toBeCopied $destination/
+      sudo cp -r $toBeCopied $destination/ > /dev/null || cp -r $toBeCopied $destination/
       ;;
     x )
       echo "Executing file '$toBeCopied' in directory $PWD"
