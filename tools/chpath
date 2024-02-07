@@ -47,11 +47,11 @@ edit() {
   # Check if a real path is specified
   if [[ "$(find -type d -name "$2")" == "" ]]; then
     echo "Path specified to replace doesn't exist!"
-    exit
+  else
+    # Set old path to new path
+    tmpPath="$(echo "$tmpPath" | sed "s/$1/$2/")"
   fi
 
-  # Set old path to new path
-  tmpPath="$(echo "$tmpPath" | sed "s/$1/$2/")"
 }
 remove() {
   while [[ "$1" != "" ]]; do
@@ -77,7 +77,6 @@ reset() {
 missingArg() {
   if [[ "$1" == "" ]]; then
     echo "Missing required argument: [PATH]"
-    exit
   # elif [[ ! "$1" =~ "$tmpPath" ]]; then
   #   echo "Path specified doesn't exist!"
   #   echo -e "Did you mean:\n$(echo "$tmpPath" | grep "$1")"
@@ -115,7 +114,6 @@ fi
 # Run args
 if [[ "$1" == "" ]]; then
   echo "USAGE: chpath [get/add/list/edit/remove/reset] [path] [optionalPath]"
-  exit
 else
   cmd="$1"
   shift # Move to next argument
@@ -124,31 +122,31 @@ else
       # missingArg $1
       get $1
       # updatePath
-      exit;;
+      ;;
     add ) # Add new record to path (can change priority)
       missingArg $1
       add $@
       updatePath
-      exit;;
+      ;;
     edit ) # Edit existing record
       missingArg $1
       edit $@
       updatePath
-      exit;;
+      ;;
     remove ) # Remove path records
       missingArg $1
       remove $@
       updatePath
-      exit;;
+      ;;
     reset ) # Reset to path snapshot taken at installation
       reset
-      exit;;
+      ;;
     list ) # List paths
       echo "$tmpPath"
-      exit;;
+      ;;
     * )
       echo "Subcommand '$cmd' not found"
       echo "Did you mean: $(echo -e "$cmdList" | grep $cmd)?"
-      exit;;
+      ;;
   esac
 fi

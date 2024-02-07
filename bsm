@@ -46,7 +46,7 @@ if [[ "$1" == "" ]]; then
       Create )
         echo "What type of script will this be?"
         scriptType="-b"
-        select type in Python Node Ruby LISP Bash PowerShell Cancel; do
+        select type in Python Node Ruby LISP Bash PowerShell Perl Cancel; do
           echo ""
           case $type in
             Python )
@@ -66,6 +66,9 @@ if [[ "$1" == "" ]]; then
             PowerShell )
               scriptType="-P"
               break;;
+            Perl )
+              scriptType="-e"
+              break;;
             Cancel )
               scriptType="cancel"
               break;;
@@ -74,8 +77,8 @@ if [[ "$1" == "" ]]; then
               ;;
           esac
           echo -e "\nWhat type of script will this be?"
-          echo "1) Python      3) Ruby       5) Bash        7) Cancel"
-          echo "2) Node        4) LISP       6) PowerShell"
+          echo "1) Python      3) Ruby       5) Bash        7) Perl"
+          echo "2) Node        4) LISP       6) PowerShell  8) Cancel"
         done
         if [[ "$scriptType" == "cancel" ]]; then
           # Show options again

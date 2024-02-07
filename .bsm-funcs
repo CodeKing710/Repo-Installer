@@ -286,8 +286,8 @@ mkperl() {
     mkdir $BSM_SCRIPTS/_perl >> $log 2>> $errlog
   fi
   touch "$BSM_SCRIPTS/_perl/${name%.pl}" && chmod 755 "$BSM_SCRIPTS/_perl/${name%.pl}"
-  printf "#!/bin/perl\n\n# Write script code" > "$BSM_SCRIPTS/_node/${name%.pl}"
-  if [[ -e "$BSM_SCRIPTS/_node/${name%.pl}" ]]; then
+  printf "#!/bin/perl\n\n# Write script code" > "$BSM_SCRIPTS/_perl/${name%.pl}"
+  if [[ -e "$BSM_SCRIPTS/_perl/${name%.pl}" ]]; then
     echo "Script Created!"
   fi
 }
@@ -447,7 +447,7 @@ create_script() {
   else
     local name=$1
     # Check if next arg is a name or a type def
-    if [[ ! -e "$BSM_SCRIPTS/_power/${name%.***}" && ! -e "$BSM_SCRIPTS/_lisp/${name%.**}" && ! -e "$BSM_SCRIPTS/_ruby/${name%.**}" && ! -e "$BSM_SCRIPTS/_node/${name%.**}" && ! -e "$BSM_SCRIPTS/_python/${name%.**}" && ! -e "$BSM_SCRIPTS/$name" ]]; then
+    if [[ ! -e "$BSM_SCRIPTS/_perl/${name%.**}" && ! -e "$BSM_SCRIPTS/_power/${name%.***}" && ! -e "$BSM_SCRIPTS/_lisp/${name%.**}" && ! -e "$BSM_SCRIPTS/_ruby/${name%.**}" && ! -e "$BSM_SCRIPTS/_node/${name%.**}" && ! -e "$BSM_SCRIPTS/_python/${name%.**}" && ! -e "$BSM_SCRIPTS/$name" ]]; then
       if [[ "$name" =~ ".js" ]]; then # Node
         mknode $name
       elif [[ "$name" =~ ".py" ]]; then # Python
@@ -458,6 +458,8 @@ create_script() {
         mklisp $name
       elif [[ "$name" =~ ".ps1" ]]; then # PowerShell
         mkpwsh $name
+      elif [[ "$name" =~ ".pl" ]]; then #Perl
+        mkperl $name
       else # Bash
         mkbash $name
       fi
@@ -473,7 +475,7 @@ open_script() {
     echo "Script found, opening..."
     find -L "$BSM_SCRIPTS/_power/${name%.***}" -type f -name "${name%.***}" -exec $editor {}.ps1 \;
   # Check rest normally
-  elif [[ -e "$BSM_SCRIPTS/_lisp/${name%.**}" || -e "$BSM_SCRIPTS/_ruby/${name%.**}" || -e "$BSM_SCRIPTS/_python/${name%.**}" || -e "$BSM_SCRIPTS/_node/${name%.**}" || -e "$BSM_SCRIPTS/${name%.**}" ]]; then
+  elif [[ -e "$BSM_SCRIPTS/_perl/${name%.**}" || -e "$BSM_SCRIPTS/_lisp/${name%.**}" || -e "$BSM_SCRIPTS/_ruby/${name%.**}" || -e "$BSM_SCRIPTS/_python/${name%.**}" || -e "$BSM_SCRIPTS/_node/${name%.**}" || -e "$BSM_SCRIPTS/${name%.**}" ]]; then
     echo "Script found, opening..."
     find -L $BSM_SCRIPTS -type f -name "${name%.**}" -exec $editor {} \;
   else
