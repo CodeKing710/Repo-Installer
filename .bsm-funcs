@@ -532,6 +532,13 @@ remove_scripts() {
         else
           echo "Unable to remove script, refer to $BSM_ROOT/logs/err.log for details"
         fi
+      elif [[ -e "$BSM_SCRIPTS/_perl/${n%.**}" ]]; then
+        rm "$BSM_SCRIPTS/_perl/${n%.**}" >> $log >> $errlog
+        if [[ ! -e "$BSM_SCRIPTS/_perl/${n%.**}" ]]; then
+          echo "Script(s) Removed!"
+        else
+          echo "Unable to remove script, refer to $BSM_ROOT/logs/err.log for details"
+        fi
       else
         echo "Script doesn't exist!"
       fi
@@ -583,13 +590,15 @@ import_script() {
     create_script "$name"
     local scriptpath="$BSM_SCRIPTS"
     if [[ "$name" =~ ".js" ]]; then
-        scriptpath="$scriptpath/_node"
+      scriptpath="$scriptpath/_node"
     elif [[ "$name" =~ ".py" ]]; then
-        scriptpath="$scriptpath/_python"
+      scriptpath="$scriptpath/_python"
     elif [[ "$name" =~ ".rb" ]]; then
-        scriptpath="$scriptpath/_ruby"
+      scriptpath="$scriptpath/_ruby"
     elif [[ "$name" =~ ".cl" ]]; then
-        scriptpath="$scriptpath/_lisp"
+      scriptpath="$scriptpath/_lisp"
+    elif [[ "$name" =~ ".pl" ]]; then
+      scriptpath="$scriptpath/_perl"
     fi
     cat $(find -L -path $BSM_ROOT -prune -type f -name "$name") >> "$scriptpath/${name%.**}"
   done
@@ -619,7 +628,6 @@ list_scripts() {
     echo "No Scripts Created Yet!"
   else
     echo -e "Available Scripts:\n$list"
-    # ls -pR1 $BSM_SCRIPTS | grep -v / | grep -v '\...' | tr -s '\n' ' ' | tr ' ' '\n' | xargs -i echo "- {}"
   fi
 }
 config_bsm() {
@@ -630,8 +638,6 @@ config_bsm() {
     # Set rule
     sed -i -e "s/$1=$editor/$1=$2/" $BSM_ROOT/.config
     echo "Rule change: $(cat $BSM_ROOT/.config | grep "$1")"
-    # Reload vars
-    # . $BSM_ROOT/.bsm-vars
   fi
 }
 get_tool() {
