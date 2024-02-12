@@ -9,10 +9,6 @@
 #        will point to for said program       #
 ###############################################
 
-[ $MSYSTEM ] && BIN=~/bin || BIN='/usr/local/bin'
-[ `command -v sudo` ] && sudo=sudo || sudo=""
-[ "$1" == '-v' ] && echo "v1.0.0" && exit
-
 # Functions
 parse() {
   local installDesc=`echo "$1" | cut -d '>' -f1`
@@ -22,39 +18,61 @@ parse() {
   local onFalse=`echo "$1" | cut -d '>' -f5`
   [[ $destination =~ "BIN" ]] && destination=$(echo "$destination" | sed "s|BIN|$BIN|g")
   [[ $destination =~ "HOME" ]] && destination=$(echo "$destination" | sed "s|HOME|$HOME|g")
+  [[ $destination =~ "ROOT" ]] && destination=$(echo "$destination" | sed "s|ROOT|$ROOT|g")
   case $installDesc in
-    f )
+    f ) # Copy file
       echo "Copying '$toBeCopied' to $destination/$toBeCopied"
       $sudo cp $toBeCopied $destination/$toBeCopied
       ;;
-    d )
+    d ) # Copy directory
       echo "Copying folder '$toBeCopied' to $destination"
       $sudo cp $toBeCopied/* $destination/
       ;;
-    r )
+    r ) # Recursively copy directory and subfolders
       echo "Copying folder and subfolders of '$toBeCopied' to $destination"
       $sudo cp -r $toBeCopied $destination/
       ;;
-    x )
+    x ) # Source a script into RepoInstaller
       echo "Executing file '$toBeCopied' in directory $PWD"
       source ./$toBeCopied $destination
       ;;
-    e )
+    e ) # Write to Console
       echo "$1" | cut -d '>' -f2
       ;;
-    c )
-      # Use destination to hold condition
+    c ) # Conditional copy
+      # Use destination to hold condition (Satisfy BASH if condition set for '[[' )
       [[ $onTrue =~ "BIN" ]] && onTrue=$(echo "$onTrue" | sed "s|BIN|$BIN|g")
       [[ $onTrue =~ "HOME" ]] && onTrue=$(echo "$onTrue" | sed "s|HOME|$HOME|g")
+      [[ $onTrue =~ "ROOT" ]] && onTrue=$(echo "$onTrue" | sed "s|ROOT|$ROOT|g")
       [[ $onFalse =~ "BIN" ]] && onFalse=$(echo "$onFalse" | sed "s|BIN|$BIN|g")
       [[ $onFalse =~ "HOME" ]] && onFalse=$(echo "$onFalse" | sed "s|HOME|$HOME|g")
+      [[ $onFalse =~ "ROOT" ]] && onFalse=$(echo "$onFalse" | sed "s|ROOT|$ROOT|g")
       if [[ $destination ]]; then cp $toBeCopied $onTrue/; else cp $toBeCopied $onFalse/; fi
+      ;;
+    m ) # Make a directory (PATH starts at $ROOT directory)
+      if [[ "$toBeCopied" == "f" ]]; then
+        echo "Making file $destination"
+        $sudo touch -i $ROOT/$destination
+      else
+        echo "Making directory $toBeCopied"
+        $sudo mkdir $ROOT/$toBeCopied 2>> /dev/null
+      fi
       ;;
     * )
       echo "Flag '$installDesc' doesn't exist!"
       ;;
   esac
 }
+
+[ $MSYSTEM ] && BIN=~/bin || BIN='/usr/local/bin'
+# [[ "$1" == '-v' ]] && ROOT=$1 || ROOT=$HOME
+[ `command -v sudo` ] && sudo=sudo || sudo=""
+if [ "$1" == '-v' ]; then
+  echo "v1.0.0"
+  exit
+else
+  [[ "$1" == "" ]] && ROOT=$HOME || ROOT="$1"
+fi
 
 # Default action is to move every file in the folder that doesn't match the global ignore rule
 # Default destination is the user's ~/bin folder
