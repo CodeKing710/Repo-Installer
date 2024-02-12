@@ -633,11 +633,11 @@ list_scripts() {
 config_bsm() {
   if [[ "$2" == "" ]]; then
     # Get rule
-    echo "Rule: $(cat $BSM_ROOT/.config | grep "$1")"
+    echo "Rule: $(cat $BSM_ROOT/.cfg | grep "$1")"
   else
     # Set rule
-    sed -i -e "s/$1=$editor/$1=$2/" $BSM_ROOT/.config
-    echo "Rule change: $(cat $BSM_ROOT/.config | grep "$1")"
+    sed -i -e "s/$1=$editor/$1=$2/" $BSM_ROOT/.cfg
+    echo "Rule change: $(cat $BSM_ROOT/.cfg | grep "$1")"
   fi
 }
 get_tool() {
