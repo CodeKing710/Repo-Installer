@@ -4,21 +4,21 @@
 
 # Import vars and functions
 repo="$(find ~ -type d -name "Bash-Script-Manager")"
-if [ -e /bsm/.bsm-vars ]; then
-  . /bsm/.bsm-vars
-elif [ -e ~/bsm/.bsm-vars ]; then
-  . ~/bsm/.bsm-vars
+if [ -e /bsm/.vars ]; then
+  . /bsm/.vars
+elif [ -e ~/bsm/.vars ]; then
+  . ~/bsm/.vars
 else
-  . $repo/.bsm-vars # Fallback to repo version
+  . $repo/.vars # Fallback to repo version
 fi
 version="$(cat $BSM_ROOT/.version | head -1)"
 help="cat $BSM_ROOT/.help"
 editor="$(cat $BSM_ROOT/.cfg | grep "editor" | sed 's/editor=//')"
-. $BSM_ROOT/.bsm-funcs
+. $BSM_ROOT/.funcs
 
 # Check if deps are installed
 if [[ ! -d $BSM_ROOT ]]; then
-  . $(find ~ -type f -name bsm-install) -i
+  $repo/bsm-install -i
 fi
 
 # Check for updates

@@ -3,17 +3,17 @@
 ### BSM: reverse shell ###
 
 repo="$(find ~ -type d -name "Bash-Script-Manager")"
-if [ -e /bsm/.bsm-vars ]; then
-  echo "Loading vars from BSM assets"
-  . /bsm/.bsm-vars
-elif [ -e ~/bsm/.bsm-vars ]; then
-  echo "Loading vars from BSM assets (Git Bash)"
-  . ~/bsm/.bsm-vars
+if [ -e /bsm/.vars ]; then
+  # echo "Loading vars from BSM assets"
+  . /bsm/.vars
+elif [ -e ~/bsm/.vars ]; then
+  # echo "Loading vars from BSM assets (Git Bash)"
+  . ~/bsm/.vars
 else
-  echo "Loading vars from repo"
-  . $repo/.bsm-vars # Fallback to repo version
+  # echo "Loading vars from repo"
+  . $repo/.vars # Fallback to repo version
 fi
-. $BSM_ROOT/.bsm-funcs
+. $BSM_ROOT/.funcs
 
 # Welcome message
 echo "Welcome to BSM shell!"
