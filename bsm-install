@@ -28,7 +28,7 @@ cpdeps() {
     cp -f "$(find $repo -type f -name ".version")" $BSM_ROOT/.version
     cp -f "$(find $repo -type f -name ".vars")" $BSM_ROOT/.vars
     cp -f "$(find $repo -type f -name ".funcs")" $BSM_ROOT/.funcs
-    # cp -f "$(find $repo -type f -name ".bsm-ac")" /etc/bash_completion.d/bsm-ac
+    # cp -f "$(find $repo -type f -name "bsm-ac.sh")" /etc/bash_completion.d/bsm
     cp -f "$(find $repo -type f -name ".help")" $BSM_ROOT/.help
     cp -f "$(find $repo -type f -name ".install-help")" $BSM_ROOT/.install-help
     if [[ ! -e $BSM_ROOT/.cfg ]]; then
@@ -43,7 +43,7 @@ cpdeps() {
     cp -f "$(find $repo -type f -name ".version")" $BSM_ROOT/.version
     cp -f "$(find $repo -type f -name ".vars")" $BSM_ROOT/.vars
     cp -f "$(find $repo -type f -name ".funcs")" $BSM_ROOT/.funcs
-    cp -f "$(find $repo -type f -name ".bsm-ac")" /etc/bash_completion.d/bsm-ac
+    # cp -f "$(find $repo -type f -name "bsm-ac.sh")" /etc/bash_completion.d/bsm
     cp -f "$(find $repo -type f -name ".help")" $BSM_ROOT/.help
     cp -f "$(find $repo -type f -name ".install-help")" $BSM_ROOT/.install-help
     if [[ ! -e $BSM_ROOT/.config ]]; then
@@ -296,6 +296,10 @@ search_args() {
       clear_bsm $1
       exit;;
     -R | --ri-fin )
+      [ ! $MSYSTEM ] && sudo chgrp $USER $BSM_ROOT
+      [ ! $MSYSTEM ] && sudo chown $USER $BSM_ROOT
+      [ ! $MSYSTEM ] && sudo chmod 666 $log
+      [ ! $MSYSTEM ] && sudo chmod 666 $errlog
       echo "Updating PATH..."
       if [[ "$(echo "$PATH" | grep $BSM_ROOT)" == "" ]]; then
         if [[ "$(command -v chpath)" != "" ]]; then
