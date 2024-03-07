@@ -4,14 +4,10 @@
 
 # Vars
 repo="$(find ~ -type d -name "Bash-Script-Manager")"
-if [ -e /bsm/.vars ]; then
-  echo "Loading vars from BSM assets"
-  . /bsm/.vars
-elif [ -e ~/bsm/.vars ]; then
-  echo "Loading vars from BSM assets (Git Bash)"
-  . ~/bsm/.vars
+if [ -e ~/.bsm/.vars ]; then
+  . ~/.bsm/.vars
 else
-  echo "Loading vars from repo"
+  echo "Loading from repo..."
   . $repo/.vars # Fallback to repo version
 fi
 version=$(cat $BSM_ROOT/.version | tail -1)

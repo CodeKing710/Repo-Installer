@@ -4,10 +4,8 @@
 
 # Import vars and functions
 repo="$(find ~ -type d -name "Bash-Script-Manager")"
-if [ -e /bsm/.vars ]; then
-  . /bsm/.vars
-elif [ -e ~/bsm/.vars ]; then
-  . ~/bsm/.vars
+if [ -e ~/.bsm/.vars ]; then
+  . ~/.bsm/.vars
 else
   . $repo/.vars # Fallback to repo version
 fi
