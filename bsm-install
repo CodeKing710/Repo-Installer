@@ -16,50 +16,32 @@ help="cat $BSM_ROOT/.install-help"
 
 # Functions
 cpdeps() {
-  if [ $MSYSTEM ]; then
-    # Handle Git Bash integration
-    cp -f "$(find $repo -type f -name "bsm")" ~/bin/bsm && echo "Copy of BSM added to user registry!"
-    cp -f "$(find $repo -type f -name "rbsm")" ~/bin/rbsm
-    cp -f "$(find $repo -type f -name "bsm-install")" ~/bin/bsm-install && echo "Installer copied to user registry!"
-    cp -f "$(find $repo -type f -name ".version")" $BSM_ROOT/.version
-    cp -f "$(find $repo -type f -name ".vars")" $BSM_ROOT/.vars
-    cp -f "$(find $repo -type f -name ".funcs")" $BSM_ROOT/.funcs
-    # cp -f "$(find $repo -type f -name "bsm-ac.sh")" /etc/bash_completion.d/bsm
-    cp -f "$(find $repo -type f -name ".help")" $BSM_ROOT/.help
-    cp -f "$(find $repo -type f -name ".install-help")" $BSM_ROOT/.install-help
-    if [[ ! -e $BSM_ROOT/.cfg ]]; then
-      cp -f "$(find $repo -type f -name ".cfg")" $BSM_ROOT/.cfg
-    fi
-    cp -rf "$(find $repo -type d -name "tools")" $BSM_ROOT/
-  else
-    # Handle like any other Linux flavor
-    sudo cp -f "$(find $repo -type f -name "bsm")" /usr/local/bin/bsm && echo "Copy of BSM added to program registry!"
-    sudo cp -f "$(find $repo -type f -name "rbsm")" /usr/local/bin/rbsm
-    sudo cp -f "$(find $repo -type f -name "bsm-install")" /usr/local/sbin/bsm-install && echo "Installer copied to system registry!"
-    cp -f "$(find $repo -type f -name ".version")" $BSM_ROOT/.version
-    cp -f "$(find $repo -type f -name ".vars")" $BSM_ROOT/.vars
-    cp -f "$(find $repo -type f -name ".funcs")" $BSM_ROOT/.funcs
-    # cp -f "$(find $repo -type f -name "bsm-ac.sh")" /etc/bash_completion.d/bsm
-    cp -f "$(find $repo -type f -name ".help")" $BSM_ROOT/.help
-    cp -f "$(find $repo -type f -name ".install-help")" $BSM_ROOT/.install-help
-    if [[ ! -e $BSM_ROOT/.config ]]; then
-      cp -f "$(find $repo -type f -name ".cfg")" $BSM_ROOT/.cfg
-    fi
-    cp -rf "$(find $repo -type d -name "tools")" $BSM_ROOT/
-    sudo chmod 644 $BSM_ROOT/.cfg
-    sudo chmod 755 /usr/local/bin/bsm
-    sudo chmod 755 /usr/local/sbin/bsm-install
+  # Handle Git Bash integration
+  cp -f "$(find $repo -type f -name "bsm")" ~/bin/bsm && echo "Copy of BSM added to user registry!"
+  cp -f "$(find $repo -type f -name "rbsm")" ~/bin/rbsm
+  cp -f "$(find $repo -type f -name "bsm-install")" ~/bin/bsm-install && echo "Installer copied to user registry!"
+  cp -f "$(find $repo -type f -name ".version")" $BSM_ROOT/.version
+  cp -f "$(find $repo -type f -name ".vars")" $BSM_ROOT/.vars
+  cp -f "$(find $repo -type f -name ".funcs")" $BSM_ROOT/.funcs
+  # cp -f "$(find $repo -type f -name "bsm-ac.sh")" /etc/bash_completion.d/bsm
+  cp -f "$(find $repo -type f -name ".help")" $BSM_ROOT/.help
+  cp -f "$(find $repo -type f -name ".install-help")" $BSM_ROOT/.install-help
+  if [[ ! -e $BSM_ROOT/.cfg ]]; then
+    cp -f "$(find $repo -type f -name ".cfg")" $BSM_ROOT/.cfg
   fi
+  cp -rf "$(find $repo -type d -name "tools")" $BSM_ROOT/
 }
+
 install() {
   echo "Installing..."
-  if [ `command -v ri` ]; then
-    read -p "Repo Installer found! Would you like to install via 'ri'? [Y\n] " yn
-    if [[ "${yn,}" == "y" ]]; then 
-      cd $repo; ri
-      exit
-    fi
-  fi
+  [ ! -d ~/bin ] && mkdir ~/bin
+  # if [ `command -v ri` ]; then
+  #   read -p "Repo Installer found! Would you like to install via 'ri'? [Y\n] " yn
+  #   if [[ "${yn,}" == "y" ]]; then 
+  #     cd $repo; ri
+  #     exit
+  #   fi
+  # fi
   echo "Setting up logging and scripts folders..."
   if [ ! -d "$BSM_ROOT" ]; then
     [ $MSYSTEM ] && mkdir $BSM_ROOT || sudo mkdir $BSM_ROOT
