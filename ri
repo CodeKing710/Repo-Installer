@@ -64,7 +64,7 @@ parse() {
   esac
 }
 
-[ $MSYSTEM ] && BIN=~/bin || BIN='/usr/local/bin'
+BIN=~/bin
 # [[ "$1" == '-v' ]] && ROOT=$1 || ROOT=$HOME
 [ `command -v sudo` ] && sudo=sudo || sudo=""
 if [ "$1" == '-v' ]; then
