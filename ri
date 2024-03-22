@@ -22,14 +22,14 @@ parse() {
   case $installDesc in
     f ) # Copy file
       echo "Copying '$toBeCopied' to $destination/$toBeCopied"
-      $sudo cp $toBeCopied $destination/$toBeCopied
+      $sudo cp $toBeCopied $destination/
       ;;
     d ) # Copy directory
       echo "Copying folder '$toBeCopied' to $destination"
-      $sudo cp $toBeCopied/* $destination/
+      $sudo cp -r $toBeCopied $destination
       ;;
-    r ) # Recursively copy directory and subfolders
-      echo "Copying folder and subfolders of '$toBeCopied' to $destination"
+    r ) # Recursively copy directory contents
+      echo "Copying folder contents and subfolders of '$toBeCopied' to $destination"
       $sudo cp -r $toBeCopied $destination/
       ;;
     x ) # Source a script into RepoInstaller
