@@ -16,9 +16,9 @@ parse() {
   local destination=`echo "$1" | cut -d '>' -f3`
   local onTrue=`echo "$1" | cut -d '>' -f4`
   local onFalse=`echo "$1" | cut -d '>' -f5`
-  [[ $destination =~ "BIN" ]] && destination=$(echo "$destination" | sed "s|BIN|$BIN|g")
-  [[ $destination =~ "HOME" ]] && destination=$(echo "$destination" | sed "s|HOME|$HOME|g")
-  [[ $destination =~ "ROOT" ]] && destination=$(echo "$destination" | sed "s|ROOT|$ROOT|g")
+  [[ "${destination}" =~ "BIN" ]] && destination=$(echo "$destination" | sed "s|BIN|$BIN|g")
+  [[ "${destination}" =~ "HOME" ]] && destination=$(echo "$destination" | sed "s|HOME|$HOME|g")
+  [[ "${destination}" =~ "ROOT" ]] && destination=$(echo "$destination" | sed "s|ROOT|$ROOT|g")
   case $installDesc in
     f ) # Copy file
       echo "Copying '$toBeCopied' to $destination/$toBeCopied"
@@ -96,5 +96,6 @@ if [ -e ./ri.cfg ]; then
     done < ./ri.cfg
   fi
 else
-  cp -r ./* ~/bin
+  echo "Could not find a ri.cfg file in the current directory!" &>2
+  # cp -r ./* ~/bin
 fi
